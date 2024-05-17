@@ -13,16 +13,31 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
+        }
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        #board-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
         }
         #board {
             display: grid;
-            grid-template-columns: repeat(6, 100px);
-            grid-template-rows: repeat(6, 100px);
-            gap: 5px;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 2px;
+            width: 60%;
+            height: 60%;
         }
         .slot {
-            width: 100px;
-            height: 100px;
             border: 1px solid #000;
             display: flex;
             align-items: center;
@@ -34,43 +49,62 @@
             background-color: yellow !important;
         }
         .draggable {
-            width: 90px;
-            height: 90px;
+            width: 90%;
+            height: 90%;
             background-color: blue;
             border: 1px solid #000;
             cursor: grab;
         }
-        #dice {
-            margin-top: 20px;
-        }
         .deck, .hand {
-            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
         }
         .card {
-            width: 60px;
-            height: 90px;
+            width: 50px;
+            height: 70px;
             border: 1px solid #000;
             background-color: white;
             margin: 5px;
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
         }
         .hand {
             border: 1px solid #000;
             padding: 10px;
+            width: 60%;
+            justify-content: space-around;
+        }
+        #controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        button, input {
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <div id="board"></div>
-    <button id="rollDice">Roll Dice</button>
-    <div id="dice"></div>
-    <button id="startHost">Start as Host</button>
-    <input type="text" id="peerId" placeholder="Enter Host ID">
-    <button id="joinGame">Join Game</button>
-    <div id="hostIdDisplay"></div>
-
-    <div class="deck" id="deck"></div>
-    <div class="hand" id="hand"></div>
+    <div id="game-container">
+        <div id="controls">
+            <button id="rollDice">Roll Dice</button>
+            <div id="dice"></div>
+            <button id="startHost">Start as Host</button>
+            <input type="text" id="peerId" placeholder="Enter Host ID">
+            <button id="joinGame">Join Game</button>
+            <div id="hostIdDisplay"></div>
+        </div>
+        <div id="deck" class="deck"></div>
+        <div id="board-container">
+            <div id="board"></div>
+        </div>
+        <div id="hand" class="hand"></div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
@@ -229,3 +263,4 @@
     </script>
 </body>
 </html>
+
