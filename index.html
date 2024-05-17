@@ -22,6 +22,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
+            position: relative;
         }
         #controls {
             display: flex;
@@ -88,6 +89,15 @@
             width: 60%;
             justify-content: space-around;
         }
+        #connection-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            border: 1px solid #000;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -105,6 +115,7 @@
             <div id="board"></div>
         </div>
         <div id="hand" class="hand"></div>
+        <div id="connection-status">Status: Disconnected</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
@@ -113,6 +124,11 @@
         let peer;
         let conn;
         let isHost = false;
+        const connectionStatus = document.getElementById('connection-status');
+
+        function updateConnectionStatus(message) {
+            connectionStatus.textContent = 'Status: ' + message;
+        }
 
         document.getElementById('startHost').addEventListener('click', () => {
             peer = new Peer();
@@ -123,6 +139,7 @@
                 hostIdDisplay.textContent = 'Host ID: ' + id;
                 hostIdDisplay.style.display = 'block';
                 isHost = true;
+                updateConnectionStatus('Host started with ID ' + id);
             });
 
             peer.on('connection', connection => {
@@ -131,11 +148,13 @@
                 conn.on('data', handleData);
                 conn.on('open', () => {
                     console.log('Connection opened with client');
+                    updateConnectionStatus('Client connected');
                 });
             });
 
             peer.on('error', (err) => {
                 console.error('PeerJS error: ', err);
+                updateConnectionStatus('Error: ' + err);
             });
         });
 
@@ -149,17 +168,20 @@
 
                 conn.on('open', () => {
                     console.log('Connected to host');
+                    updateConnectionStatus('Connected to host');
                 });
 
                 conn.on('data', handleData);
 
                 conn.on('error', (err) => {
                     console.error('Connection error: ', err);
+                    updateConnectionStatus('Error: ' + err);
                 });
             });
 
             peer.on('error', (err) => {
                 console.error('PeerJS error: ', err);
+                updateConnectionStatus('Error: ' + err);
             });
         });
 
@@ -287,4 +309,3 @@
     </script>
 </body>
 </html>
-
