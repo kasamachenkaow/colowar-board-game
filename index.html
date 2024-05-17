@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(6, 100px);
+            grid-template-rows: repeat(6, 100px);
+            gap: 5px;
+        }
+        .slot {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+        .highlight {
+            background-color: yellow !important;
+        }
+        .draggable {
+            width: 90px;
+            height: 90px;
+            background-color: blue;
+            border: 1px solid #000;
+            cursor: grab;
+        }
+        #dice {
+            margin-top: 20px;
+        }
+        .deck, .hand {
+            margin: 20px;
+        }
+        .card {
+            width: 60px;
+            height: 90px;
+            border: 1px solid #000;
+            background-color: white;
+            margin: 5px;
+            display: inline-block;
+        }
+        .hand {
+            border: 1px solid #000;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+    <button id="rollDice">Roll Dice</button>
+    <div id="dice"></div>
+    <button id="startHost">Start as Host</button>
+    <input type="text" id="peerId" placeholder="Enter Host ID">
+    <button id="joinGame">Join Game</button>
+    <div id="hostIdDisplay"></div>
+
+    <div class="deck" id="deck"></div>
+    <div class="hand" id="hand"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
+    <script>
+        let peer;
+        let conn;
+        let isHost = false;
+
+        document.getElementById('startHost').addEventListener('click', () => {
+            peer = new Peer();
+
+            peer.on('open', id => {
+                const hostIdDisplay = document.getElementById('hostIdDisplay');
+                hostIdDisplay.textContent = 'Host ID: ' + id;
+                hostIdDisplay.style.display = 'block';
+                isHost = true;
+            });
+
+            peer.on('connection', connection => {
+                conn = connection;
+                conn.on('data', handleData);
+            });
+        });
+
+        document.getElementById('joinGame').addEventListener('click', () => {
+            const hostId = document.getElementById('peerId').value;
+            peer = new Peer();
+            conn = peer.connect(hostId);
+
+            conn.on('open', () => {
+                conn.on('data', handleData);
+            });
+        });
+
+        function handleData(data) {
+            if (data.type === 'move') {
+                const fromSlot = document.querySelector(`.slot[data-index='${data.from}']`);
+                const toSlot = document.querySelector(`.slot[data-index='${data.to}']`);
+                if (fromSlot && toSlot) {
+                    fromSlot.innerHTML = '';
+                    toSlot.innerHTML = data.item;
+                }
+            } else if (data.type === 'roll') {
+                highlightSlot(data.row, data.col);
+            } else if (data.type === 'drawCard') {
+                addCardToHand(data.cardId);
+            } else if (data.type === 'placeCard') {
+                placeCardOnBoard(data.cardId, data.slotIndex);
+            }
+        }
+
+        // Create the 6x6 board
+        const board = document.getElementById('board');
+        for (let i = 0; i < 36; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            slot.dataset.index = i;
+            board.appendChild(slot);
+        }
+
+        // Initialize sortable
+        Sortable.create(board, {
+            animation: 150,
+            group: 'shared',
+            draggable: '.draggable, .card',
+            onAdd: function (evt) {
+                if (evt.from.id === 'hand') {
+                    const cardId = evt.item.dataset.cardId;
+                    const slotIndex = evt.to.dataset.index;
+                    if (isHost && conn) {
+                        conn.send({ type: 'placeCard', cardId, slotIndex });
+                    }
+                }
+            }
+        });
+
+        // Create draggable elements (markers)
+        for (let i = 0; i < 4; i++) {
+            const marker = document.createElement('div');
+            marker.className = 'draggable';
+            marker.draggable = true;
+            document.querySelector('.slot').appendChild(marker);
+        }
+
+        // Roll dice functionality
+        document.getElementById('rollDice').addEventListener('click', function() {
+            const rowDice = Math.floor(Math.random() * 6) + 1;
+            const colDice = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('dice').textContent = `Rolled: Row = ${rowDice}, Column = ${colDice}`;
+
+            highlightSlot(rowDice, colDice);
+
+            if (isHost && conn) {
+                conn.send({ type: 'roll', row: rowDice, col: colDice });
+            }
+        });
+
+        function highlightSlot(row, col) {
+            const slots = document.querySelectorAll('.slot');
+            slots.forEach(slot => slot.classList.remove('highlight'));
+            const targetIndex = (row - 1) * 6 + (col - 1);
+            const targetSlot = slots[targetIndex];
+            if (targetSlot) {
+                targetSlot.classList.add('highlight');
+            }
+        }
+
+        // Initialize the deck with dummy cards
+        const deck = document.getElementById('deck');
+        for (let i = 0; i < 10; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.cardId = i;
+            card.textContent = `Card ${i}`;
+            card.draggable = true;
+            deck.appendChild(card);
+        }
+
+        // Initialize sortable for the hand area
+        const hand = document.getElementById('hand');
+        Sortable.create(hand, {
+            animation: 150,
+            group: 'shared',
+            draggable: '.card',
+            onAdd: function (evt) {
+                if (isHost && conn) {
+                    const cardId = evt.item.dataset.cardId;
+                    conn.send({ type: 'drawCard', cardId });
+                }
+            }
+        });
+
+        // Add a card to the hand
+        function addCardToHand(cardId) {
+            const card = document.querySelector(`.card[data-cardId='${cardId}']`);
+            if (card) {
+                hand.appendChild(card);
+            }
+        }
+
+        // Place a card on the board
+        function placeCardOnBoard(cardId, slotIndex) {
+            const card = document.querySelector(`.card[data-cardId='${cardId}']`);
+            const slot = document.querySelector(`.slot[data-index='${slotIndex}']`);
+            if (card && slot) {
+                slot.appendChild(card);
+            }
+        }
+
+        // Allow drawing cards by dragging from the deck to the hand
+        Sortable.create(deck, {
+            animation: 150,
+            group: 'shared',
+            draggable: '.card'
+        });
+    </script>
+</body>
+</html>
