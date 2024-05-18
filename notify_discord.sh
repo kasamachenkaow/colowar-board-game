@@ -28,6 +28,11 @@ PAYLOAD=$(cat <<EOF
         "name": "Build URL",
         "value": "$BUILD_URL",
         "inline": true
+      },
+      {
+        "name": "Main URL",
+        "value": "https://entropia-board-game.pages.dev",
+        "inline": true
       }
     ]
   }]
