@@ -124,6 +124,7 @@
         let peer;
         let connections = [];
         let isHost = false;
+        let conn;
         const connectionStatus = document.getElementById('connection-status');
 
         function updateConnectionStatus(message) {
@@ -169,7 +170,7 @@
 
             peer.on('open', () => {
                 console.log('Client peer opened');
-                const conn = peer.connect(hostId);
+                conn = peer.connect(hostId);
 
                 conn.on('open', () => {
                     console.log('Connected to host');
@@ -231,6 +232,8 @@
                     const slotIndex = evt.to.dataset.index;
                     if (isHost) {
                         broadcast({ type: 'placeCard', cardId, slotIndex });
+                    } else if (conn) {
+                        conn.send({ type: 'placeCard', cardId, slotIndex });
                     }
                 }
             }
@@ -252,8 +255,12 @@
 
             highlightSlot(rowDice, colDice);
 
+            const rollData = { type: 'roll', row: rowDice, col: colDice };
+
             if (isHost) {
-                broadcast({ type: 'roll', row: rowDice, col: colDice });
+                broadcast(rollData);
+            } else if (conn) {
+                conn.send(rollData);
             }
         });
 
@@ -288,6 +295,9 @@
                 if (isHost) {
                     const cardId = evt.item.dataset.cardId;
                     broadcast({ type: 'drawCard', cardId });
+                } else if (conn) {
+                    const cardId = evt.item.dataset.cardId;
+                    conn.send({ type: 'drawCard', cardId });
                 }
             }
         });
