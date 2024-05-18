@@ -122,7 +122,7 @@
     <script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
     <script>
         let peer;
-        let conn;
+        let connections = [];
         let isHost = false;
         const connectionStatus = document.getElementById('connection-status');
 
@@ -144,11 +144,16 @@
 
             peer.on('connection', connection => {
                 console.log('Client connected');
-                conn = connection;
-                conn.on('data', handleData);
-                conn.on('open', () => {
+                connections.push(connection);
+                connection.on('data', handleData);
+                connection.on('open', () => {
                     console.log('Connection opened with client');
                     updateConnectionStatus('Client connected');
+                });
+                connection.on('close', () => {
+                    console.log('Client disconnected');
+                    connections = connections.filter(conn => conn !== connection);
+                    updateConnectionStatus('Client disconnected');
                 });
             });
 
@@ -164,7 +169,7 @@
 
             peer.on('open', () => {
                 console.log('Client peer opened');
-                conn = peer.connect(hostId);
+                const conn = peer.connect(hostId);
 
                 conn.on('open', () => {
                     console.log('Connected to host');
@@ -177,13 +182,17 @@
                     console.error('Connection error: ', err);
                     updateConnectionStatus('Error: ' + err);
                 });
-            });
 
-            peer.on('error', (err) => {
-                console.error('PeerJS error: ', err);
-                updateConnectionStatus('Error: ' + err);
+                peer.on('error', (err) => {
+                    console.error('PeerJS error: ', err);
+                    updateConnectionStatus('Error: ' + err);
+                });
             });
         });
+
+        function broadcast(data) {
+            connections.forEach(connection => connection.send(data));
+        }
 
         function handleData(data) {
             if (data.type === 'move') {
@@ -220,8 +229,8 @@
                 if (evt.from.id === 'hand') {
                     const cardId = evt.item.dataset.cardId;
                     const slotIndex = evt.to.dataset.index;
-                    if (isHost && conn) {
-                        conn.send({ type: 'placeCard', cardId, slotIndex });
+                    if (isHost) {
+                        broadcast({ type: 'placeCard', cardId, slotIndex });
                     }
                 }
             }
@@ -243,8 +252,8 @@
 
             highlightSlot(rowDice, colDice);
 
-            if (isHost && conn) {
-                conn.send({ type: 'roll', row: rowDice, col: colDice });
+            if (isHost) {
+                broadcast({ type: 'roll', row: rowDice, col: colDice });
             }
         });
 
@@ -276,9 +285,9 @@
             group: 'shared',
             draggable: '.card',
             onAdd: function (evt) {
-                if (isHost && conn) {
+                if (isHost) {
                     const cardId = evt.item.dataset.cardId;
-                    conn.send({ type: 'drawCard', cardId });
+                    broadcast({ type: 'drawCard', cardId });
                 }
             }
         });
