@@ -110,7 +110,11 @@
             <button id="joinGame">Join Game</button>
             <div id="hostIdDisplay"></div>
         </div>
-        <div id="deck" class="deck"></div>
+        <div id="decks" class="deck">
+            <div class="deck" data-deck-id="1">Deck 1: <span class="deck-count">10</span></div>
+            <div class="deck" data-deck-id="2">Deck 2: <span class="deck-count">10</span></div>
+            <div class="deck" data-deck-id="3">Deck 3: <span class="deck-count">10</span></div>
+        </div>
         <div id="board-container">
             <div id="board"></div>
         </div>
@@ -210,9 +214,12 @@
             } else if (data.type === 'roll') {
                 highlightSlot(data.row, data.col);
             } else if (data.type === 'drawCard') {
-                addCardToHand(data.cardId);
+                updateDeckCount(data.deckId, -1);
+                addCardToHand(data.deckId);
             } else if (data.type === 'placeCard') {
                 placeCardOnBoard(data.cardId, data.slotIndex);
+            } else if (data.type === 'updateDeckCount') {
+                updateDeckCount(data.deckId, data.count);
             }
         }
 
@@ -283,15 +290,52 @@
             }
         }
 
-        // Initialize the deck with dummy cards
-        const deck = document.getElementById('deck');
-        for (let i = 0; i < 10; i++) {
+        // Initialize the decks with dummy cards
+        const decks = document.querySelectorAll('.deck');
+        decks.forEach(deck => {
+            deck.addEventListener('click', () => {
+                const deckId = deck.dataset.deckId;
+                updateDeckCount(deckId, -1);
+                const data = { type: 'drawCard', deckId };
+                if (isHost) {
+                    broadcast(data);
+                } else if (conn) {
+                    conn.send(data);
+                }
+            });
+        });
+
+        // Update deck count
+        function updateDeckCount(deckId, change) {
+            const deck = document.querySelector(`.deck[data-deck-id='${deckId}']`);
+            const countSpan = deck.querySelector('.deck-count');
+            let count = parseInt(countSpan.textContent);
+            count += change;
+            countSpan.textContent = count;
+            if (isHost) {
+                const data = { type: 'updateDeckCount', deckId, count };
+                broadcast(data);
+            }
+        }
+
+        // Add a card to the hand
+        function addCardToHand(deckId) {
             const card = document.createElement('div');
             card.className = 'card';
-            card.dataset.cardId = i;
-            card.textContent = `Card ${i}`;
+            card.dataset.cardId = `deck${deckId}`;
+            card.textContent = `Card from Deck ${deckId}`;
             card.draggable = true;
-            deck.appendChild(card);
+            const hand = document.getElementById('hand');
+            hand.appendChild(card);
+        }
+
+        // Place a card on the board
+        function placeCardOnBoard(cardId, slotIndex) {
+            const card = document.querySelector(`.card[data-cardId='${cardId}']`);
+            const slot = document.querySelector(`.slot[data-index='${slotIndex}']`);
+            if (card && slot) {
+                slot.appendChild(card);
+            }
         }
 
         // Initialize sortable for the hand area
@@ -309,30 +353,6 @@
                     conn.send(data);
                 }
             }
-        });
-
-        // Add a card to the hand
-        function addCardToHand(cardId) {
-            const card = document.querySelector(`.card[data-cardId='${cardId}']`);
-            if (card) {
-                hand.appendChild(card);
-            }
-        }
-
-        // Place a card on the board
-        function placeCardOnBoard(cardId, slotIndex) {
-            const card = document.querySelector(`.card[data-cardId='${cardId}']`);
-            const slot = document.querySelector(`.slot[data-index='${slotIndex}']`);
-            if (card && slot) {
-                slot.appendChild(card);
-            }
-        }
-
-        // Allow drawing cards by dragging from the deck to the hand
-        Sortable.create(deck, {
-            animation: 150,
-            group: 'shared',
-            draggable: '.card'
         });
     </script>
 </body>
