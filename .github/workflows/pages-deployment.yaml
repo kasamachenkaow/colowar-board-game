@@ -7,30 +7,36 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Pages
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Deploy to Cloudflare Pages
-      uses: cloudflare/pages-action@1
-      with:
-        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        projectName: entropia-board-game
-        directory: ./
-        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        id: publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: entropia-board-game
+          directory: ./
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Notify Discord success
-      if: success()
-      run: ./notify_discord.sh success $GITHUB_RUN_URL
-      env:
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Notify Discord success
+        if: success()
+        run: ./notify_discord.sh success ${{ steps.publish.outputs.url }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-    - name: Notify Discord failure
-      if: failure()
-      run: ./notify_discord.sh failure $GITHUB_RUN_URL
-      env:
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Notify Discord failure
+        if: failure()
+        run: ./notify_discord.sh failure ${{ steps.publish.outputs.url }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
