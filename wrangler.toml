@@ -1,0 +1,15 @@
+name = "entropia-board-game"
+type = "javascript"
+account_id = "9d3ecf528b6ab7cd35454e1851301f70"
+workers_dev = true
+
+[build]
+command = "echo 'No build required'"
+
+[upload]
+format = "service-worker"
+dir = "."
+
+[[scripts]]
+command = "./notify_discord.sh success $CF_PAGES_URL"
+onFailure = "./notify_discord.sh failure $CF_PAGES_URL"
