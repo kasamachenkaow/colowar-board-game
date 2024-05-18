@@ -31,12 +31,12 @@ jobs:
 
       - name: Notify Discord success
         if: success()
-        run: ./notify_discord.sh success ${{ steps.publish.outputs.url }}
+        run: ./notify_discord.sh success ${{ steps.publish.outputs.url }} ${{ steps.publish.outputs.alias }}
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Notify Discord failure
         if: failure()
-        run: ./notify_discord.sh failure ${{ steps.publish.outputs.url }}
+        run: ./notify_discord.sh failure ${{ steps.publish.outputs.url }} ${{ steps.publish.outputs.alias }}
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
