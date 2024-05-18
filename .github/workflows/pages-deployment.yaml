@@ -1,0 +1,36 @@
+# .github/workflows/deploy.yml
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/pages-action@1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: entropia-board-game
+        directory: ./
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Notify Discord success
+      if: success()
+      run: ./notify_discord.sh success $GITHUB_RUN_URL
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Notify Discord failure
+      if: failure()
+      run: ./notify_discord.sh failure $GITHUB_RUN_URL
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
