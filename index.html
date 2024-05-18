@@ -146,7 +146,15 @@
             peer.on('connection', connection => {
                 console.log('Client connected');
                 connections.push(connection);
-                connection.on('data', handleData);
+                connection.on('data', data => {
+                    handleData(data);
+                    // Broadcast to other clients
+                    connections.forEach(conn => {
+                        if (conn !== connection) {
+                            conn.send(data);
+                        }
+                    });
+                });
                 connection.on('open', () => {
                     console.log('Connection opened with client');
                     updateConnectionStatus('Client connected');
@@ -191,10 +199,6 @@
             });
         });
 
-        function broadcast(data) {
-            connections.forEach(connection => connection.send(data));
-        }
-
         function handleData(data) {
             if (data.type === 'move') {
                 const fromSlot = document.querySelector(`.slot[data-index='${data.from}']`);
@@ -210,6 +214,10 @@
             } else if (data.type === 'placeCard') {
                 placeCardOnBoard(data.cardId, data.slotIndex);
             }
+        }
+
+        function broadcast(data) {
+            connections.forEach(connection => connection.send(data));
         }
 
         // Create the 6x6 board
@@ -230,10 +238,11 @@
                 if (evt.from.id === 'hand') {
                     const cardId = evt.item.dataset.cardId;
                     const slotIndex = evt.to.dataset.index;
+                    const data = { type: 'placeCard', cardId, slotIndex };
                     if (isHost) {
-                        broadcast({ type: 'placeCard', cardId, slotIndex });
+                        broadcast(data);
                     } else if (conn) {
-                        conn.send({ type: 'placeCard', cardId, slotIndex });
+                        conn.send(data);
                     }
                 }
             }
@@ -292,12 +301,12 @@
             group: 'shared',
             draggable: '.card',
             onAdd: function (evt) {
+                const cardId = evt.item.dataset.cardId;
+                const data = { type: 'drawCard', cardId };
                 if (isHost) {
-                    const cardId = evt.item.dataset.cardId;
-                    broadcast({ type: 'drawCard', cardId });
+                    broadcast(data);
                 } else if (conn) {
-                    const cardId = evt.item.dataset.cardId;
-                    conn.send({ type: 'drawCard', cardId });
+                    conn.send(data);
                 }
             }
         });

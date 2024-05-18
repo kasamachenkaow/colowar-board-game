@@ -3,6 +3,7 @@
 WEBHOOK_URL=$DISCORD_WEBHOOK_URL
 DEPLOY_STATUS=$1
 BUILD_URL=$2
+DEPLOYMENT_URL=$3
 
 if [ "$DEPLOY_STATUS" == "success" ]; then
   COLOR=3066993
@@ -27,6 +28,11 @@ PAYLOAD=$(cat <<EOF
       {
         "name": "Build URL",
         "value": "$BUILD_URL",
+        "inline": true
+      },
+      {
+        "name": "Deployment URL",
+        "value": "$DEPLOYMENT_URL",
         "inline": true
       }
     ]
