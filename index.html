@@ -234,7 +234,10 @@
                 highlightSlot(data.row, data.col);
             } else if (data.type === 'drawCard') {
                 updateDeckCount(data.deckId, -1);
-                addCardToHand(data.deckId);
+                // Only the client who drew the card will add it to their hand
+                if (data.clientId === peer.id) {
+                    addCardToHand(data.deckId);
+                }
             } else if (data.type === 'placeCard') {
                 placeCardOnBoard(data.cardId, data.slotIndex);
             } else if (data.type === 'updateDeckCount') {
@@ -331,7 +334,7 @@
             if (count > 0) {
                 updateDeckCount(deckId, -1);
                 addCardToHand(deckId);
-                const data = { type: 'drawCard', deckId };
+                const data = { type: 'drawCard', deckId, clientId: peer.id };
                 if (isHost) {
                     broadcast(data);
                 } else if (conn) {
