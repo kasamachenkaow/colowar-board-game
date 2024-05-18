@@ -356,10 +356,6 @@
                 deck.setAttribute('draggable', 'true');
                 deck.style.cursor = 'grab';
             }
-            if (isHost) {
-                const data = { type: 'updateDeckCount', deckId, count };
-                broadcast(data);
-            }
         }
 
         // Add a card to the hand
