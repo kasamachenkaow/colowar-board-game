@@ -110,6 +110,12 @@
             color: white;
             cursor: grab;
         }
+        #decks {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -122,13 +128,13 @@
             <button id="joinGame">Join Game</button>
             <div id="hostIdDisplay"></div>
         </div>
-        <div id="decks" class="deck">
+        <div id="board-container">
+            <div id="board"></div>
+        </div>
+        <div id="decks">
             <div class="deck-card" data-deck-id="1" draggable="true">10</div>
             <div class="deck-card" data-deck-id="2" draggable="true">10</div>
             <div class="deck-card" data-deck-id="3" draggable="true">10</div>
-        </div>
-        <div id="board-container">
-            <div id="board"></div>
         </div>
         <div id="hand" class="hand"></div>
         <div id="connection-status">Status: Disconnected</div>
