@@ -98,6 +98,18 @@
             background-color: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        .deck-card {
+            width: 60px;
+            height: 90px;
+            border: 1px solid #000;
+            background-color: gray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: white;
+            cursor: grab;
+        }
     </style>
 </head>
 <body>
@@ -111,9 +123,9 @@
             <div id="hostIdDisplay"></div>
         </div>
         <div id="decks" class="deck">
-            <div class="deck" data-deck-id="1">Deck 1: <span class="deck-count">10</span></div>
-            <div class="deck" data-deck-id="2">Deck 2: <span class="deck-count">10</span></div>
-            <div class="deck" data-deck-id="3">Deck 3: <span class="deck-count">10</span></div>
+            <div class="deck-card" data-deck-id="1" draggable="true">10</div>
+            <div class="deck-card" data-deck-id="2" draggable="true">10</div>
+            <div class="deck-card" data-deck-id="3" draggable="true">10</div>
         </div>
         <div id="board-container">
             <div id="board"></div>
@@ -290,28 +302,50 @@
             }
         }
 
-        // Initialize the decks with dummy cards
-        const decks = document.querySelectorAll('.deck');
+        // Initialize the decks
+        const decks = document.querySelectorAll('.deck-card');
         decks.forEach(deck => {
-            deck.addEventListener('click', () => {
-                const deckId = deck.dataset.deckId;
+            deck.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', deck.dataset.deckId);
+            });
+        });
+
+        // Handle dropping cards into the hand
+        const hand = document.getElementById('hand');
+        hand.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        hand.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const deckId = e.dataTransfer.getData('text/plain');
+            const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
+            const count = parseInt(deck.textContent);
+            if (count > 0) {
                 updateDeckCount(deckId, -1);
+                addCardToHand(deckId);
                 const data = { type: 'drawCard', deckId };
                 if (isHost) {
                     broadcast(data);
                 } else if (conn) {
                     conn.send(data);
                 }
-            });
+            }
         });
 
         // Update deck count
         function updateDeckCount(deckId, change) {
-            const deck = document.querySelector(`.deck[data-deck-id='${deckId}']`);
-            const countSpan = deck.querySelector('.deck-count');
-            let count = parseInt(countSpan.textContent);
+            const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
+            let count = parseInt(deck.textContent);
             count += change;
-            countSpan.textContent = count;
+            deck.textContent = count;
+            if (count === 0) {
+                deck.setAttribute('draggable', 'false');
+                deck.style.cursor = 'not-allowed';
+            } else {
+                deck.setAttribute('draggable', 'true');
+                deck.style.cursor = 'grab';
+            }
             if (isHost) {
                 const data = { type: 'updateDeckCount', deckId, count };
                 broadcast(data);
@@ -322,10 +356,9 @@
         function addCardToHand(deckId) {
             const card = document.createElement('div');
             card.className = 'card';
-            card.dataset.cardId = `deck${deckId}`;
+            card.dataset.cardId = `deck${deckId}-${Math.random().toString(36).substr(2, 9)}`;
             card.textContent = `Card from Deck ${deckId}`;
             card.draggable = true;
-            const hand = document.getElementById('hand');
             hand.appendChild(card);
         }
 
@@ -337,23 +370,6 @@
                 slot.appendChild(card);
             }
         }
-
-        // Initialize sortable for the hand area
-        const hand = document.getElementById('hand');
-        Sortable.create(hand, {
-            animation: 150,
-            group: 'shared',
-            draggable: '.card',
-            onAdd: function (evt) {
-                const cardId = evt.item.dataset.cardId;
-                const data = { type: 'drawCard', cardId };
-                if (isHost) {
-                    broadcast(data);
-                } else if (conn) {
-                    conn.send(data);
-                }
-            }
-        });
     </script>
 </body>
 </html>
