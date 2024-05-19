@@ -3,6 +3,7 @@
 WEBHOOK_URL=$DISCORD_WEBHOOK_URL
 DEPLOY_STATUS=$1
 BUILD_URL=$2
+COMMIT_MESSAGE=$3
 
 if [ "$DEPLOY_STATUS" == "success" ]; then
   COLOR=3066993
@@ -33,6 +34,11 @@ PAYLOAD=$(cat <<EOF
         "name": "Main URL",
         "value": "https://entropia-board-game.pages.dev",
         "inline": true
+      },
+      {
+        "name": "Commit Message",
+        "value": "$COMMIT_MESSAGE",
+        "inline": false
       }
     ]
   }]
