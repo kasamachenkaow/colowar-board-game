@@ -130,6 +130,8 @@
             justify-content: center;
             background-color: #f0f0f0;
             position: relative;
+            width: 100%;
+            height: 100%;
         }
         .slot-indicator {
             position: absolute;
@@ -189,6 +191,7 @@
             justify-content: center;
             align-items: center;
             font-size: 12px;
+            cursor: grab;
         }
         .card img {
             width: 100%;
@@ -378,10 +381,10 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
     <script src="./deckImages.js"></script>
     <script>
+        const playerColors = ['#ff9999', '#99ff99', '#9999ff', '#ffcc99']; // Colors for players
         let peer;
         let connections = [];
         let isHost = false;
@@ -390,10 +393,10 @@
         const skillDeckCounts = {};
         const rollHistory = [];
         const playerInfo = [
-            { id: 'player1', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1 },
-            { id: 'player2', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1 },
-            { id: 'player3', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1 },
-            { id: 'player4', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1 }
+            { id: 'player1', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[0] },
+            { id: 'player2', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[1] },
+            { id: 'player3', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[2] },
+            { id: 'player4', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[3] }
         ];
 
         function updateConnectionStatus(message) {
@@ -564,13 +567,6 @@
                 document.getElementById('rollDice').disabled = false;
                 setBoardState(data.board);
                 showSnackbar('Game Started');
-            } else if (data.type === 'move') {
-                const fromSlot = document.querySelector(`.slot[data-index='${data.from}']`);
-                const toSlot = document.querySelector(`.slot[data-index='${data.to}']`);
-                if (fromSlot && toSlot) {
-                    fromSlot.innerHTML = '';
-                    toSlot.innerHTML = data.item;
-                }
             } else if (data.type === 'roll') {
                 if (data.diceType === '2d6') {
                     highlightSlot(data.row, data.col);
@@ -592,7 +588,7 @@
                     updatePlayerUI(playerInfo.indexOf(player));
                 }
             } else if (data.type === 'placeCard') {
-                placeCardOnBoard(data.cardId, data.slotIndex);
+                placeCardOnBoard(data.cardId, data.slotIndex, data.playerColor);
             } else if (data.type === 'updateDeckCount') {
                 updateDeckCount(data.deckId, data.count);
             } else if (data.type === 'updatePlayerInfo' || data.type === 'playerJoin') {
@@ -601,6 +597,8 @@
                     playerInfo[playerIndex] = { ...playerInfo[playerIndex], ...data.playerInfo };
                     updatePlayerUI(playerIndex);
                 }
+            } else if (data.type === 'updateBoard') {
+                setBoardState(data.board);
             }
         }
 
@@ -621,6 +619,7 @@
 
             name.textContent = `Name: ${player.name}`;
             job.textContent = `Job: ${player.job} (Level ${player.jobLevel})`;
+            playerSlot.style.backgroundColor = player.color;
 
             if (player.connected) {
                 icon.src = "images/player-icon.png";
@@ -681,27 +680,25 @@
             const slot = document.createElement('div');
             slot.className = 'slot';
             slot.dataset.index = i;
-            board.appendChild(slot);
-        }
-
-        // Initialize sortable
-        Sortable.create(board, {
-            animation: 150,
-            group: 'shared',
-            draggable: '.draggable, .card',
-            onAdd: function (evt) {
-                if (gameStarted && evt.from.id === 'hand') {
-                    const cardId = evt.item.dataset.cardId;
-                    const slotIndex = evt.to.dataset.index;
-                    const data = { type: 'placeCard', cardId, slotIndex };
+            slot.addEventListener('dragover', (e) => e.preventDefault());
+            slot.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const cardId = e.dataTransfer.getData('text/plain');
+                const card = document.querySelector(`.card[data-card-id='${cardId}']`);
+                if (card) {
+                    const slotIndex = slot.dataset.index;
+                    const playerColor = playerInfo.find(p => p.peerId === peer.id).color;
+                    placeCardOnBoard(cardId, slotIndex, playerColor);
+                    const data = { type: 'placeCard', cardId, slotIndex, playerColor };
                     if (isHost) {
                         broadcast(data);
                     } else if (conn) {
                         conn.send(data);
                     }
                 }
-            }
-        });
+            });
+            board.appendChild(slot);
+        }
 
         // Roll dice functionality
         document.getElementById('rollDice').addEventListener('click', function() {
@@ -874,16 +871,33 @@
             img.src = `./images/${deckId}/${deckImages[deckId][cardIndex]}`;
             card.appendChild(img);
             card.draggable = true;
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', card.dataset.cardId);
+            });
             hand.appendChild(card);
         }
 
         // Place a card on the board
-        function placeCardOnBoard(cardId, slotIndex) {
+        function placeCardOnBoard(cardId, slotIndex, playerColor) {
             console.log(`Placing card ${cardId} on board at slot ${slotIndex}`);
-            const card = document.querySelector(`.card[data-cardId='${cardId}']`);
+            const card = document.querySelector(`.card[data-card-id='${cardId}']`);
             const slot = document.querySelector(`.slot[data-index='${slotIndex}']`);
             if (card && slot) {
+                card.style.width = '50px';
+                card.style.height = '75px';
+                const indicator = slot.querySelector('.slot-indicator');
+                slot.innerHTML = '';
                 slot.appendChild(card);
+                if (indicator) {
+                    slot.appendChild(indicator);
+                }
+                slot.style.backgroundColor = playerColor;
+                const boardState = getBoardState();
+                if (isHost) {
+                    broadcast({ type: 'updateBoard', board: boardState });
+                } else if (conn) {
+                    conn.send({ type: 'updateBoard', board: boardState });
+                }
             }
         }
 
@@ -1005,18 +1019,30 @@
 
         function getBoardState() {
             const slots = document.querySelectorAll('.slot');
-            return Array.from(slots).map(slot => slot.querySelector('.slot-indicator').textContent);
+            return Array.from(slots).map(slot => {
+                const type = slot.querySelector('.slot-indicator').textContent;
+                const cardId = slot.querySelector('.card')?.dataset.cardId || null;
+                return { type, cardId };
+            });
         }
 
         function setBoardState(boardState) {
             const slots = document.querySelectorAll('.slot');
             slots.forEach((slot, index) => {
                 slot.innerHTML = '';
-                const type = boardState[index];
+                const state = boardState[index];
                 const indicator = document.createElement('div');
                 indicator.className = 'slot-indicator';
-                indicator.textContent = type;
+                indicator.textContent = state.type;
                 slot.appendChild(indicator);
+                if (state.cardId) {
+                    const card = document.querySelector(`.card[data-card-id='${state.cardId}']`);
+                    if (card) {
+                        card.style.width = '50px';
+                        card.style.height = '75px';
+                        slot.appendChild(card);
+                    }
+                }
             });
         }
 
