@@ -131,6 +131,13 @@
             background-color: #f0f0f0;
             position: relative;
         }
+        .slot-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 12px;
+            font-weight: bold;
+        }
         .highlight {
             background-color: yellow !important;
         }
@@ -523,7 +530,8 @@
                 document.getElementById('stopGame').style.display = 'block';
                 document.getElementById('dice-type').disabled = false;
                 document.getElementById('rollDice').disabled = false;
-                broadcast({ type: 'startGame' });
+                initializeBoard();
+                broadcast({ type: 'startGame', board: getBoardState() });
                 showSnackbar('Game Started');
             }
         });
@@ -554,6 +562,7 @@
                 document.getElementById('stopGame').style.display = 'block';
                 document.getElementById('dice-type').disabled = false;
                 document.getElementById('rollDice').disabled = false;
+                setBoardState(data.board);
                 showSnackbar('Game Started');
             } else if (data.type === 'move') {
                 const fromSlot = document.querySelector(`.slot[data-index='${data.from}']`);
@@ -976,6 +985,40 @@
                 alert('Please fill in all details.');
             }
         });
+
+        // Initialize the board with random slot types
+        function initializeBoard() {
+            const slots = document.querySelectorAll('.slot');
+            const types = ['S', 'J', 'E'];
+            const slotTypes = Array(12).fill('S').concat(Array(12).fill('J')).concat(Array(12).fill('E'));
+            shuffle(slotTypes);
+
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                const type = slotTypes[index];
+                const indicator = document.createElement('div');
+                indicator.className = 'slot-indicator';
+                indicator.textContent = type;
+                slot.appendChild(indicator);
+            });
+        }
+
+        function getBoardState() {
+            const slots = document.querySelectorAll('.slot');
+            return Array.from(slots).map(slot => slot.querySelector('.slot-indicator').textContent);
+        }
+
+        function setBoardState(boardState) {
+            const slots = document.querySelectorAll('.slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                const type = boardState[index];
+                const indicator = document.createElement('div');
+                indicator.className = 'slot-indicator';
+                indicator.textContent = type;
+                slot.appendChild(indicator);
+            });
+        }
 
         // Load decks images after page load
         document.addEventListener('DOMContentLoaded', loadAllDeckImages);
