@@ -8,21 +8,59 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
         }
         #game-container {
             display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        #players-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            width: 200px;
+            background-color: #f4f4f4;
+            border-right: 1px solid #ccc;
+        }
+        #player-controls {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .player-slot {
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            margin: 10px;
+            padding: 10px;
             width: 100%;
-            height: 100%;
-            position: relative;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        .player-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 5px;
+        }
+        .player-status {
+            margin-bottom: 5px;
+        }
+        .player-cards, .player-lp {
+            margin-bottom: 5px;
+        }
+        #main-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
         }
         #controls {
             display: flex;
@@ -59,13 +97,6 @@
         .highlight {
             background-color: yellow !important;
         }
-        .draggable {
-            width: 90%;
-            height: 90%;
-            background-color: blue;
-            border: 1px solid #000;
-            cursor: grab;
-        }
         .deck-container {
             display: flex;
             flex-direction: column;
@@ -100,9 +131,9 @@
             padding: 10px;
             width: 50%;
             display: flex;
-            flex-wrap: wrap; /* Align cards in rows */
+            flex-wrap: wrap;
             justify-content: flex-start;
-            min-height: 120px; /* Ensure stable height */
+            min-height: 120px;
         }
         .card {
             width: 60px;
@@ -120,14 +151,22 @@
             height: 100%;
             object-fit: cover;
         }
-        #connection-status {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        #dice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding: 10px;
-            border: 1px solid #000;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #f4f4f4;
+            border-left: 1px solid #ccc;
+        }
+        #dice-result {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        #roll-history {
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
         }
         #decks {
             display: flex;
@@ -145,35 +184,73 @@
 </head>
 <body>
     <div id="game-container">
-        <div id="controls">
+        <div id="players-info">
+            <div id="player-controls">
+                <button id="startHost">Start as Host</button>
+                <input type="text" id="peerId" placeholder="Enter Host ID">
+                <button id="joinGame">Join Game</button>
+                <div id="hostIdDisplay"></div>
+            </div>
+            <div id="player1" class="player-slot">
+                <img src="images/no-player.png" class="player-icon" alt="No Player">
+                <div class="player-status">Disconnected</div>
+                <div class="player-cards">Cards: 0</div>
+                <div class="player-lp">LP: 0</div>
+            </div>
+            <div id="player2" class="player-slot">
+                <img src="images/no-player.png" class="player-icon" alt="No Player">
+                <div class="player-status">Disconnected</div>
+                <div class="player-cards">Cards: 0</div>
+                <div class="player-lp">LP: 0</div>
+            </div>
+            <div id="player3" class="player-slot">
+                <img src="images/no-player.png" class="player-icon" alt="No Player">
+                <div class="player-status">Disconnected</div>
+                <div class="player-cards">Cards: 0</div>
+                <div class="player-lp">LP: 0</div>
+            </div>
+            <div id="player4" class="player-slot">
+                <img src="images/no-player.png" class="player-icon" alt="No Player">
+                <div class="player-status">Disconnected</div>
+                <div class="player-cards">Cards: 0</div>
+                <div class="player-lp">LP: 0</div>
+            </div>
+        </div>
+        <div id="main-area">
+            <div id="board-container">
+                <div id="board"></div>
+            </div>
+            <div id="decks">
+                <div class="deck-container">
+                    <div class="deck-label">Spell Deck</div>
+                    <div class="deck-card" data-deck-id="spell" draggable="true">0</div>
+                </div>
+                <div class="deck-container">
+                    <div class="deck-label">Equipment Deck</div>
+                    <div class="deck-card" data-deck-id="equipment" draggable="true">0</div>
+                </div>
+            </div>
+            <div class="hand-container">
+                <div id="hand" class="hand"></div>
+                <div class="skill-deck-container">
+                    <div class="deck-label">Skill Deck</div>
+                    <div class="deck-card" id="skill-deck" data-deck-id="skill" draggable="true">0</div>
+                </div>
+            </div>
+        </div>
+        <div id="dice-container">
+            <label for="dice-type">Dice Type:</label>
+            <select id="dice-type">
+                <option value="2d6" selected>2d6 (slot roll)</option>
+                <option value="4">1d4</option>
+                <option value="6">1d6</option>
+                <option value="8">1d8</option>
+                <option value="10">1d10</option>
+            </select>
             <button id="rollDice">Roll Dice</button>
-            <div id="dice"></div>
-            <button id="startHost">Start as Host</button>
-            <input type="text" id="peerId" placeholder="Enter Host ID">
-            <button id="joinGame">Join Game</button>
-            <div id="hostIdDisplay"></div>
+            <div id="dice-result"></div>
+            <div id="roll-history"></div>
         </div>
-        <div id="board-container">
-            <div id="board"></div>
-        </div>
-        <div id="decks">
-            <div class="deck-container">
-                <div class="deck-label">Spell Deck</div>
-                <div class="deck-card" data-deck-id="spell" draggable="true">0</div>
-            </div>
-            <div class="deck-container">
-                <div class="deck-label">Equipment Deck</div>
-                <div class="deck-card" data-deck-id="equipment" draggable="true">0</div>
-            </div>
-        </div>
-        <div class="hand-container">
-            <div id="hand" class="hand"></div>
-            <div class="skill-deck-container">
-                <div class="deck-label">Skill Deck</div>
-                <div class="deck-card" id="skill-deck" data-deck-id="skill" draggable="true">0</div>
-            </div>
-        </div>
-        <div id="connection-status">Status: Disconnected</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
@@ -184,11 +261,20 @@
         let connections = [];
         let isHost = false;
         let conn;
-        const connectionStatus = document.getElementById('connection-status');
         const skillDeckCounts = {};
+        const rollHistory = [];
+        const playerInfo = [
+            { id: 'player1', peerId: null, connected: false, cards: 0, lp: 40 },
+            { id: 'player2', peerId: null, connected: false, cards: 0, lp: 40 },
+            { id: 'player3', peerId: null, connected: false, cards: 0, lp: 40 },
+            { id: 'player4', peerId: null, connected: false, cards: 0, lp: 40 }
+        ];
 
         function updateConnectionStatus(message) {
-            connectionStatus.textContent = 'Status: ' + message;
+            const connectionStatus = document.getElementById('connection-status');
+            if (connectionStatus) {
+                connectionStatus.textContent = 'Status: ' + message;
+            }
         }
 
         function shuffle(array) {
@@ -248,6 +334,13 @@
             peer.on('connection', connection => {
                 console.log('Client connected');
                 connections.push(connection);
+                const playerIndex = connections.length - 1;
+                if (playerIndex < 4) {
+                    const player = playerInfo[playerIndex];
+                    player.connected = true;
+                    player.peerId = connection.peer;
+                    updatePlayerUI(playerIndex);
+                }
                 connection.on('data', data => {
                     handleData(data);
                     // Broadcast to other clients
@@ -263,6 +356,12 @@
                 });
                 connection.on('close', () => {
                     console.log('Client disconnected');
+                    const player = playerInfo.find(p => p.peerId === connection.peer);
+                    if (player) {
+                        player.connected = false;
+                        player.peerId = null;
+                        updatePlayerUI(playerInfo.indexOf(player));
+                    }
                     connections = connections.filter(conn => conn !== connection);
                     updateConnectionStatus('Client disconnected');
                 });
@@ -323,7 +422,10 @@
                     toSlot.innerHTML = data.item;
                 }
             } else if (data.type === 'roll') {
-                highlightSlot(data.row, data.col);
+                if (data.diceType === '2d6') {
+                    highlightSlot(data.row, data.col);
+                }
+                addRollToHistory(data.result);
             } else if (data.type === 'drawCard') {
                 console.log('Handling drawCard:', data);
                 if (data.deckId === 'skill') {
@@ -335,6 +437,12 @@
                 if (data.clientId === peer.id) {
                     addCardToHand(data.deckId, data.cardIndex);
                 }
+                // Update player cards count
+                const player = playerInfo.find(p => p.peerId === data.clientId);
+                if (player) {
+                    player.cards += 1;
+                    updatePlayerUI(playerInfo.indexOf(player));
+                }
             } else if (data.type === 'placeCard') {
                 placeCardOnBoard(data.cardId, data.slotIndex);
             } else if (data.type === 'updateDeckCount') {
@@ -345,6 +453,27 @@
         function broadcast(data) {
             console.log('Broadcasting data:', data);
             connections.forEach(connection => connection.send(data));
+        }
+
+        function updatePlayerUI(playerIndex) {
+            const player = playerInfo[playerIndex];
+            const playerSlot = document.getElementById(player.id);
+            const icon = playerSlot.querySelector('.player-icon');
+            const status = playerSlot.querySelector('.player-status');
+            const cards = playerSlot.querySelector('.player-cards');
+            const lp = playerSlot.querySelector('.player-lp');
+
+            if (player.connected) {
+                icon.src = "images/player-icon.png";
+                status.textContent = 'Connected';
+                cards.textContent = `Cards: ${player.cards}`;
+                lp.textContent = `LP: ${player.lp}`;
+            } else {
+                icon.src = "images/no-player.png";
+                status.textContent = 'Disconnected';
+                cards.textContent = 'Cards: 0';
+                lp.textContent = 'LP: 0';
+            }
         }
 
         // Create the 6x6 board
@@ -377,20 +506,50 @@
 
         // Roll dice functionality
         document.getElementById('rollDice').addEventListener('click', function() {
-            const rowDice = Math.floor(Math.random() * 6) + 1;
-            const colDice = Math.floor(Math.random() * 6) + 1;
-            document.getElementById('dice').textContent = `Rolled: Row = ${rowDice}, Column = ${colDice}`;
-
-            highlightSlot(rowDice, colDice);
-
-            const rollData = { type: 'roll', row: rowDice, col: colDice };
-
-            if (isHost) {
-                broadcast(rollData);
-            } else if (conn) {
-                conn.send(rollData);
-            }
+            const diceType = document.getElementById('dice-type').value;
+            rollDice(diceType);
         });
+
+        function rollDice(diceType) {
+            const diceResult = document.getElementById('dice-result');
+            diceResult.textContent = 'Rolling...';
+            let rolls = 0;
+            const maxRolls = 20;
+            const interval = setInterval(() => {
+                if (rolls >= maxRolls) {
+                    clearInterval(interval);
+                    let result;
+                    if (diceType === '2d6') {
+                        const die1 = Math.floor(Math.random() * 6) + 1;
+                        const die2 = Math.floor(Math.random() * 6) + 1;
+                        result = [die1, die2];
+                        diceResult.textContent = `Result: (${die1}, ${die2})`;
+                        highlightSlot(die1, die2);
+                    } else {
+                        result = Math.floor(Math.random() * diceType) + 1;
+                        diceResult.textContent = `Result: (${result})`;
+                    }
+                    addRollToHistory(result);
+                    const rollData = { type: 'roll', diceType, result };
+                    if (diceType === '2d6') {
+                        rollData.row = result[0];
+                        rollData.col = result[1];
+                    }
+                    if (isHost) {
+                        broadcast(rollData);
+                    } else if (conn) {
+                        conn.send(rollData);
+                    }
+                } else {
+                    if (diceType === '2d6') {
+                        diceResult.textContent = `Rolling... (${Math.floor(Math.random() * 6) + 1}, ${Math.floor(Math.random() * 6) + 1})`;
+                    } else {
+                        diceResult.textContent = `Rolling... (${Math.floor(Math.random() * diceType) + 1})`;
+                    }
+                    rolls++;
+                }
+            }, 50);
+        }
 
         function highlightSlot(row, col) {
             const slots = document.querySelectorAll('.slot');
@@ -400,6 +559,12 @@
             if (targetSlot) {
                 targetSlot.classList.add('highlight');
             }
+        }
+
+        function addRollToHistory(result) {
+            rollHistory.unshift(result);
+            const rollHistoryDiv = document.getElementById('roll-history');
+            rollHistoryDiv.innerHTML = 'Roll History:<br>' + rollHistory.map(r => Array.isArray(r) ? `(${r[0]}, ${r[1]})` : `(${r})`).join('<br>');
         }
 
         // Initialize the decks
