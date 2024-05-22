@@ -78,7 +78,11 @@ function initSlotsBoard() {
 }
 
 function broadcastState() {
-    broadcast({ type: 'broadcastState', sharedState: state.shared });
+    if (isHost) {
+       broadcast({ type: 'broadcastState', sharedState: state.shared });
+    } else {
+       throw new Error('Only host can broadcast')
+    }
 }
 
 function updateSharedState(newSharedState) {
@@ -177,6 +181,7 @@ function updateUIFromState() {
 
 function handleData(data) {
     console.log('Received data:', data);
+
     if (data.type === 'updateState') {
         updateSharedState(data.sharedState);
     }
@@ -224,11 +229,6 @@ document.getElementById('startHost').addEventListener('click', () => {
 
             connection.on('data', data => {
                 handleData(data);
-                connections.forEach(conn => {
-                    if (conn !== connection) {
-                        conn.send(data);
-                    }
-                });
             });
 
             newPlayer(connection.peer, connection.metadata.name, connection.metadata.job)
