@@ -1,0 +1,2 @@
+- players info not sync
+

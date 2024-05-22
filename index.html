@@ -54,7 +54,7 @@
         .player-status {
             margin-bottom: 5px;
         }
-        .player-cards, .player-lp, .player-name, .player-job {
+        .player-cards, .player-lp, .player-name, .player-job, .player-markers {
             margin-bottom: 5px;
         }
         .compact-button {
@@ -228,6 +228,28 @@
             align-items: center;
             margin-left: 20px;
         }
+        .marker-deck-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        }
+        #play-area-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+        #play-area {
+            border: 1px solid #000;
+            padding: 10px;
+            width: 50%;
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         /* Popup Styles */
         .modal {
             display: none;
@@ -264,6 +286,39 @@
         .copy-btn {
             cursor: pointer;
         }
+        .modal-card-details {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+        .modal-content-card-details {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .close-card-details {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-card-details:hover,
+        .close-card-details:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -287,6 +342,7 @@
                 <div class="player-status">Disconnected</div>
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-lp">LP: 0</div>
+                <div class="player-markers">Markers: 0</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player1')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increaseLP('player1')">Increase LP</button>
                 <button class="compact-button" style="display:none;" onclick="decreaseLP('player1')">Decrease LP</button>
@@ -298,6 +354,7 @@
                 <div class="player-status">Disconnected</div>
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-lp">LP: 0</div>
+                <div class="player-markers">Markers: 0</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player2')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increaseLP('player2')">Increase LP</button>
                 <button class="compact-button" style="display:none;" onclick="decreaseLP('player2')">Decrease LP</button>
@@ -309,6 +366,7 @@
                 <div class="player-status">Disconnected</div>
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-lp">LP: 0</div>
+                <div class="player-markers">Markers: 0</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player3')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increaseLP('player3')">Increase LP</button>
                 <button class="compact-button" style="display:none;" onclick="decreaseLP('player3')">Decrease LP</button>
@@ -320,6 +378,7 @@
                 <div class="player-status">Disconnected</div>
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-lp">LP: 0</div>
+                <div class="player-markers">Markers: 0</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player4')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increaseLP('player4')">Increase LP</button>
                 <button class="compact-button" style="display:none;" onclick="decreaseLP('player4')">Decrease LP</button>
@@ -346,6 +405,14 @@
                     <div class="deck-label">Skill Deck</div>
                     <div class="deck-card" id="skill-deck" data-deck-id="skill" draggable="true">0</div>
                 </div>
+                <div class="marker-deck-container">
+                    <div class="deck-label">Marker Deck</div>
+                    <div class="deck-card" id="marker-deck" data-deck-id="marker" draggable="true">0</div>
+                </div>
+            </div>
+            <div id="play-area-container">
+                <div class="deck-label">Play Area</div>
+                <div id="play-area"></div>
             </div>
         </div>
         <div id="dice-container">
@@ -381,673 +448,17 @@
         </div>
     </div>
 
+    <!-- Card Details Modal -->
+    <div id="cardDetailsModal" class="modal-card-details">
+        <div class="modal-content-card-details">
+            <span class="close-card-details">&times;</span>
+            <h2 id="card-name"></h2>
+            <table id="card-details-table"></table>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/peerjs@1.5.3/dist/peerjs.min.js"></script>
     <script src="./deckImages.js"></script>
-    <script>
-        const playerColors = ['#ff9999', '#99ff99', '#9999ff', '#ffcc99']; // Colors for players
-        let peer;
-        let connections = [];
-        let isHost = false;
-        let conn;
-        let gameStarted = false;
-        const skillDeckCounts = {};
-        const rollHistory = [];
-        const playerInfo = [
-            { id: 'player1', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[0] },
-            { id: 'player2', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[1] },
-            { id: 'player3', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[2] },
-            { id: 'player4', peerId: null, connected: false, cards: 0, lp: 40, name: '-', job: '-', jobLevel: 1, color: playerColors[3] }
-        ];
-
-        function updateConnectionStatus(message) {
-            const connectionStatus = document.getElementById('connection-status');
-            if (connectionStatus) {
-                connectionStatus.textContent = 'Status: ' + message;
-            }
-        }
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        function loadDeckImages(deckId) {
-            const images = deckImages[deckId];
-            shuffle(images);
-            if (deckId === 'skill') {
-                document.getElementById('skill-deck').textContent = images.length;
-            } else {
-                document.querySelector(`.deck-card[data-deck-id='${deckId}']`).textContent = images.length;
-            }
-        }
-
-        function loadAllDeckImages() {
-            const deckTypes = ['spell', 'equipment', 'skill'];
-            deckTypes.forEach(type => {
-                loadDeckImages(type);
-            });
-        }
-
-        function initializeDecks() {
-            const deckTypes = ['spell', 'equipment', 'skill'];
-            deckTypes.forEach(type => {
-                const images = deckImages[type];
-                shuffle(images);
-                if (type === 'skill') {
-                    document.getElementById('skill-deck').textContent = images.length;
-                    skillDeckCounts[peer.id] = images.length;
-                } else {
-                    document.querySelector(`.deck-card[data-deck-id='${type}']`).textContent = images.length;
-                }
-            });
-            if (isHost) {
-                broadcast({ type: 'initializeDecks', deckImages });
-            }
-        }
-
-        document.getElementById('startHost').addEventListener('click', () => {
-            peer = new Peer();
-
-            peer.on('open', id => {
-                console.log('Host ID: ' + id);
-                const hostIdDisplay = document.getElementById('hostIdDisplay');
-                hostIdDisplay.textContent = 'Game ID: ' + id;
-                hostIdDisplay.style.display = 'block';
-                isHost = true;
-                showModal('host', id);
-                // Enable copy game ID
-                hostIdDisplay.classList.add('copy-btn');
-                hostIdDisplay.addEventListener('click', () => {
-                    navigator.clipboard.writeText(id).then(() => {
-                        showSnackbar('Game ID copied to clipboard');
-                    });
-                });
-            });
-
-            peer.on('connection', connection => {
-                if (!gameStarted && connections.length < 3) {
-                    console.log('Client connected');
-                    connections.push(connection);
-                    connection.on('data', data => {
-                        handleData(data);
-                        connections.forEach(conn => {
-                            if (conn !== connection) {
-                                conn.send(data);
-                            }
-                        });
-                    });
-                    connection.on('open', () => {
-                        console.log('Connection opened with client');
-                        if (connections.length > 0) {
-                            document.getElementById('startGame').disabled = false;
-                            document.getElementById('startGame').style.display = 'block';
-                        }
-                    });
-                    connection.on('close', () => {
-                        console.log('Client disconnected');
-                        const player = playerInfo.find(p => p.peerId === connection.peer);
-                        if (player) {
-                            player.connected = false;
-                            player.peerId = null;
-                            updatePlayerUI(playerInfo.indexOf(player));
-                            showSnackbar(`Player ${playerInfo.indexOf(player) + 1} disconnected`);
-                        }
-                        connections = connections.filter(conn => conn !== connection);
-                        if (connections.length < 1) {
-                            document.getElementById('startGame').disabled = true;
-                        }
-                    });
-
-                    // Notify other clients about the new player
-                    const newPlayer = playerInfo.find(p => p.peerId === null);
-                    if (newPlayer) {
-                        newPlayer.peerId = connection.peer;
-                        newPlayer.connected = true;
-                        updatePlayerUI(playerInfo.indexOf(newPlayer));
-                        const data = { type: 'playerJoin', peerId: newPlayer.peerId, playerInfo: newPlayer };
-                        broadcast(data);
-                    }
-                }
-            });
-
-            peer.on('error', (err) => {
-                console.error('PeerJS error: ', err);
-                showSnackbar(`Error: ${err}`);
-            });
-        });
-
-        document.getElementById('joinGame').addEventListener('click', () => {
-            showModal('client');
-        });
-
-        document.getElementById('leaveGame').addEventListener('click', () => {
-            location.reload(); // Simple way to leave the game
-        });
-
-        document.getElementById('startGame').addEventListener('click', () => {
-            if (connections.length >= 1) {
-                gameStarted = true;
-                document.getElementById('startGame').style.display = 'none';
-                document.getElementById('stopGame').style.display = 'block';
-                document.getElementById('dice-type').disabled = false;
-                document.getElementById('rollDice').disabled = false;
-                initializeBoard();
-                broadcast({ type: 'startGame', board: getBoardState() });
-                showSnackbar('Game Started');
-            }
-        });
-
-        document.getElementById('stopGame').addEventListener('click', () => {
-            if (isHost) {
-                location.reload(); // Simple way to reset the game for the host
-            }
-        });
-
-        function handleData(data) {
-            console.log('Received data:', data);
-            if (data.type === 'initializeDecks') {
-                console.log('Initializing decks with data:', data.deckImages);
-                Object.keys(data.deckImages).forEach(deckId => {
-                    deckImages[deckId] = data.deckImages[deckId];
-                    const count = deckImages[deckId].length;
-                    if (deckId === 'skill') {
-                        skillDeckCounts[peer.id] = count;
-                        document.getElementById('skill-deck').textContent = count;
-                    } else {
-                        document.querySelector(`.deck-card[data-deck-id='${deckId}']`).textContent = count;
-                    }
-                });
-            } else if (data.type === 'startGame') {
-                gameStarted = true;
-                document.getElementById('startGame').style.display = 'none';
-                document.getElementById('stopGame').style.display = 'block';
-                document.getElementById('dice-type').disabled = false;
-                document.getElementById('rollDice').disabled = false;
-                setBoardState(data.board);
-                showSnackbar('Game Started');
-            } else if (data.type === 'roll') {
-                if (data.diceType === '2d6') {
-                    highlightSlot(data.row, data.col);
-                }
-                addRollToHistory(data.result);
-            } else if (data.type === 'drawCard') {
-                console.log('Handling drawCard:', data);
-                if (data.deckId === 'skill') {
-                    updateSkillDeckCount(data.clientId, -1);
-                } else {
-                    updateDeckCount(data.deckId, -1);
-                }
-                if (data.clientId === peer.id) {
-                    addCardToHand(data.deckId, data.cardIndex);
-                }
-                const player = playerInfo.find(p => p.peerId === data.clientId);
-                if (player) {
-                    player.cards += 1;
-                    updatePlayerUI(playerInfo.indexOf(player));
-                }
-            } else if (data.type === 'placeCard') {
-                placeCardOnBoard(data.cardId, data.slotIndex, data.playerColor);
-            } else if (data.type === 'updateDeckCount') {
-                updateDeckCount(data.deckId, data.count);
-            } else if (data.type === 'updatePlayerInfo' || data.type === 'playerJoin') {
-                const playerIndex = playerInfo.findIndex(p => p.peerId === data.peerId);
-                if (playerIndex !== -1) {
-                    playerInfo[playerIndex] = { ...playerInfo[playerIndex], ...data.playerInfo };
-                    updatePlayerUI(playerIndex);
-                }
-            } else if (data.type === 'updateBoard') {
-                setBoardState(data.board);
-            }
-        }
-
-        function broadcast(data) {
-            console.log('Broadcasting data:', data);
-            connections.forEach(connection => connection.send(data));
-        }
-
-        function updatePlayerUI(playerIndex) {
-            const player = playerInfo[playerIndex];
-            const playerSlot = document.getElementById(player.id);
-            const icon = playerSlot.querySelector('.player-icon');
-            const status = playerSlot.querySelector('.player-status');
-            const cards = playerSlot.querySelector('.player-cards');
-            const lp = playerSlot.querySelector('.player-lp');
-            const name = playerSlot.querySelector('.player-name');
-            const job = playerSlot.querySelector('.player-job');
-
-            name.textContent = `Name: ${player.name}`;
-            job.textContent = `Job: ${player.job} (Level ${player.jobLevel})`;
-            playerSlot.style.backgroundColor = player.color;
-
-            if (player.connected) {
-                icon.src = "images/player-icon.png";
-                status.textContent = 'Connected';
-                cards.textContent = `Cards: ${player.cards}`;
-                lp.textContent = `LP: ${player.lp}`;
-                if (peer.id === player.peerId) {
-                    playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'block');
-                } else {
-                    playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
-                }
-            } else {
-                icon.src = "images/no-player.png";
-                status.textContent = 'Disconnected';
-                cards.textContent = 'Cards: 0';
-                lp.textContent = 'LP: 0';
-                playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
-            }
-        }
-
-        function increaseJobLevel(playerId) {
-            const player = playerInfo.find(p => p.id === playerId);
-            if (player && player.jobLevel < 3) {
-                player.jobLevel += 1;
-                updatePlayerInfo(player);
-            }
-        }
-
-        function increaseLP(playerId) {
-            const player = playerInfo.find(p => p.id === playerId);
-            if (player) {
-                player.lp += 1;
-                updatePlayerInfo(player);
-            }
-        }
-
-        function decreaseLP(playerId) {
-            const player = playerInfo.find(p => p.id === playerId);
-            if (player) {
-                player.lp -= 1;
-                updatePlayerInfo(player);
-            }
-        }
-
-        function updatePlayerInfo(player) {
-            const data = { type: 'updatePlayerInfo', peerId: player.peerId, playerInfo: player };
-            if (isHost) {
-                broadcast(data);
-            } else if (conn) {
-                conn.send(data);
-            }
-            updatePlayerUI(playerInfo.indexOf(player));
-        }
-
-        // Create the 6x6 board
-        const board = document.getElementById('board');
-        for (let i = 0; i < 36; i++) {
-            const slot = document.createElement('div');
-            slot.className = 'slot';
-            slot.dataset.index = i;
-            slot.addEventListener('dragover', (e) => e.preventDefault());
-            slot.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const cardId = e.dataTransfer.getData('text/plain');
-                const card = document.querySelector(`.card[data-card-id='${cardId}']`);
-                if (card) {
-                    const slotIndex = slot.dataset.index;
-                    const playerColor = playerInfo.find(p => p.peerId === peer.id).color;
-                    placeCardOnBoard(cardId, slotIndex, playerColor);
-                    const data = { type: 'placeCard', cardId, slotIndex, playerColor };
-                    if (isHost) {
-                        broadcast(data);
-                    } else if (conn) {
-                        conn.send(data);
-                    }
-                }
-            });
-            board.appendChild(slot);
-        }
-
-        // Roll dice functionality
-        document.getElementById('rollDice').addEventListener('click', function() {
-            if (gameStarted) {
-                const diceType = document.getElementById('dice-type').value;
-                rollDice(diceType);
-            }
-        });
-
-        function rollDice(diceType) {
-            const diceResult = document.getElementById('dice-result');
-            diceResult.textContent = 'Rolling...';
-            let rolls = 0;
-            const maxRolls = 20;
-            const interval = setInterval(() => {
-                if (rolls >= maxRolls) {
-                    clearInterval(interval);
-                    let result;
-                    if (diceType === '2d6') {
-                        const die1 = Math.floor(Math.random() * 6) + 1;
-                        const die2 = Math.floor(Math.random() * 6) + 1;
-                        result = [die1, die2];
-                        diceResult.textContent = `Result: (${die1}, ${die2})`;
-                        highlightSlot(die1, die2);
-                    } else {
-                        result = Math.floor(Math.random() * diceType) + 1;
-                        diceResult.textContent = `Result: (${result})`;
-                    }
-                    addRollToHistory(result);
-                    const rollData = { type: 'roll', diceType, result };
-                    if (diceType === '2d6') {
-                        rollData.row = result[0];
-                        rollData.col = result[1];
-                    }
-                    if (isHost) {
-                        broadcast(rollData);
-                    } else if (conn) {
-                        conn.send(rollData);
-                    }
-                } else {
-                    if (diceType === '2d6') {
-                        diceResult.textContent = `Rolling... (${Math.floor(Math.random() * 6) + 1}, ${Math.floor(Math.random() * 6) + 1})`;
-                    } else {
-                        diceResult.textContent = `Rolling... (${Math.floor(Math.random() * diceType) + 1})`;
-                    }
-                    rolls++;
-                }
-            }, 50);
-        }
-
-        function highlightSlot(row, col) {
-            const slots = document.querySelectorAll('.slot');
-            slots.forEach(slot => slot.classList.remove('highlight'));
-            const targetIndex = (row - 1) * 6 + (col - 1);
-            const targetSlot = slots[targetIndex];
-            if (targetSlot) {
-                targetSlot.classList.add('highlight');
-            }
-        }
-
-        function addRollToHistory(result) {
-            rollHistory.unshift(result);
-            const rollHistoryDiv = document.getElementById('roll-history');
-            rollHistoryDiv.innerHTML = 'Roll History:<br>' + rollHistory.map(r => Array.isArray(r) ? `(${r[0]}, ${r[1]})` : `(${r})`).join('<br>');
-        }
-
-        // Initialize the decks
-        const decks = document.querySelectorAll('.deck-card');
-        decks.forEach(deck => {
-            deck.addEventListener('dragstart', (e) => {
-                if (gameStarted) {
-                    e.dataTransfer.setData('text/plain', deck.dataset.deckId);
-                }
-            });
-        });
-
-        // Handle dropping cards into the hand
-        const hand = document.getElementById('hand');
-        hand.addEventListener('dragover', (e) => {
-            if (gameStarted) {
-                e.preventDefault();
-            }
-        });
-
-        hand.addEventListener('drop', (e) => {
-            if (gameStarted) {
-                e.preventDefault();
-                const deckId = e.dataTransfer.getData('text/plain');
-                console.log('Dropping card from deck:', deckId);
-                if (deckId === 'skill') {
-                    if (!skillDeckCounts[peer.id]) {
-                        skillDeckCounts[peer.id] = deckImages['skill'].length;
-                    }
-                    const count = skillDeckCounts[peer.id];
-                    if (count > 0) {
-                        const cardIndex = deckImages[deckId].length - count; // Get the next card image index
-                        updateSkillDeckCount(peer.id, -1);
-                        addCardToHand(deckId, cardIndex);
-                        const data = { type: 'drawCard', deckId, clientId: peer.id, cardIndex };
-                        if (isHost) {
-                            broadcast(data);
-                        } else {
-                            conn.send(data);
-                        }
-                    }
-                } else {
-                    const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
-                    const count = parseInt(deck.textContent);
-                    if (count > 0) {
-                        const cardIndex = deckImages[deckId].length - count; // Get the next card image index
-                        updateDeckCount(deckId, -1);
-                        addCardToHand(deckId, cardIndex);
-                        const data = { type: 'drawCard', deckId, clientId: peer.id, cardIndex };
-                        if (isHost) {
-                            broadcast(data);
-                        } else {
-                            conn.send(data);
-                        }
-                    }
-                }
-            }
-        });
-
-        // Update deck count
-        function updateDeckCount(deckId, change) {
-            const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
-            let count = parseInt(deck.textContent);
-            count += change;
-            deck.textContent = count;
-            if (count === 0) {
-                deck.setAttribute('draggable', 'false');
-                deck.style.cursor = 'not-allowed';
-            } else {
-                deck.setAttribute('draggable', 'true');
-                deck.style.cursor = 'grab';
-            }
-            if (isHost) {
-                const data = { type: 'updateDeckCount', deckId, count };
-                broadcast(data);
-            }
-        }
-
-        function updateSkillDeckCount(clientId, change) {
-            if (!(clientId in skillDeckCounts)) {
-                skillDeckCounts[clientId] = deckImages['skill'].length;
-            }
-            skillDeckCounts[clientId] += change;
-            const count = skillDeckCounts[clientId];
-            console.log(`Updating skill deck count for ${clientId}: ${count}`);
-            if (clientId === peer.id) {
-                const deck = document.getElementById('skill-deck');
-                deck.textContent = count;
-                if (count === 0) {
-                    deck.setAttribute('draggable', 'false');
-                    deck.style.cursor = 'not-allowed';
-                } else {
-                    deck.setAttribute('draggable', 'true');
-                    deck.style.cursor = 'grab';
-                }
-            }
-        }
-
-        // Add a card to the hand with image
-        function addCardToHand(deckId, cardIndex) {
-            console.log(`Adding card to hand from ${deckId}, card index: ${cardIndex}`);
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.dataset.cardId = `deck${deckId}-${Math.random().toString(36).substr(2, 9)}`;
-            const img = document.createElement('img');
-            img.src = `./images/${deckId}/${deckImages[deckId][cardIndex]}`;
-            card.appendChild(img);
-            card.draggable = true;
-            card.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', card.dataset.cardId);
-            });
-            hand.appendChild(card);
-        }
-
-        // Place a card on the board
-        function placeCardOnBoard(cardId, slotIndex, playerColor) {
-            console.log(`Placing card ${cardId} on board at slot ${slotIndex}`);
-            const card = document.querySelector(`.card[data-card-id='${cardId}']`);
-            const slot = document.querySelector(`.slot[data-index='${slotIndex}']`);
-            if (card && slot) {
-                card.style.width = '50px';
-                card.style.height = '75px';
-                const indicator = slot.querySelector('.slot-indicator');
-                slot.innerHTML = '';
-                slot.appendChild(card);
-                if (indicator) {
-                    slot.appendChild(indicator);
-                }
-                slot.style.backgroundColor = playerColor;
-                const boardState = getBoardState();
-                if (isHost) {
-                    broadcast({ type: 'updateBoard', board: boardState });
-                } else if (conn) {
-                    conn.send({ type: 'updateBoard', board: boardState });
-                }
-            }
-        }
-
-        // Snackbar function to show temporary notifications
-        function showSnackbar(message) {
-            const snackbar = document.getElementById('snackbar');
-            snackbar.textContent = message;
-            snackbar.className = 'show';
-            setTimeout(() => {
-                snackbar.className = snackbar.className.replace('show', '');
-            }, 3000);
-        }
-
-        // Modal for entering name and selecting job
-        const modal = document.getElementById('myModal');
-        const span = document.getElementsByClassName('close')[0];
-        const joinButton = document.getElementById('joinGameFromModal');
-
-        function showModal(role, id) {
-            if (role === 'host') {
-                const player = playerInfo[0];
-                player.peerId = id;
-                player.connected = true;
-                updatePlayerUI(0);
-                document.getElementById('startGame').style.display = 'block';
-            }
-            modal.style.display = 'block';
-        }
-
-        span.onclick = function() {
-            modal.style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        joinButton.addEventListener('click', () => {
-            const hostId = document.getElementById('peerId').value;
-            const playerName = document.getElementById('playerName').value;
-            const playerJob = document.getElementById('playerJob').value;
-
-            if (playerName && playerJob) {
-                if (isHost) {
-                    const player = playerInfo.find(p => p.peerId === peer.id);
-                    if (player) {
-                        player.name = playerName;
-                        player.job = playerJob;
-                        updatePlayerInfo(player);
-                    }
-                    modal.style.display = 'none';
-                } else {
-                    if (hostId) {
-                        peer = new Peer();
-
-                        peer.on('open', () => {
-                            console.log('Client peer opened');
-                            conn = peer.connect(hostId);
-
-                            conn.on('open', () => {
-                                console.log('Connected to host');
-                                showSnackbar('Connected to host');
-                                document.getElementById('join-controls').style.display = 'none';
-                                document.getElementById('startHost').style.display = 'none';
-                                document.getElementById('leaveGame').style.display = 'block';
-
-                                const player = playerInfo.find(p => p.peerId === null);
-                                if (player) {
-                                    player.name = playerName;
-                                    player.job = playerJob;
-                                    player.peerId = peer.id;
-                                    player.connected = true;
-                                    updatePlayerInfo(player);
-                                    conn.send({ type: 'updatePlayerInfo', peerId: player.peerId, playerInfo: player });
-                                }
-
-                                modal.style.display = 'none';
-                            });
-
-                            conn.on('data', handleData);
-
-                            conn.on('error', (err) => {
-                                console.error('Connection error: ', err);
-                                showSnackbar(`Error: ${err}`);
-                            });
-
-                            peer.on('error', (err) => {
-                                console.error('PeerJS error: ', err);
-                                showSnackbar(`Error: ${err}`);
-                            });
-                        });
-                    } else {
-                        alert('Please fill in the Game ID.');
-                    }
-                }
-            } else {
-                alert('Please fill in all details.');
-            }
-        });
-
-        // Initialize the board with random slot types
-        function initializeBoard() {
-            const slots = document.querySelectorAll('.slot');
-            const types = ['S', 'J', 'E'];
-            const slotTypes = Array(12).fill('S').concat(Array(12).fill('J')).concat(Array(12).fill('E'));
-            shuffle(slotTypes);
-
-            slots.forEach((slot, index) => {
-                slot.innerHTML = '';
-                const type = slotTypes[index];
-                const indicator = document.createElement('div');
-                indicator.className = 'slot-indicator';
-                indicator.textContent = type;
-                slot.appendChild(indicator);
-            });
-        }
-
-        function getBoardState() {
-            const slots = document.querySelectorAll('.slot');
-            return Array.from(slots).map(slot => {
-                const type = slot.querySelector('.slot-indicator').textContent;
-                const cardId = slot.querySelector('.card')?.dataset.cardId || null;
-                return { type, cardId };
-            });
-        }
-
-        function setBoardState(boardState) {
-            const slots = document.querySelectorAll('.slot');
-            slots.forEach((slot, index) => {
-                slot.innerHTML = '';
-                const state = boardState[index];
-                const indicator = document.createElement('div');
-                indicator.className = 'slot-indicator';
-                indicator.textContent = state.type;
-                slot.appendChild(indicator);
-                if (state.cardId) {
-                    const card = document.querySelector(`.card[data-card-id='${state.cardId}']`);
-                    if (card) {
-                        card.style.width = '50px';
-                        card.style.height = '75px';
-                        slot.appendChild(card);
-                    }
-                }
-            });
-        }
-
-        // Load decks images after page load
-        document.addEventListener('DOMContentLoaded', loadAllDeckImages);
-    </script>
+    <script src="./game.js"></script>
 </body>
 </html>
