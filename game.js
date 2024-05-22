@@ -499,6 +499,10 @@ function addCardToHand(deckId, cardIndex) {
 
 // Place a card on the board
 function placeMarkerOnBoard(slotIndex, player) {
+    if (player.markers <= 0) {
+      return
+    }
+
     console.log(`Placing a marker on board at slot ${slotIndex}, with color ${player.color}`);
 
     const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: player.color }) : s)
