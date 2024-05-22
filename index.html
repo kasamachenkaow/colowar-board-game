@@ -140,8 +140,8 @@
             font-size: 12px;
             font-weight: bold;
         }
-        .highlight {
-            background-color: yellow !important;
+        .highlight > .slot-indicator {
+            font-size: 40px;
         }
         .deck-container {
             display: flex;
@@ -238,8 +238,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 20px;
-            width: 100%;
+            margin-top: -23px;
+            width: 120px;
         }
         #play-area {
             border: 1px solid #000;
@@ -400,19 +400,15 @@
                 </div>
             </div>
             <div class="hand-container">
+                <div id="play-area-container">
+                    <div class="deck-label">Play Area</div>
+                    <div id="play-area"></div>
+                </div>
                 <div id="hand" class="hand"></div>
                 <div class="skill-deck-container">
                     <div class="deck-label">Skill Deck</div>
                     <div class="deck-card" id="skill-deck" data-deck-id="skill" draggable="true">0</div>
                 </div>
-                <div class="marker-deck-container">
-                    <div class="deck-label">Marker Deck</div>
-                    <div class="deck-card" id="marker-deck" data-deck-id="marker" draggable="true">0</div>
-                </div>
-            </div>
-            <div id="play-area-container">
-                <div class="deck-label">Play Area</div>
-                <div id="play-area"></div>
             </div>
         </div>
         <div id="dice-container">
