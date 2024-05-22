@@ -107,8 +107,8 @@ function replaceSharedState(newSharedState) {
     updateUIFromState();
 }
 
-function updatePlayerUI(player) {
-    const playerSlot = document.getElementById(player.id);
+function updatePlayerUI(player, index) {
+    const playerSlot = document.getElementById(`player${index}`);
     const icon = playerSlot.querySelector('.player-icon');
     const status = playerSlot.querySelector('.player-status');
     const cards = playerSlot.querySelector('.player-cards');
@@ -155,9 +155,19 @@ function updateUIFromState() {
 
     setBoardState(state.shared.board);
 
-    state.shared.players.forEach((player, index) => {
-        updatePlayerUI(player);
-    });
+    if (peer) {
+      const currPlayer = state.shared.players.find(p => p.peerId === peer.id)
+
+      let playerIndex = 1
+      updatePlayerUI(currPlayer, playerIndex);
+
+      state.shared.players.forEach((player) => {
+          if (player.peerId !== peer.id) {
+            playerIndex++;
+            updatePlayerUI(player, playerIndex);
+          }
+      });
+    }
 
     // Update play area
     if (state.shared.playArea) {
@@ -696,7 +706,7 @@ function increaseJobLevel() {
     }
 }
 
-function increaseLP(playerId) {
+function increaseLP() {
     const player = state.shared.players.find(p => p.peerId === peer.id);
     if (player) {
         player.lp += 1;
@@ -704,7 +714,7 @@ function increaseLP(playerId) {
     }
 }
 
-function decreaseLP(playerId) {
+function decreaseLP() {
     const player = state.shared.players.find(p => p.peerId === peer.id);
     if (player) {
         player.lp -= 1;
