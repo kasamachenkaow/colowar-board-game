@@ -1,7 +1,9 @@
 const deckImages = {
     spell: [
         {
+            id: 'spell1',
             name: 'spell_basic_02_lv1.png',
+            title: 'Fire Spell Lv1',
             details: {
                 type: 'Fire',
                 level: 1,
@@ -11,7 +13,9 @@ const deckImages = {
             }
         },
         {
+            id: 'spell2',
             name: 'spell_basic_03_lv1.png',
+            title: 'Water Spell Lv1',
             details: {
                 type: 'Water',
                 level: 1,
@@ -21,7 +25,9 @@ const deckImages = {
             }
         },
         {
+            id: 'spell3',
             name: 'spell_basic_04_lv1.png',
+            title: 'Earth Spell Lv1',
             details: {
                 type: 'Earth',
                 level: 1,
@@ -31,7 +37,9 @@ const deckImages = {
             }
         },
         {
+            id: 'spell4',
             name: 'spell_basic_lv1.png',
+            title: 'Wind Spell Lv1',
             details: {
                 type: 'Wind',
                 level: 1,
@@ -43,7 +51,9 @@ const deckImages = {
     ],
     equipment: [
         {
+            id: 'equip1',
             name: 'sword_lv1.png',
+            title: 'Basic Sword Lv1',
             details: {
                 type: 'Sword',
                 level: 1,
@@ -52,7 +62,9 @@ const deckImages = {
             }
         },
         {
+            id: 'equip2',
             name: 'sword_lv1_02.png',
+            title: 'Steel Sword Lv1',
             details: {
                 type: 'Sword',
                 level: 1,
@@ -61,7 +73,9 @@ const deckImages = {
             }
         },
         {
+            id: 'equip3',
             name: 'sword_lv1_03.png',
+            title: 'Iron Sword Lv1',
             details: {
                 type: 'Sword',
                 level: 1,
@@ -70,30 +84,94 @@ const deckImages = {
             }
         }
     ],
-    skill: [
-        {
-            name: 'skill_basic.png',
-            details: {
-                type: 'Stealth',
-                effect: 'Invisible',
-                duration: '2 turns'
+    skill: {
+        Magician: [
+            {
+                id: 'magician1',
+                name: 'skill_01.png',
+                title: 'Magic Shield',
+                details: {
+                    type: 'Defense',
+                    effect: 'Block Damage',
+                    duration: '1 turn'
+                }
+            },
+            {
+                id: 'magician2',
+                name: 'skill_02.png',
+                title: 'Mana Burst',
+                details: {
+                    type: 'Attack',
+                    effect: 'Double Damage',
+                    duration: '1 turn'
+                }
             }
-        },
-        {
-            name: 'skill_basic_02.png',
-            details: {
-                type: 'Speed',
-                effect: 'Double move',
-                duration: '1 turn'
+        ],
+        "Fortune teller": [
+            {
+                id: 'fortune1',
+                name: 'skill_01.png',
+                title: 'Future Sight',
+                details: {
+                    type: 'Insight',
+                    effect: 'Reveal Cards',
+                    duration: '1 turn'
+                }
+            },
+            {
+                id: 'fortune2',
+                name: 'skill_02.png',
+                title: 'Lucky Draw',
+                details: {
+                    type: 'Buff',
+                    effect: 'Double Cards',
+                    duration: '1 turn'
+                }
             }
-        },
-        {
-            name: 'skill_basic_03.png',
-            details: {
-                type: 'Strength',
-                effect: 'Double damage',
-                duration: '1 turn'
+        ],
+        Soldier: [
+            {
+                id: 'soldier1',
+                name: 'skill_01.png',
+                title: 'War Cry',
+                details: {
+                    type: 'Buff',
+                    effect: 'Increase Attack',
+                    duration: '2 turns'
+                }
+            },
+            {
+                id: 'soldier2',
+                name: 'skill_02.png',
+                title: 'Shield Block',
+                details: {
+                    type: 'Defense',
+                    effect: 'Reduce Damage',
+                    duration: '2 turns'
+                }
+            },
+            {
+                id: 'soldier2',
+                name: 'skill_02.png',
+                title: 'Shield Block',
+                details: {
+                    type: 'Defense',
+                    effect: 'Reduce Damage',
+                    duration: '2 turns'
+                }
             }
-        }
-    ]
+        ],
+        Hacker: [
+            {
+                id: 'hacker1',
+                name: 'skill_01.png',
+                title: 'System Hack',
+                details: {
+                    type: 'Debuff',
+                    effect: 'Reduce Defense',
+                    duration: '2 turns'
+                }
+            },
+        ]
+    }
 };

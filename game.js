@@ -58,6 +58,10 @@ state.shared.players = [
     { ...initPlayer, id: 'player4', color: playerColors[3], markers: 0 }
 ];
 
+function findCurrentPlayer() {
+    return state.shared.players.find(p => p.peerId === peer.id);
+}
+
 function initSlotsBoard() {
     // Create the 6x6 board
     const board = document.getElementById('board');
@@ -69,7 +73,7 @@ function initSlotsBoard() {
             e.preventDefault();
 
             const slotIndex = slot.dataset.index;
-            const player = state.shared.players.find(p => p.peerId === peer.id)
+            const player = findCurrentPlayer();
 
             placeMarkerOnBoard(slotIndex, player);
         });
@@ -156,7 +160,7 @@ function updateUIFromState() {
     setBoardState(state.shared.board);
 
     if (peer) {
-      const currPlayer = state.shared.players.find(p => p.peerId === peer.id)
+      const currPlayer = findCurrentPlayer();
 
       let playerIndex = 1
       updatePlayerUI(currPlayer, playerIndex);
@@ -171,9 +175,9 @@ function updateUIFromState() {
 
     // Update play area
     if (state.shared.playArea) {
-        const { cardId, playerColor } = state.shared.playArea;
-        if (cardId) {
-            playCard(cardId, playerColor);
+        const { deckId, cardId, playerColor, playerJob } = state.shared.playArea;
+        if (deckId && cardId && playerColor && playerJob) {
+            playCard(deckId, cardId, playerColor, playerJob);
         }
     }
 
@@ -290,6 +294,8 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 document.getElementById('startGame').addEventListener('click', () => {
     initializeBoard();
 
+    loadSharedDeckImages();
+
     updateSharedState({
         ...state.shared,
         isGameStarted: true
@@ -396,21 +402,21 @@ function updateDeck(deckId, type) {
     }
 }
 
-// Load deck images
-function loadDeckImages(deckId) {
-    const images = deckImages[deckId];
-    shuffle(images); // Shuffle the images to randomize the deck
-
-    if (deckId === 'skill') {
-        state.player.decks[deckId] = images;
-    } else {
-        state.shared.decks[deckId] = images;
-    }
+// Load shared deck images when the game starts
+function loadSharedDeckImages() {
+    const deckTypes = ['spell', 'equipment'];
+    deckTypes.forEach(type => {
+        const images = deckImages[type];
+        const shuffledImages = shuffle([...images]);
+        state.shared.decks[type] = shuffledImages;
+    });
 }
 
-function loadAllDeckImages() {
-    const deckTypes = ['spell', 'equipment', 'skill'];
-    deckTypes.forEach(type => loadDeckImages(type));
+// Load player-specific deck images based on job when joining or becoming a host
+function loadPlayerDeckImages(job) {
+    const images = deckImages.skill[job];
+    const shuffledImages = shuffle([...images]);
+    state.player.decks.skill = shuffledImages;
 }
 
 // Roll dice functionality
@@ -439,16 +445,23 @@ hand.addEventListener('dragover', (e) => {
     }
 });
 
+function isPlayerDeck(deckId) {
+    return deckId === 'skill';
+}
+
 hand.addEventListener('drop', (e) => {
     if (state.shared.isGameStarted) {
         e.preventDefault();
         const deckId = e.dataTransfer.getData('text/plain');
         console.log('Dropping card from deck:', deckId);
-        const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
-        const count = parseInt(deck.textContent);
+        const deckNode = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
+        const count = parseInt(deckNode.textContent);
         if (count > 0) {
-            const cardIndex = deckImages[deckId].length - count; // Get the next card image index
-            if (deckId === 'skill') {
+            const deck = isPlayerDeck(deckId) ? state.player.decks[deckId] : state.shared.decks[deckId];
+            const card = deck.pop();
+            addCardToHand(deckId, card.id);
+
+            if (isPlayerDeck(deckId)) {
                 updatePlayerState({
                     ...state.player,
                     decks: {
@@ -465,24 +478,39 @@ hand.addEventListener('drop', (e) => {
                     }
                 });
             }
-
-            addCardToHand(deckId, cardIndex);
         }
     }
 });
 
+function getCardInfo(deckId, cardId, playerJob) {
+    console.log(`Getting card info from ${deckId}, card id: ${cardId}`)
+
+    console.log({ deckImages, deckId, cardId, job: playerJob })
+
+    const cardInfo = deckId === 'skill'
+        ? deckImages.skill[playerJob].find(card => card.id === cardId)
+        : deckImages[deckId].find(card => card.id === cardId);
+
+    console.log('Card info:', cardInfo)
+
+    return cardInfo;
+}
+
 // Create the card element with click event to show details
-function createCardElement(deckId, cardIndex) {
-    const cardInfo = deckImages[deckId][cardIndex];
+function createCardElement(deckId, cardId, playerJob) {
+    const cardInfo = getCardInfo(deckId, cardId, playerJob);
+
     const card = document.createElement('div');
     card.className = 'card';
-    card.dataset.cardId = `deck${deckId}-${Math.random().toString(36).substr(2, 9)}`;
     const img = document.createElement('img');
-    img.src = `./images/${deckId}/${cardInfo.name}`;
+    const jobPath = deckId === 'skill' ? `/${playerJob.toLowerCase().replace(' ', '-')}` : '';
+    img.src = `./images/${deckId}${jobPath}/${cardInfo.name}`;
     card.appendChild(img);
     card.draggable = true;
+    const deckCardId = `${deckId}-${cardId}`;
+    card.dataset.deckCardId = deckCardId;
     card.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', card.dataset.cardId);
+        e.dataTransfer.setData('text/plain', deckCardId);
     });
     card.addEventListener('click', () => {
         showCardDetails(cardInfo);
@@ -491,9 +519,10 @@ function createCardElement(deckId, cardIndex) {
 }
 
 // Add a card to the hand with image
-function addCardToHand(deckId, cardIndex) {
-    console.log(`Adding card to hand from ${deckId}, card index: ${cardIndex}`);
-    const card = createCardElement(deckId, cardIndex);
+function addCardToHand(deckId, cardId) {
+    console.log(`Adding card to hand from ${deckId}, card index: ${cardId}`);
+    const currPlayer = findCurrentPlayer();
+    const card = createCardElement(deckId, cardId, currPlayer.job);
     hand.appendChild(card);
 }
 
@@ -526,35 +555,43 @@ playArea.addEventListener('dragover', (e) => {
 playArea.addEventListener('drop', (e) => {
     if (state.shared.isGameStarted) {
         e.preventDefault();
-        const cardId = e.dataTransfer.getData('text/plain');
-        const card = document.querySelector(`.card[data-card-id='${cardId}']`);
+        const deckCardId = e.dataTransfer.getData('text/plain');
+        const [deckId, cardId] = deckCardId.split('-');
+        const card = document.querySelector(`.card[data-deck-card-id='${deckCardId}']`);
         if (card) {
-            const player = state.shared.players.find(p => p.peerId === peer.id);
-            playCard(cardId, player.color);
+            const player = findCurrentPlayer();
             updateSharedState({
                 ...state.shared,
-                playArea: { cardId, playerColor: player.color }
+                playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job }
             });
         }
     }
 });
 
-// Play a card in the play area
-function playCard(cardId, playerColor) {
-    console.log(`Playing card ${cardId} in the play area`);
-    const card = document.querySelector(`.card[data-card-id='${cardId}']`);
+function putCardInPlayArea(card, playerColor, deckId, cardId, playerJob) {
     const playArea = document.getElementById('play-area');
-    if (card && playArea) {
-        playArea.innerHTML = '';
-        card.style.width = '60px';
-        card.style.height = '90px';
-        playArea.appendChild(card);
-        playArea.style.backgroundColor = playerColor;
-        card.addEventListener('click', () => {
-            const deckId = cardId.split('-')[0].replace('deck', '');
-            const cardIndex = deckImages[deckId].findIndex(c => c.name === card.querySelector('img').src.split('/').pop());
-            showCardDetails(deckImages[deckId][cardIndex]);
-        });
+
+    playArea.innerHTML = '';
+    card.style.width = '60px';
+    card.style.height = '90px';
+    playArea.appendChild(card);
+    playArea.style.backgroundColor = playerColor;
+    card.addEventListener('click', () => {
+        const cardInfo = getCardInfo(deckId, cardId, playerJob);
+        showCardDetails(cardInfo);
+    });
+}
+
+// Play a card in the play area
+function playCard(deckId, cardId, playerColor, playerJob) {
+    console.log(`Playing card from ${deckId}, card id: ${cardId}`);
+
+    const card = document.querySelector(`.card[data-deck-card-id='${deckId}-${cardId}']`);
+    if (card) {
+      putCardInPlayArea(card, playerColor, deckId, cardId, playerJob);
+    } else {
+      const otherPlayerCard = createCardElement(deckId, cardId, playerJob);
+      putCardInPlayArea(otherPlayerCard, playerColor, deckId, cardId, playerJob);
     }
 }
 
@@ -564,7 +601,7 @@ function showCardDetails(cardInfo) {
     const cardName = document.getElementById('card-name');
     const cardDetailsTable = document.getElementById('card-details-table');
 
-    cardName.textContent = cardInfo.name;
+    cardName.textContent = cardInfo.title;
     cardDetailsTable.innerHTML = '';
 
     for (const key in cardInfo.details) {
@@ -598,7 +635,6 @@ window.onclick = function(event) {
 // Load decks images after page load
 document.addEventListener('DOMContentLoaded', () => {
     initSlotsBoard();
-    loadAllDeckImages();
     updateUIFromState();
 });
 
@@ -664,6 +700,8 @@ joinButton.addEventListener('click', () => {
         if (isHost) {
             newPlayer(peer.id, playerName, playerJob)
 
+            loadPlayerDeckImages(playerJob);
+
             modal.style.display = 'none';
 
             updateUIFromState();
@@ -679,6 +717,8 @@ joinButton.addEventListener('click', () => {
                     conn.on('open', () => {
                         console.log('Connected to host');
                         showSnackbar('Connected to host');
+
+                        loadPlayerDeckImages(playerJob);
 
                         document.getElementById('startHost').style.display = 'none';
                         document.getElementById('join-controls').style.display = 'none';
