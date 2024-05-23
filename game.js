@@ -522,8 +522,11 @@ function createCardElement(deckId, cardId, playerJob) {
 function addCardToHand(deckId, cardId) {
     console.log(`Adding card to hand from ${deckId}, card index: ${cardId}`);
     const currPlayer = findCurrentPlayer();
+    currPlayer.cards++;
     const card = createCardElement(deckId, cardId, currPlayer.job);
     hand.appendChild(card);
+
+    updateSharedState();
 }
 
 // Place a card on the board
@@ -560,6 +563,7 @@ playArea.addEventListener('drop', (e) => {
         const card = document.querySelector(`.card[data-deck-card-id='${deckCardId}']`);
         if (card) {
             const player = findCurrentPlayer();
+            player.cards--;
             updateSharedState({
                 ...state.shared,
                 playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job }
