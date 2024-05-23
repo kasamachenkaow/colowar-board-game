@@ -514,6 +514,30 @@ function placeMarkerOnBoard(slotIndex, player) {
         board: newBoard,
     });
 }
+// Add these lines in the appropriate place, likely after initializing the board and hand event listeners
+
+const playArea = document.getElementById('play-area');
+playArea.addEventListener('dragover', (e) => {
+    if (state.shared.isGameStarted) {
+        e.preventDefault();
+    }
+});
+
+playArea.addEventListener('drop', (e) => {
+    if (state.shared.isGameStarted) {
+        e.preventDefault();
+        const cardId = e.dataTransfer.getData('text/plain');
+        const card = document.querySelector(`.card[data-card-id='${cardId}']`);
+        if (card) {
+            const player = state.shared.players.find(p => p.peerId === peer.id);
+            playCard(cardId, player.color);
+            updateSharedState({
+                ...state.shared,
+                playArea: { cardId, playerColor: player.color }
+            });
+        }
+    }
+});
 
 // Play a card in the play area
 function playCard(cardId, playerColor) {
