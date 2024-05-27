@@ -2,27 +2,43 @@ const deckImages = {
     tech: {
         scientist: [
             {
-                id: 'magician1',
+                id: 'scientist_lv2_A',
+                pattern:  [
+                  [0, 0, 0],
+                  [1, 1, 0],
+                  [0, 0, 0]
+                ],
+                title: 'Propaganda',
+                details: {
+                    type: 'Population',
+                    effect: 'Gain 5 Population',
+                },
+                copies: 3
+            },
+            {
+                id: 'scientist_lv3_A',
                 pattern:  [
                   [0, 0, 1],
                   [0, 1, 0],
                   [1, 0, 0]
                 ],
-                title: 'Magic Shield',
+                title: 'Propaganda',
                 details: {
-                    type: 'Defense',
-                    effect: 'Block Damage',
-                    duration: '1 turn'
+                    type: 'Population',
+                    effect: 'Gain 5 Population',
                 }
             },
             {
-                id: 'magician2',
-                name: 'skill_02.png',
-                title: 'Mana Burst',
+                id: 'scientist_lv3_B',
+                pattern:  [
+                  [1, 0, 0],
+                  [0, 1, 0],
+                  [0, 0, 1]
+                ],
+                title: 'Propaganda',
                 details: {
-                    type: 'Attack',
-                    effect: 'Double Damage',
-                    duration: '1 turn'
+                    type: 'Population',
+                    effect: 'Gain 5 Population',
                 }
             }
         ],

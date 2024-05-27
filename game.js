@@ -43,7 +43,8 @@ const state = {
             equipment: []
         },
         playArea: { cardId: null, playerColor: null },
-        rollHistory: []
+        rollHistory: [],
+        cardInfos: {},
     },
     player: {
         ...initPlayer
@@ -177,9 +178,9 @@ function updateUIFromState() {
 
     // Update play area
     if (state.shared.playArea) {
-        const { deckId, cardId, playerColor, playerJob } = state.shared.playArea;
-        if (deckId && cardId && playerColor && playerJob) {
-            playCard(deckId, cardId, playerColor, playerJob);
+        const { deckId, cardId, playerColor, playerJob, playerPeerId } = state.shared.playArea;
+        if (deckId && cardId && playerColor && playerJob && playerPeerId) {
+            playCard(deckId, cardId, playerColor, playerJob, playerPeerId);
         }
     }
 
@@ -204,6 +205,8 @@ function handleData(data) {
 
     if (data.type === 'broadcastState') {
         replaceSharedState(data.sharedState);
+        const currPlayer = findCurrentPlayer();
+        loadPlayerDeckImages(currPlayer.job);
     }
 
     if (data.type === 'gameStarted') {
@@ -420,9 +423,29 @@ function loadSharedDeckImages() {
 
 // Load player-specific deck images based on job when joining or becoming a host
 function loadPlayerDeckImages(job) {
+    if (state.shared.cardInfos[peer.id]) {
+        console.log('Player deck images already loaded');
+        return;
+    }
+
     const images = deckImages.tech[job];
-    const shuffledImages = shuffle([...images]);
+    console.log({ images })
+    const multipleCopies = images.flatMap((card) => {
+        return Array(card.copies ?? 1).fill(card).map((copy, i) => ({ ...copy, id: `${copy.id}_${i}` }));
+    });
+    console.log({ multipleCopies })
+    const shuffledImages = shuffle([...multipleCopies]);
     state.player.decks.tech = shuffledImages;
+
+    console.log({ peerId: peer.id, cardInfos: state.shared.cardInfos })
+
+    updateSharedState({
+        ...state.shared,
+        cardInfos: {
+          ...state.shared.cardInfos,
+          [peer.id]: [...shuffledImages],
+        }
+    })
 }
 
 // Roll dice functionality
@@ -488,13 +511,13 @@ hand.addEventListener('drop', (e) => {
     }
 });
 
-function getCardInfo(deckId, cardId, playerJob) {
+function getCardInfo(deckId, cardId, playerPeerId) {
     console.log(`Getting card info from ${deckId}, card id: ${cardId}`)
 
-    console.log({ deckImages, deckId, cardId, job: playerJob })
+    console.log({ deckId, cardId, playerPeerId })
 
     const cardInfo = deckId === 'tech'
-        ? deckImages.tech[playerJob].find(card => card.id === cardId)
+        ? state.shared.cardInfos[playerPeerId].find(card => card.id === cardId)
         : deckImages[deckId].find(card => card.id === cardId);
 
     console.log('Card info:', cardInfo)
@@ -502,8 +525,8 @@ function getCardInfo(deckId, cardId, playerJob) {
     return cardInfo;
 }
 
-function createCardElement(deckId, cardId, playerJob) {
-    const cardInfo = getCardInfo(deckId, cardId, playerJob);
+function createCardElement(deckId, cardId, playerJob, playerPeerId) {
+    const cardInfo = getCardInfo(deckId, cardId, playerPeerId);
 
     const card = document.createElement('div');
     card.className = 'card';
@@ -536,8 +559,8 @@ function createCardElement(deckId, cardId, playerJob) {
         card.appendChild(canvas);
     } else {
         const img = document.createElement('img');
-        const jobPath = deckId === 'tech' ? `/${playerJob.toLowerCase().replace(' ', '-')}` : '';
-        img.src = `./images/${deckId}${jobPath}/${cardInfo.name}`;
+        const jobPath = deckId === 'tech' ? `/${playerJob}` : '';
+        img.src = `./images/${deckId}${jobPath}/${cardInfo.url}`;
         card.appendChild(img);
     }
 
@@ -558,7 +581,7 @@ function addCardToHand(deckId, cardId) {
     console.log(`Adding card to hand from ${deckId}, card index: ${cardId}`);
     const currPlayer = findCurrentPlayer();
     currPlayer.cards++;
-    const card = createCardElement(deckId, cardId, currPlayer.job);
+    const card = createCardElement(deckId, cardId, currPlayer.job, currPlayer.peerId);
     hand.appendChild(card);
 
     updateSharedState();
@@ -615,13 +638,13 @@ playArea.addEventListener('drop', (e) => {
             player.cards--;
             updateSharedState({
                 ...state.shared,
-                playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job }
+                playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId: player.peerId }
             });
         }
     }
 });
 
-function putCardInPlayArea(card, playerColor, deckId, cardId, playerJob) {
+function putCardInPlayArea(card, playerColor, deckId, cardId, playerPeerId) {
     const playArea = document.getElementById('play-area');
 
     playArea.innerHTML = '';
@@ -630,21 +653,21 @@ function putCardInPlayArea(card, playerColor, deckId, cardId, playerJob) {
     playArea.appendChild(card);
     playArea.style.backgroundColor = playerColor;
     card.addEventListener('click', () => {
-        const cardInfo = getCardInfo(deckId, cardId, playerJob);
+        const cardInfo = getCardInfo(deckId, cardId, playerPeerId);
         showCardDetails(cardInfo);
     });
 }
 
 // Play a card in the play area
-function playCard(deckId, cardId, playerColor, playerJob) {
+function playCard(deckId, cardId, playerColor, playerJob, playerPeerId) {
     console.log(`Playing card from ${deckId}, card id: ${cardId}`);
 
     const card = document.querySelector(`.card[data-deck-card-id='${deckId}-${cardId}']`);
     if (card) {
-      putCardInPlayArea(card, playerColor, deckId, cardId, playerJob);
+      putCardInPlayArea(card, playerColor, deckId, cardId, playerPeerId);
     } else {
-      const otherPlayerCard = createCardElement(deckId, cardId, playerJob);
-      putCardInPlayArea(otherPlayerCard, playerColor, deckId, cardId, playerJob);
+      const otherPlayerCard = createCardElement(deckId, cardId, playerJob, playerPeerId);
+      putCardInPlayArea(otherPlayerCard, playerColor, deckId, cardId, playerPeerId);
     }
 }
 
@@ -771,7 +794,6 @@ joinButton.addEventListener('click', () => {
                         console.log('Connected to host');
                         showSnackbar('Connected to host');
 
-                        loadPlayerDeckImages(playerJob);
 
                         document.getElementById('startHost').style.display = 'none';
                         document.getElementById('join-controls').style.display = 'none';
