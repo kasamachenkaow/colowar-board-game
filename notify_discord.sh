@@ -32,7 +32,7 @@ PAYLOAD=$(cat <<EOF
       },
       {
         "name": "Main URL",
-        "value": "https://entropia-board-game.pages.dev",
+        "value": "https://colowar-board-game.pages.dev",
         "inline": true
       },
       {
