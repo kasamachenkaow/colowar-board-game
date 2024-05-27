@@ -23,7 +23,7 @@ const initPlayer = {
     peerId: null,
     connected: false,
     cards: 0,
-    lp: 40,
+    population: 40,
     name: '-',
     job: '-',
     jobLevel: 1,
@@ -116,7 +116,7 @@ function updatePlayerUI(player, index) {
     const icon = playerSlot.querySelector('.player-icon');
     const status = playerSlot.querySelector('.player-status');
     const cards = playerSlot.querySelector('.player-cards');
-    const lp = playerSlot.querySelector('.player-lp');
+    const population = playerSlot.querySelector('.player-population');
     const name = playerSlot.querySelector('.player-name');
     const job = playerSlot.querySelector('.player-job');
     const markers = playerSlot.querySelector('.player-markers');
@@ -130,7 +130,7 @@ function updatePlayerUI(player, index) {
         icon.src = "images/player-icon.png";
         status.textContent = 'Connected';
         cards.textContent = `Cards: ${player.cards}`;
-        lp.textContent = `LP: ${player.lp}`;
+        population.textContent = `Population: ${player.population}`;
         if (peer.id === player.peerId) {
             playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'block');
         } else {
@@ -141,7 +141,7 @@ function updatePlayerUI(player, index) {
         icon.src = "images/no-player.png";
         status.textContent = 'Disconnected';
         cards.textContent = 'Cards: 0';
-        lp.textContent = 'LP: 0';
+        population.textContent = 'Population: 0';
         playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
     }
 }
@@ -778,18 +778,18 @@ function increaseJobLevel() {
     }
 }
 
-function increaseLP() {
+function increasePopulation() {
     const player = state.shared.players.find(p => p.peerId === peer.id);
     if (player) {
-        player.lp += 1;
+        player.population += 1;
         updateSharedState();
     }
 }
 
-function decreaseLP() {
+function decreasePopulation() {
     const player = state.shared.players.find(p => p.peerId === peer.id);
     if (player) {
-        player.lp -= 1;
+        player.population -= 1;
         updateSharedState();
     }
 }
