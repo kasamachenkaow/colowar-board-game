@@ -6,16 +6,16 @@ let conn;
 
 const jobMetadata = {
    "scientist": {
-      initMarkers: 5,
+      initResources: 5,
    },
    "spiritual-leader": {
-      initMarkers: 9,
+      initResources: 9,
    },
    "engineer": {
-      initMarkers: 7,
+      initResources: 7,
    },
    "hacker": {
-      initMarkers: 7,
+      initResources: 7,
    },
 }
 
@@ -52,10 +52,10 @@ const state = {
 
 // Initialize the players array after defining the state
 state.shared.players = [
-    { ...initPlayer, id: 'player1', color: playerColors[0], markers: 0 },
-    { ...initPlayer, id: 'player2', color: playerColors[1], markers: 0 },
-    { ...initPlayer, id: 'player3', color: playerColors[2], markers: 0 },
-    { ...initPlayer, id: 'player4', color: playerColors[3], markers: 0 }
+    { ...initPlayer, id: 'player1', color: playerColors[0], resources: 0 },
+    { ...initPlayer, id: 'player2', color: playerColors[1], resources: 0 },
+    { ...initPlayer, id: 'player3', color: playerColors[2], resources: 0 },
+    { ...initPlayer, id: 'player4', color: playerColors[3], resources: 0 }
 ];
 
 function findCurrentPlayer() {
@@ -75,7 +75,7 @@ function initSlotsBoard() {
             const slotIndex = slot.dataset.index;
             const player = findCurrentPlayer();
 
-            placeMarkerOnBoard(slotIndex, player);
+            placeStationOnBoard(slotIndex, player);
         });
         board.appendChild(slot);
     }
@@ -119,11 +119,11 @@ function updatePlayerUI(player, index) {
     const population = playerSlot.querySelector('.player-population');
     const name = playerSlot.querySelector('.player-name');
     const job = playerSlot.querySelector('.player-job');
-    const markers = playerSlot.querySelector('.player-markers');
+    const resources = playerSlot.querySelector('.player-resources');
 
     name.textContent = `Name: ${player.name}`;
     job.textContent = `Job: ${player.job} (Level ${player.jobLevel})`;
-    markers.textContent = `Markers: ${player.markers}`;
+    resources.textContent = `Resources: ${player.resources}`;
 
     if (player.connected) {
         playerSlot.style.backgroundColor = player.color;
@@ -530,16 +530,16 @@ function addCardToHand(deckId, cardId) {
 }
 
 // Place a card on the board
-function placeMarkerOnBoard(slotIndex, player) {
-    if (player.markers <= 0) {
+function placeStationOnBoard(slotIndex, player) {
+    if (player.resources <= 0) {
       return
     }
 
-    console.log(`Placing a marker on board at slot ${slotIndex}, with color ${player.color}`);
+    console.log(`Placing a station on board at slot ${slotIndex}, with color ${player.color}`);
 
     const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: player.color }) : s)
 
-    player.markers--;
+    player.resources--;
 
     updateSharedState({
         ...state.shared,
@@ -689,7 +689,7 @@ function newPlayer(peerId, name, job) {
     if (player) {
         player.name = name;
         player.job = job;
-        player.markers = jobMetadata[job].initMarkers;
+        player.resources = jobMetadata[job].initResources;
         player.peerId = peerId
         player.connected = true;
     }
