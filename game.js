@@ -526,6 +526,9 @@ function createCardElement(deckId, cardId, playerJob) {
             for (let j = 0; j < pattern[i].length; j++) {
                 if (pattern[i][j] === 1) {
                     ctx.fillRect(startX + j * boxSize, startY + i * boxSize, boxSize, boxSize);
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(startX + j * boxSize, startY + i * boxSize, boxSize, boxSize);
                 }
             }
         }
