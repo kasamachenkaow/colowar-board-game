@@ -75,7 +75,9 @@ function initSlotsBoard() {
             const slotIndex = slot.dataset.index;
             const player = findCurrentPlayer();
 
-            placeStationOnBoard(slotIndex, player);
+            const isSlotOccupied = state.shared.board[slotIndex].playerColor;
+
+            isSlotOccupied ? recycleStationOnBoard(slotIndex, player) : placeStationOnBoard(slotIndex, player);
         });
         board.appendChild(slot);
     }
@@ -350,6 +352,7 @@ function rollDice(diceType) {
     }, 50);
 }
 
+const defaultSlotBackgroundColor = '#f0f0f0';
 function setBoardState(boardState) {
     const slots = document.querySelectorAll('.slot');
     slots.forEach((slot, index) => {
@@ -362,6 +365,8 @@ function setBoardState(boardState) {
             slot.appendChild(indicator);
             if (state.playerColor) {
                 slot.style.backgroundColor = state.playerColor;
+            } else {
+                slot.style.backgroundColor = defaultSlotBackgroundColor;
             }
         }
     });
@@ -528,6 +533,20 @@ function addCardToHand(deckId, cardId) {
     hand.appendChild(card);
 
     updateSharedState();
+}
+
+// Recycle a station on the board
+function recycleStationOnBoard(slotIndex, player) {
+    console.log(`Recycling station on board at slot ${slotIndex}, with color ${player.color}`);
+
+    const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: null }) : s)
+
+    player.resources++;
+
+    updateSharedState({
+        ...state.shared,
+        board: newBoard,
+    });
 }
 
 // Place a card on the board
