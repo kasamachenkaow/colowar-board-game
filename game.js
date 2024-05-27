@@ -502,16 +502,42 @@ function getCardInfo(deckId, cardId, playerJob) {
     return cardInfo;
 }
 
-// Create the card element with click event to show details
 function createCardElement(deckId, cardId, playerJob) {
     const cardInfo = getCardInfo(deckId, cardId, playerJob);
 
     const card = document.createElement('div');
     card.className = 'card';
-    const img = document.createElement('img');
-    const jobPath = deckId === 'tech' ? `/${playerJob.toLowerCase().replace(' ', '-')}` : '';
-    img.src = `./images/${deckId}${jobPath}/${cardInfo.name}`;
-    card.appendChild(img);
+
+    if (cardInfo.pattern) {
+        const pattern = cardInfo.pattern;
+        const canvas = document.createElement('canvas');
+        canvas.width = 60;
+        canvas.height = 90;
+        const ctx = canvas.getContext('2d');
+        const boxSize = 20; // Size of each box
+
+        const patternWidth = pattern[0].length * boxSize;
+        const patternHeight = pattern.length * boxSize;
+        const startX = (canvas.width - patternWidth) / 2;
+        const startY = (canvas.height - patternHeight) / 2;
+
+        ctx.fillStyle = 'black';
+        for (let i = 0; i < pattern.length; i++) {
+            for (let j = 0; j < pattern[i].length; j++) {
+                if (pattern[i][j] === 1) {
+                    ctx.fillRect(startX + j * boxSize, startY + i * boxSize, boxSize, boxSize);
+                }
+            }
+        }
+
+        card.appendChild(canvas);
+    } else {
+        const img = document.createElement('img');
+        const jobPath = deckId === 'tech' ? `/${playerJob.toLowerCase().replace(' ', '-')}` : '';
+        img.src = `./images/${deckId}${jobPath}/${cardInfo.name}`;
+        card.appendChild(img);
+    }
+
     card.draggable = true;
     const deckCardId = `${deckId}-${cardId}`;
     card.dataset.deckCardId = deckCardId;

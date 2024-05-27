@@ -3,7 +3,11 @@ const deckImages = {
         scientist: [
             {
                 id: 'magician1',
-                name: 'skill_01.png',
+                pattern:  [
+                  [0, 0, 1],
+                  [0, 1, 0],
+                  [1, 0, 0]
+                ],
                 title: 'Magic Shield',
                 details: {
                     type: 'Defense',
@@ -25,7 +29,11 @@ const deckImages = {
         "spiritual-leader": [
             {
                 id: 'fortune1',
-                name: 'skill_01.png',
+                pattern:  [
+                  [0, 0, 0],
+                  [1, 1, 0],
+                  [0, 0, 0]
+                ],
                 title: 'Future Sight',
                 details: {
                     type: 'Insight',
