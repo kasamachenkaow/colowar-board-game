@@ -6,16 +6,16 @@ let conn;
 
 const jobMetadata = {
    "scientist": {
-      initResources: 5,
+      initResources: 1,
    },
    "spiritual-leader": {
-      initResources: 9,
+      initResources: 3,
    },
    "engineer": {
-      initResources: 7,
+      initResources: 1,
    },
    "hacker": {
-      initResources: 7,
+      initResources: 2,
    },
 }
 
@@ -294,8 +294,6 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 document.getElementById('startGame').addEventListener('click', () => {
     initializeBoard();
 
-    loadSharedDeckImages();
-
     updateSharedState({
         ...state.shared,
         isGameStarted: true
@@ -390,6 +388,10 @@ function updateDecks() {
 function updateDeck(deckId, type) {
     const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
 
+    if (!deck) {
+        return;
+    }
+
     const count = state[type].decks[deckId].length;
     deck.textContent = count;
 
@@ -402,7 +404,6 @@ function updateDeck(deckId, type) {
     }
 }
 
-// Load shared deck images when the game starts
 function loadSharedDeckImages() {
     const deckTypes = ['spell', 'equipment'];
     deckTypes.forEach(type => {
@@ -794,3 +795,10 @@ function decreasePopulation() {
     }
 }
 
+function increaseResource() {
+    const player = state.shared.players.find(p => p.peerId === peer.id);
+    if (player) {
+        player.resources += 1;
+        updateSharedState();
+    }
+}

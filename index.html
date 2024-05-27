@@ -216,11 +216,13 @@
             width: 100%;
             text-align: center;
         }
-        #decks {
+        #resource-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
+        }
+        #resource-container > .gain-resource-button {
+            font-size: 20px;
         }
         .tech-deck-container {
             display: flex;
@@ -389,15 +391,8 @@
                 <div id="snackbar"></div>
                 <div id="board"></div>
             </div>
-            <div id="decks">
-                <div class="deck-container">
-                    <div class="deck-label">Spell Deck</div>
-                    <div class="deck-card" data-deck-id="spell" draggable="true">0</div>
-                </div>
-                <div class="deck-container">
-                    <div class="deck-label">Equipment Deck</div>
-                    <div class="deck-card" data-deck-id="equipment" draggable="true">0</div>
-                </div>
+            <div id="resource-container">
+                <button class="gain-resource-button" onclick="increaseResource()">Gain [1 resource]</button>
             </div>
             <div class="hand-container">
                 <div id="play-area-container">
