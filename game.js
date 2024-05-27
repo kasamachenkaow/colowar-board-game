@@ -4,6 +4,8 @@ let connections = [];
 let isHost = false;
 let conn;
 
+const cardIdDelim = '/';
+
 const jobMetadata = {
    "scientist": {
       initResources: 1,
@@ -565,7 +567,7 @@ function createCardElement(deckId, cardId, playerJob, playerPeerId) {
     }
 
     card.draggable = true;
-    const deckCardId = `${deckId}-${cardId}`;
+    const deckCardId = getCardNodeId(deckId, cardId, playerPeerId)
     card.dataset.deckCardId = deckCardId;
     card.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text/plain', deckCardId);
@@ -574,6 +576,10 @@ function createCardElement(deckId, cardId, playerJob, playerPeerId) {
         showCardDetails(cardInfo);
     });
     return card;
+}
+
+function getCardNodeId(deckId, cardId, playerPeerId) {
+    return [deckId, cardId, playerPeerId].join(cardIdDelim);
 }
 
 // Add a card to the hand with image
@@ -631,14 +637,14 @@ playArea.addEventListener('drop', (e) => {
     if (state.shared.isGameStarted) {
         e.preventDefault();
         const deckCardId = e.dataTransfer.getData('text/plain');
-        const [deckId, cardId] = deckCardId.split('-');
+        const [deckId, cardId, playerPeerId] = deckCardId.split(cardIdDelim);
         const card = document.querySelector(`.card[data-deck-card-id='${deckCardId}']`);
         if (card) {
             const player = findCurrentPlayer();
             player.cards--;
             updateSharedState({
                 ...state.shared,
-                playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId: player.peerId }
+                playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId }
             });
         }
     }
@@ -662,7 +668,7 @@ function putCardInPlayArea(card, playerColor, deckId, cardId, playerPeerId) {
 function playCard(deckId, cardId, playerColor, playerJob, playerPeerId) {
     console.log(`Playing card from ${deckId}, card id: ${cardId}`);
 
-    const card = document.querySelector(`.card[data-deck-card-id='${deckId}-${cardId}']`);
+    const card = document.querySelector(`.card[data-deck-card-id='${getCardNodeId(deckId, cardId, playerPeerId)}']`);
     if (card) {
       putCardInPlayArea(card, playerColor, deckId, cardId, playerPeerId);
     } else {
