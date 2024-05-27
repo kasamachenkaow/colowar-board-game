@@ -84,8 +84,8 @@ const deckImages = {
             }
         }
     ],
-    skill: {
-        Magician: [
+    tech: {
+        scientist: [
             {
                 id: 'magician1',
                 name: 'skill_01.png',
@@ -107,7 +107,7 @@ const deckImages = {
                 }
             }
         ],
-        "Fortune teller": [
+        "spiritual-leader": [
             {
                 id: 'fortune1',
                 name: 'skill_01.png',
@@ -129,7 +129,7 @@ const deckImages = {
                 }
             }
         ],
-        Soldier: [
+        engineer: [
             {
                 id: 'soldier1',
                 name: 'skill_01.png',
@@ -161,7 +161,7 @@ const deckImages = {
                 }
             }
         ],
-        Hacker: [
+        hacker: [
             {
                 id: 'hacker1',
                 name: 'skill_01.png',

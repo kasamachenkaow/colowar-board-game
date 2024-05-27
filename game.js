@@ -5,16 +5,16 @@ let isHost = false;
 let conn;
 
 const jobMetadata = {
-   "Magician": {
+   "scientist": {
       initMarkers: 5,
    },
-   "Fortune teller": {
+   "spiritual-leader": {
       initMarkers: 9,
    },
-   "Soldier": {
+   "engineer": {
       initMarkers: 7,
    },
-   "Hacker": {
+   "hacker": {
       initMarkers: 7,
    },
 }
@@ -29,7 +29,7 @@ const initPlayer = {
     jobLevel: 1,
     color: null,
     decks: {
-      skill: [],
+      tech: [],
     }
 }
 
@@ -414,9 +414,9 @@ function loadSharedDeckImages() {
 
 // Load player-specific deck images based on job when joining or becoming a host
 function loadPlayerDeckImages(job) {
-    const images = deckImages.skill[job];
+    const images = deckImages.tech[job];
     const shuffledImages = shuffle([...images]);
-    state.player.decks.skill = shuffledImages;
+    state.player.decks.tech = shuffledImages;
 }
 
 // Roll dice functionality
@@ -446,7 +446,7 @@ hand.addEventListener('dragover', (e) => {
 });
 
 function isPlayerDeck(deckId) {
-    return deckId === 'skill';
+    return deckId === 'tech';
 }
 
 hand.addEventListener('drop', (e) => {
@@ -487,8 +487,8 @@ function getCardInfo(deckId, cardId, playerJob) {
 
     console.log({ deckImages, deckId, cardId, job: playerJob })
 
-    const cardInfo = deckId === 'skill'
-        ? deckImages.skill[playerJob].find(card => card.id === cardId)
+    const cardInfo = deckId === 'tech'
+        ? deckImages.tech[playerJob].find(card => card.id === cardId)
         : deckImages[deckId].find(card => card.id === cardId);
 
     console.log('Card info:', cardInfo)
@@ -503,7 +503,7 @@ function createCardElement(deckId, cardId, playerJob) {
     const card = document.createElement('div');
     card.className = 'card';
     const img = document.createElement('img');
-    const jobPath = deckId === 'skill' ? `/${playerJob.toLowerCase().replace(' ', '-')}` : '';
+    const jobPath = deckId === 'tech' ? `/${playerJob.toLowerCase().replace(' ', '-')}` : '';
     img.src = `./images/${deckId}${jobPath}/${cardInfo.name}`;
     card.appendChild(img);
     card.draggable = true;
