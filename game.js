@@ -23,7 +23,7 @@ const initPlayer = {
     peerId: null,
     connected: false,
     cards: 0,
-    population: 40,
+    population: 10,
     name: '-',
     job: '-',
     jobLevel: 1,
