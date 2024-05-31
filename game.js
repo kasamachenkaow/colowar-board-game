@@ -206,9 +206,9 @@ function updateUIFromState() {
 
     // Update roll history
     const rollHistoryDiv = document.getElementById('roll-history');
-    rollHistoryDiv.innerHTML = 'Roll History:<br>' + state.shared.rollHistory.map(r => Array.isArray(r) ? `(${r[0]}, ${r[1]})` : `(${r})`).join('<br>');
+    rollHistoryDiv.innerHTML = 'Roll History:<br>' + state.shared.rollHistory.map(r => Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]}) by [${r.playerName}]` : `(${r.values}) by [${r.playerName}]`).join('<br>');
 
-    const lastRoll = state.shared.rollHistory[0];
+    const lastRoll = state.shared.rollHistory[0]?.values;
     if (Array.isArray(lastRoll)) {
       highlightSlot(lastRoll[0], lastRoll[1]);
     }
@@ -364,14 +364,17 @@ function rollDice(diceType) {
             console.log('Rolling done');
 
             clearInterval(interval);
+
+            const currPlayer = findCurrentPlayer();
             let result;
             if (diceType === '2d6') {
                 const die1 = Math.floor(Math.random() * 6) + 1;
                 const die2 = Math.floor(Math.random() * 6) + 1;
-                result = [die1, die2];
+                result = { playerName: currPlayer.name, values: [die1, die2] };
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
             } else {
-                result = Math.floor(Math.random() * diceType) + 1;
+                const die1 = Math.floor(Math.random() * diceType) + 1;
+                result = { playerName: currPlayer.name, values: die1 };
                 diceResult.textContent = `Result: (${result})`;
             }
             const newRollHistory = [result, ...state.shared.rollHistory];
