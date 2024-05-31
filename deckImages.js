@@ -41,7 +41,7 @@ const deckImages = {
                 title: 'Galactic Recycler',
                 details: {
                     type: 'Station',
-                    effect: 'Recycle 1 of your stations',
+                    effect: 'Move 1 of your stations',
                     text: 'Utilize advanced recycling techniques to repurpose one of your stations.'
                 },
                 copies: 4
@@ -56,7 +56,7 @@ const deckImages = {
                 title: 'Photon Shift',
                 details: {
                     type: 'Station',
-                    effect: 'Move 1 station in a group freely to adjacent free slot of the group',
+                    effect: 'Move 2 stations in a group freely to adjacent free slot of the group',
                     text: 'Manipulate photon energy to shift a station to a new position within the group.'
                 },
                 copies: 4
@@ -183,7 +183,7 @@ const deckImages = {
                     effect: 'Gain 5 Population',
                     text: 'Boost signal strength to increase your population through enhanced communications.'
                 },
-                copies: 3,
+                copies: 4,
             },
             {
                 id: 'hacker_lv3_A',
@@ -210,7 +210,7 @@ const deckImages = {
                 title: 'System Reset',
                 details: {
                     type: 'Station',
-                    effect: 'Recycle 3 stations of your choice',
+                    effect: 'Move any upto 3 stations to any free slots',
                     text: 'Initiate a system-wide reset, allowing you to recycle multiple stations.'
                 },
                 copies: 3
@@ -225,10 +225,10 @@ const deckImages = {
                 title: 'Circuit Overload',
                 details: {
                     type: 'Station',
-                    effect: 'Move any 4 stations to any free slots',
+                    effect: 'Move any upto 3 stations to any slots',
                     text: 'Overload the circuit, enabling you to reposition multiple stations.'
                 },
-                copies: 3
+                copies: 2
             },
             {
                 id: 'hacker_lv6_A',
@@ -243,7 +243,7 @@ const deckImages = {
                     effect: 'Steal 3 adjacent stations',
                     text: 'Execute a data heist to seize control of nearby stations.'
                 },
-                copies: 2
+                copies: 1
             },
         ],
         "spiritual-leader": [
