@@ -125,6 +125,7 @@ function updatePlayerUI(player, index) {
     const name = playerSlot.querySelector('.player-name');
     const job = playerSlot.querySelector('.player-job');
     const resources = playerSlot.querySelector('.player-resources');
+    const skill = playerSlot.querySelector('.player-skill');
 
     name.textContent = `Name: ${player.name}`;
     job.textContent = `Job: ${player.job} (Level ${player.jobLevel})`;
@@ -136,6 +137,7 @@ function updatePlayerUI(player, index) {
         status.textContent = 'Connected';
         cards.textContent = `Cards: ${player.cards}`;
         population.textContent = `Population: ${player.population}`;
+        skill.textContent = getSkillTextForJob(player.job, player.jobLevel);
         if (peer.id === player.peerId) {
             playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'block');
         } else {
@@ -147,8 +149,22 @@ function updatePlayerUI(player, index) {
         status.textContent = 'Disconnected';
         cards.textContent = 'Cards: 0';
         population.textContent = 'Population: 0';
+        skill.textContent = 'Skill: None';
         playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
     }
+}
+
+function getSkillTextForJob(job, level) {
+   switch (job) {
+     case 'scientist':
+       return `Skill: threat ${level} free slot as your station`
+     case 'spiritual-leader':
+       return `Skill: gain ${level} population each turn`
+     case 'engineer':
+       return `Skill: can use ${level} adjacent station`
+     case 'hacker':
+       return `Skill: can reroll ${level} once per turn`
+   }
 }
 
 function updateUIFromState() {
