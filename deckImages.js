@@ -118,7 +118,7 @@ const deckImages = {
                 title: 'Station Multiplexer',
                 details: {
                     type: 'Station',
-                    effect: 'You can put up to 4 stations this turn',
+                    effect: 'You can build up to 4 stations this turn',
                     text: 'Utilize multiplexing technology to establish multiple stations simultaneously.'
                 },
                 copies: 4
@@ -133,8 +133,8 @@ const deckImages = {
                 title: 'Terraforming Beacon',
                 details: {
                     type: 'Station',
-                    effect: 'Consume 1 resource to build 1 station',
-                    text: 'Activate a terraforming beacon to construct a new station using resources.'
+                    effect: 'Build 1 station',
+                    text: 'Activate a terraforming beacon to construct a new station.'
                 },
                 copies: 4
             },
