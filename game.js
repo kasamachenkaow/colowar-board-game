@@ -161,7 +161,7 @@ function getSkillTextForJob(job, level) {
      case 'scientist':
        return `Skill: threat ${level} free slot as your station`
      case 'spiritual-leader':
-       return `Skill: gain ${level} population each turn`
+       return `Skill: gain ${level*3} population each turn`
      case 'engineer':
        return `Skill: can use ${level} adjacent station`
      case 'hacker':
