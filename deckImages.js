@@ -8,11 +8,12 @@ const deckImages = {
                   [1, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'Population Surge',
+                title: 'Bio-Enhancement',
                 details: {
-                    type: 'population',
+                    type: 'Population',
                     effect: 'Gain 5 Population',
-                }
+                    text: 'Enhance biological systems to increase the population swiftly.'
+                },
                 copies: 5
             },
             {
@@ -22,11 +23,12 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'xxxx',
+                title: 'Dark Protocol',
                 details: {
                     type: 'population',
                     effect: 'Kill 5 Population',
-                }
+                    text: 'Activate a covert protocol that results in the reduction of the population.'
+                },
                 copies: 5
             },
             {
@@ -36,11 +38,12 @@ const deckImages = {
                   [1, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Galactic Recycler',
                 details: {
                     type: 'Station',
                     effect: 'Recycle 1 of your stations',
-                }
+                    text: 'Utilize advanced recycling techniques to repurpose one of your stations.'
+                },
                 copies: 4
             },
             {
@@ -50,12 +53,13 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 1, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Photon Shift',
                 details: {
                     type: 'Station',
                     effect: 'Move 1 station in a group freely to adjacent free slot of the group',
-                }
-                copies: 3
+                    text: 'Manipulate photon energy to shift a station to a new position within the group.'
+                },
+                copies: 4
             },
             {
                 id: 'engineer_lv4_A',
@@ -64,11 +68,12 @@ const deckImages = {
                   [1, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Stellar Reconfiguration',
                 details: {
                     type: 'Station',
-                    effect: 'Move all adjacent stations to other adjacent free slots (they get destoryed if no free slots)',
-                }
+                    effect: 'Move all adjacent stations to other adjacent free slots (they get destroyed if no free slots)',
+                    text: 'Reconfigure the positions of all adjacent stations, reshaping the stellar map.'
+                },
                 copies: 2
             },
         ],
@@ -80,10 +85,11 @@ const deckImages = {
                   [1, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxx',
+                title: 'Quantum Expansion',
                 details: {
-                    type: 'Population',
+                    type: 'population',
                     effect: 'Gain 5 Population',
+                    text: 'Harness quantum technology to expand your population effortlessly.'
                 },
                 copies: 3
             },
@@ -94,11 +100,12 @@ const deckImages = {
                   [0, 1, 0],
                   [1, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Resource Alchemy',
                 details: {
                     type: 'Resource',
                     effect: 'Gain 1 Resource',
-                }
+                    text: 'Transform basic elements into valuable resources through alchemical processes.'
+                },
                 copies: 4
             },
             {
@@ -108,11 +115,12 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 0, 1]
                 ],
-                title: 'xxxxxxx',
+                title: 'Station Multiplexer',
                 details: {
                     type: 'Station',
                     effect: 'You can put up to 4 stations this turn',
-                }
+                    text: 'Utilize multiplexing technology to establish multiple stations simultaneously.'
+                },
                 copies: 4
             },
             {
@@ -122,11 +130,12 @@ const deckImages = {
                   [1, 1, 1],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Terraforming Beacon',
                 details: {
                     type: 'Station',
                     effect: 'Consume 1 resource to build 1 station',
-                }
+                    text: 'Activate a terraforming beacon to construct a new station using resources.'
+                },
                 copies: 4
             },
             {
@@ -136,11 +145,12 @@ const deckImages = {
                   [1, 1, 1],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Chrono Distortion',
                 details: {
                     type: 'Special',
                     effect: 'Take another turn',
-                }
+                    text: 'Distort the fabric of time, allowing you to take an additional turn.'
+                },
                 copies: 3
             },
             {
@@ -150,11 +160,12 @@ const deckImages = {
                   [0, 1, 0],
                   [1, 0, 1]
                 ],
-                title: 'xxxxxxx',
+                title: 'Nova Blast',
                 details: {
                     type: 'Station',
                     effect: 'Eliminate all stations of 3 adjacent rows/columns',
-                }
+                    text: 'Release a massive energy blast, obliterating stations in a wide area.'
+                },
                 copies: 1
             },
         ],
@@ -166,11 +177,12 @@ const deckImages = {
                   [1, 0, 0],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Signal Boost',
                 details: {
                     type: 'Population',
                     effect: 'Gain 5 Population',
-                }
+                    text: 'Boost signal strength to increase your population through enhanced communications.'
+                },
                 copies: 3,
             },
             {
@@ -180,11 +192,12 @@ const deckImages = {
                   [0, 1, 1],
                   [1, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Codebreaker',
                 details: {
                     type: 'Station',
                     effect: 'Destroy 1 station of your choice',
-                }
+                    text: 'Deploy a codebreaking algorithm to dismantle an opposing station.'
+                },
                 copies: 4
             },
             {
@@ -194,11 +207,12 @@ const deckImages = {
                   [0, 1, 1],
                   [0, 0, 1]
                 ],
-                title: 'xxxxxxx',
+                title: 'System Reset',
                 details: {
                     type: 'Station',
                     effect: 'Recycle 3 stations of your choice',
-                }
+                    text: 'Initiate a system-wide reset, allowing you to recycle multiple stations.'
+                },
                 copies: 3
             },
             {
@@ -208,11 +222,12 @@ const deckImages = {
                   [0, 0, 1],
                   [1, 1, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Circuit Overload',
                 details: {
                     type: 'Station',
                     effect: 'Move any 4 stations to any free slots',
-                }
+                    text: 'Overload the circuit, enabling you to reposition multiple stations.'
+                },
                 copies: 3
             },
             {
@@ -222,11 +237,12 @@ const deckImages = {
                   [0, 0, 0],
                   [1, 1, 1]
                 ],
-                title: 'xxxxxxx',
+                title: 'Data Heist',
                 details: {
                     type: 'Station',
-                    effect: 'Steel 3 adjacent stations',
-                }
+                    effect: 'Steal 3 adjacent stations',
+                    text: 'Execute a data heist to seize control of nearby stations.'
+                },
                 copies: 2
             },
         ],
@@ -238,11 +254,12 @@ const deckImages = {
                   [1, 1, 1],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Celestial Awakening',
                 details: {
                     type: 'Population',
                     effect: 'Gain 8 Population',
-                }
+                    text: 'Invoke a celestial awakening to greatly increase your population.'
+                },
                 copies: 3
             },
             {
@@ -252,11 +269,12 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 1, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Ascension Surge',
                 details: {
                     type: 'Population',
                     effect: 'Gain 8 Population',
-                }
+                    text: 'Trigger a surge of ascension, significantly boosting your population.'
+                },
                 copies: 3
             },
             {
@@ -266,11 +284,12 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 0, 1]
                 ],
-                title: 'xxxxxxx',
+                title: 'Soul Siphon',
                 details: {
                     type: 'Population',
                     effect: 'Steal 4 Population from an opponent',
-                }
+                    text: 'Siphon the souls of your opponents, transferring their population to your own.'
+                },
                 copies: 3
             },
             {
@@ -280,11 +299,12 @@ const deckImages = {
                   [0, 1, 0],
                   [1, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Essence Drain',
                 details: {
                     type: 'Population',
                     effect: 'Steal 4 Population from an opponent',
-                }
+                    text: 'Drain the essence of your rivals, adding their population to yours.'
+                },
                 copies: 3
             },
             {
@@ -294,11 +314,12 @@ const deckImages = {
                   [1, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Void Purge',
                 details: {
                     type: 'Population',
                     effect: 'Kill 6 Population from an opponent',
-                }
+                    text: 'Purge your enemies into the void, reducing their population.'
+                },
                 copies: 3
             },
             {
@@ -308,11 +329,12 @@ const deckImages = {
                   [0, 0, 1],
                   [0, 0, 0]
                 ],
-                title: 'xxxxxxx',
+                title: 'Shadow Erasure',
                 details: {
                     type: 'Population',
                     effect: 'Kill 6 Population from an opponent',
-                }
+                    text: 'Erase the shadows of your foes, eliminating part of their population.'
+                },
                 copies: 3
             },
         ],
