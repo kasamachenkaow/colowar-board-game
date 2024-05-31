@@ -738,8 +738,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeBoard() {
     const slots = document.querySelectorAll('.slot');
-    const types = ['S', 'J', 'E'];
-    const slotTypes = Array(12).fill('S').concat(Array(12).fill('J')).concat(Array(12).fill('E'));
+    const types = ['R', 'T'];
+    const slotTypes = Array(18).fill('R').concat(Array(18).fill('T'));
     shuffle(slotTypes);
 
     slots.forEach((slot, index) => {
