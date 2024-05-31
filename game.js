@@ -916,3 +916,11 @@ function increaseResource() {
         updateSharedState();
     }
 }
+
+function decreaseResource() {
+    const player = state.shared.players.find(p => p.peerId === peer.id);
+    if (player) {
+        player.resources -= 1;
+        updateSharedState();
+    }
+}
