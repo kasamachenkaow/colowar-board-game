@@ -192,11 +192,11 @@ const deckImages = {
                   [0, 1, 1],
                   [1, 0, 0]
                 ],
-                title: 'Codebreaker',
+                title: 'System Reset',
                 details: {
                     type: 'Station',
-                    effect: 'Destroy 1 station of your choice',
-                    text: 'Deploy a codebreaking algorithm to dismantle an opposing station.'
+                    effect: 'Move any upto 3 stations to any free slots',
+                    text: 'Initiate a system-wide reset, allowing you to recycle multiple stations.'
                 },
                 copies: 4
             },
@@ -207,11 +207,11 @@ const deckImages = {
                   [0, 1, 1],
                   [0, 0, 1]
                 ],
-                title: 'System Reset',
+                title: 'Codebreaker',
                 details: {
                     type: 'Station',
-                    effect: 'Move any upto 3 stations to any free slots',
-                    text: 'Initiate a system-wide reset, allowing you to recycle multiple stations.'
+                    effect: 'Destroy 1 station of your choice',
+                    text: 'Deploy a codebreaking algorithm to dismantle an opposing station.'
                 },
                 copies: 3
             },
