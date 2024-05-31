@@ -212,6 +212,15 @@ function updateUIFromState() {
     }
 
     updateDecks();
+    updateTotalPopulation();
+}
+
+function updateTotalPopulation() {
+    const totalPopulation = state.shared.players.reduce((acc, player) => acc + player.population, 0);
+    const halfPopulation = Math.ceil(totalPopulation / 2);
+
+    document.getElementById('total-population').textContent = `Total Population: ${totalPopulation}`;
+    document.getElementById('half-population').textContent = `Half Population: ${halfPopulation}`;
 }
 
 function handleData(data) {
