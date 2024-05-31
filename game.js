@@ -11,7 +11,7 @@ const jobMetadata = {
       initResources: 1,
    },
    "spiritual-leader": {
-      initResources: 3,
+      initResources: 2,
    },
    "engineer": {
       initResources: 1,
