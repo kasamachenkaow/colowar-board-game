@@ -223,7 +223,7 @@ function updateLargestPlayer() {
         return player.stations > acc.stations ? player : acc;
     });
 
-    document.getElementById('largest-player').textContent = `Largest group: ${mostStationsPlayer.stations} stations (${mostStationsPlayer.name})`;
+    document.getElementById('largest-player').textContent = `Largest player: ${mostStationsPlayer.stations} stations (${mostStationsPlayer.name})`;
 }
 
 function updateTotalPopulation() {
