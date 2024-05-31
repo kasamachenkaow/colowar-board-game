@@ -150,7 +150,7 @@ function updatePlayerUI(player, index) {
         icon.src = "images/no-player.png";
         status.textContent = 'Disconnected';
         cards.textContent = 'Cards: 0';
-        population.textContent = 'Population: 0';
+        population.textContent = 'Population: 10';
         skill.textContent = 'Skill: None';
         playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
     }
