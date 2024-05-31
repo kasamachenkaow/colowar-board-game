@@ -118,7 +118,7 @@ const deckImages = {
                 title: 'Station Multiplexer',
                 details: {
                     type: 'Station',
-                    effect: 'You can build up to 4 stations this turn',
+                    effect: 'Consumes 1 Resource to build 2 stations',
                     text: 'Utilize multiplexing technology to establish multiple stations simultaneously.'
                 },
                 copies: 4
