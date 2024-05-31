@@ -321,6 +321,13 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .game-info-container {
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            justify-content: left;
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
@@ -336,8 +343,11 @@
                 <button id="startGame" style="display:none;">Start Game</button>
                 <button id="stopGame" style="display:none;">Stop Game</button>
                 <div id="hostIdDisplay"></div>
-                <div id="total-population">Total Population: 40</div>
-                <div id="half-population">Half Population: 20</div>
+                <div class="game-info-container">
+                  <div id="total-population">Total Population: 40</div>
+                  <div id="half-population">Half Population: 20</div>
+                  <div id="largest-player">Largest group: 0 stations (n/a)</div>
+                </div>
             </div>
             <div id="player1" class="player-slot">
                 <img src="images/no-player.png" class="player-icon" alt="No Player">
@@ -347,6 +357,7 @@
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-population">Population: 10</div>
                 <div class="player-resources">Resources: 0</div>
+                <div class="player-stations">Stations: 0</div>
                 <div class="player-skill">Skill: None</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player1')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increasePopulation('player1')">Increase Population</button>
@@ -360,6 +371,7 @@
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-population">Population: 10</div>
                 <div class="player-resources">Resources: 0</div>
+                <div class="player-stations">Stations: 0</div>
                 <div class="player-skill">Skill: None</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player2')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increasePopulation('player2')">Increase Population</button>
@@ -373,6 +385,7 @@
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-population">Population: 10</div>
                 <div class="player-resources">Resources: 0</div>
+                <div class="player-stations">Stations: 0</div>
                 <div class="player-skill">Skill: None</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player3')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increasePopulation('player3')">Increase Population</button>
@@ -386,6 +399,7 @@
                 <div class="player-cards">Cards: 0</div>
                 <div class="player-population">Population: 10</div>
                 <div class="player-resources">Resources: 0</div>
+                <div class="player-stations">Stations: 0</div>
                 <div class="player-skill">Skill: None</div>
                 <button class="compact-button" style="display:none;" onclick="increaseJobLevel('player4')">Increase Job Level</button>
                 <button class="compact-button" style="display:none;" onclick="increasePopulation('player4')">Increase Population</button>

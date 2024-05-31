@@ -55,10 +55,10 @@ const state = {
 
 // Initialize the players array after defining the state
 state.shared.players = [
-    { ...initPlayer, id: 'player1', color: playerColors[0], resources: 0 },
-    { ...initPlayer, id: 'player2', color: playerColors[1], resources: 0 },
-    { ...initPlayer, id: 'player3', color: playerColors[2], resources: 0 },
-    { ...initPlayer, id: 'player4', color: playerColors[3], resources: 0 }
+    { ...initPlayer, id: 'player1', color: playerColors[0], resources: 0, stations: 0 },
+    { ...initPlayer, id: 'player2', color: playerColors[1], resources: 0, stations: 0 },
+    { ...initPlayer, id: 'player3', color: playerColors[2], resources: 0, stations: 0 },
+    { ...initPlayer, id: 'player4', color: playerColors[3], resources: 0, stations: 0 },
 ];
 
 function findCurrentPlayer() {
@@ -126,6 +126,7 @@ function updatePlayerUI(player, index) {
     const job = playerSlot.querySelector('.player-job');
     const resources = playerSlot.querySelector('.player-resources');
     const skill = playerSlot.querySelector('.player-skill');
+    const stations = playerSlot.querySelector('.player-stations');
 
     name.textContent = `Name: ${player.name}`;
     job.textContent = `Job: ${player.job} (Level ${player.jobLevel})`;
@@ -138,6 +139,7 @@ function updatePlayerUI(player, index) {
         cards.textContent = `Cards: ${player.cards}`;
         population.textContent = `Population: ${player.population}`;
         skill.textContent = getSkillTextForJob(player.job, player.jobLevel);
+        stations.textContent = `Stations: ${player.stations}`;
         if (peer.id === player.peerId) {
             playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'block');
         } else {
@@ -213,6 +215,15 @@ function updateUIFromState() {
 
     updateDecks();
     updateTotalPopulation();
+    updateLargestPlayer();
+}
+
+function updateLargestPlayer() {
+    const mostStationsPlayer = state.shared.players.reduce((acc, player) => {
+        return player.stations > acc.stations ? player : acc;
+    });
+
+    document.getElementById('largest-player').textContent = `Largest group: ${mostStationsPlayer.stations} stations (${mostStationsPlayer.name})`;
 }
 
 function updateTotalPopulation() {
@@ -625,6 +636,7 @@ function recycleStationOnBoard(slotIndex, player) {
     const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: null }) : s)
 
     player.resources++;
+    player.stations--;
 
     updateSharedState({
         ...state.shared,
@@ -643,6 +655,7 @@ function placeStationOnBoard(slotIndex, player) {
     const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: player.color }) : s)
 
     player.resources--;
+    player.stations++;
 
     updateSharedState({
         ...state.shared,
