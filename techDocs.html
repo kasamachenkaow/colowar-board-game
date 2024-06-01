@@ -8,6 +8,9 @@
         body {
             font-family: Arial, sans-serif;
         }
+        .search-container {
+            margin: 20px;
+        }
         .card-container {
             display: flex;
             flex-wrap: wrap;
@@ -46,11 +49,22 @@
 </head>
 <body>
     <h1>Deck Images Visualization</h1>
+    <div class="search-container">
+        <label for="job-select">Filter by job:</label>
+        <select id="job-select">
+            <option value="all">All</option>
+            <option value="engineer">Engineer</option>
+            <option value="scientist">Scientist</option>
+            <option value="hacker">Hacker</option>
+            <option value="spiritual-leader">Spiritual Leader</option>
+        </select>
+    </div>
     <div id="card-container" class="card-container"></div>
 
     <script src="./deckImages.js"></script>
     <script>
         const cardContainer = document.getElementById('card-container');
+        const jobSelect = document.getElementById('job-select');
 
         function createPattern(pattern) {
             const patternDiv = document.createElement('div');
@@ -90,12 +104,24 @@
             return cardDiv;
         }
 
-        for (const category in deckImages.tech) {
-            deckImages.tech[category].forEach(card => {
-                const cardElement = createCard(card);
-                cardContainer.appendChild(cardElement);
-            });
+        function displayCards(job) {
+            cardContainer.innerHTML = ''; // Clear the container
+            for (const category in deckImages.tech) {
+                if (job === 'all' || category === job) {
+                    deckImages.tech[category].forEach(card => {
+                        const cardElement = createCard(card);
+                        cardContainer.appendChild(cardElement);
+                    });
+                }
+            }
         }
+
+        jobSelect.addEventListener('change', () => {
+            displayCards(jobSelect.value);
+        });
+
+        // Initial display of all cards
+        displayCards('all');
     </script>
 </body>
 </html>
