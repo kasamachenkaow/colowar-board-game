@@ -8,7 +8,29 @@
         body {
             font-family: Arial, sans-serif;
         }
-        .search-container {
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+        .tab.active {
+            background-color: #ccc;
+        }
+        .job-section {
+            display: none;
+        }
+        .job-section.active {
+            display: block;
+        }
+        .job-section h2 {
+            font-size: 1.5em;
             margin: 20px;
         }
         .card-container {
@@ -25,18 +47,20 @@
         }
         .card h2 {
             font-size: 1.2em;
-            margin: 0;
+            margin: 0 0 10px 0;
         }
         .pattern {
             display: grid;
             grid-template-columns: repeat(3, 20px);
             grid-gap: 2px;
             margin: 10px 0;
+            position: relative;
         }
         .pattern div {
             width: 20px;
             height: 20px;
             background-color: #eee;
+            position: relative;
         }
         .pattern div.active {
             background-color: #333;
@@ -44,27 +68,25 @@
         .details {
             font-size: 0.9em;
             color: #555;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Deck Images Visualization</h1>
-    <div class="search-container">
-        <label for="job-select">Filter by job:</label>
-        <select id="job-select">
-            <option value="all">All</option>
-            <option value="engineer">Engineer</option>
-            <option value="scientist">Scientist</option>
-            <option value="hacker">Hacker</option>
-            <option value="spiritual-leader">Spiritual Leader</option>
-        </select>
+    <div class="tabs">
+        <div class="tab active" data-job="all">All</div>
+        <div class="tab" data-job="engineer">Engineer</div>
+        <div class="tab" data-job="scientist">Scientist</div>
+        <div class="tab" data-job="hacker">Hacker</div>
+        <div class="tab" data-job="spiritual-leader">Spiritual Leader</div>
     </div>
-    <div id="card-container" class="card-container"></div>
+    <div id="main-container"></div>
 
     <script src="./deckImages.js"></script>
     <script>
-        const cardContainer = document.getElementById('card-container');
-        const jobSelect = document.getElementById('job-select');
+        const mainContainer = document.getElementById('main-container');
+        const tabs = document.querySelectorAll('.tab');
 
         function createPattern(pattern) {
             const patternDiv = document.createElement('div');
@@ -104,24 +126,52 @@
             return cardDiv;
         }
 
-        function displayCards(job) {
-            cardContainer.innerHTML = ''; // Clear the container
-            for (const category in deckImages.tech) {
-                if (job === 'all' || category === job) {
-                    deckImages.tech[category].forEach(card => {
-                        const cardElement = createCard(card);
-                        cardContainer.appendChild(cardElement);
-                    });
-                }
-            }
+        function createJobSection(job, cards) {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.classList.add('job-section');
+            sectionDiv.dataset.job = job;
+
+            const header = document.createElement('h2');
+            header.textContent = job.charAt(0).toUpperCase() + job.slice(1);
+            sectionDiv.appendChild(header);
+
+            const cardContainer = document.createElement('div');
+            cardContainer.classList.add('card-container');
+            cards.forEach(card => {
+                const cardElement = createCard(card);
+                cardContainer.appendChild(cardElement);
+            });
+
+            sectionDiv.appendChild(cardContainer);
+            return sectionDiv;
         }
 
-        jobSelect.addEventListener('change', () => {
-            displayCards(jobSelect.value);
+        for (const job in deckImages.tech) {
+            const jobSection = createJobSection(job, deckImages.tech[job]);
+            mainContainer.appendChild(jobSection);
+        }
+
+        function showSection(job) {
+            const sections = document.querySelectorAll('.job-section');
+            sections.forEach(section => {
+                if (job === 'all' || section.dataset.job === job) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                showSection(tab.dataset.job);
+            });
         });
 
-        // Initial display of all cards
-        displayCards('all');
+        // Initially show all sections
+        showSection('all');
     </script>
 </body>
 </html>
