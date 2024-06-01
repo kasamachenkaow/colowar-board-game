@@ -960,13 +960,15 @@ function decreasePopulation(inputPlayer) {
 }
 
 function increaseResource() {
-    switch (state.shared.currentStep) {
-        case STEP.roll:
-            state.shared.currentStep = STEP.choose;
-            break;
-        case STEP.choose:
-            state.shared.currentStep = STEP.build;
-            break;
+    if (state.shared.isGameStarted) {
+      switch (state.shared.currentStep) {
+          case STEP.roll:
+              state.shared.currentStep = STEP.choose;
+              break;
+          case STEP.choose:
+              state.shared.currentStep = STEP.build;
+              break;
+      }
     }
 
     const player = state.shared.players.find(p => p.peerId === peer.id);
