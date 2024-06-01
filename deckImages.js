@@ -11,7 +11,7 @@ const deckImages = {
                 title: 'Bio-Enhancement',
                 details: {
                     type: 'Population',
-                    effect: 'Gain 5 Population',
+                    effect: 'Gain X Population, where X is the number of the adjacent stations',
                     text: 'Enhance biological systems to increase the population swiftly.'
                 },
                 copies: 3
@@ -26,7 +26,7 @@ const deckImages = {
                 title: 'Dark Protocol',
                 details: {
                     type: 'population',
-                    effect: 'Kill 5 Population',
+                    effect: 'Kill X Population, where X is the number of the adjacent stations',
                     text: 'Activate a covert protocol that results in the reduction of the population.'
                 },
                 copies: 3
@@ -103,7 +103,7 @@ const deckImages = {
                 title: 'Quantum Expansion',
                 details: {
                     type: 'population',
-                    effect: 'Gain 5 Population',
+                    effect: 'Gain X Population, where X is the number of the adjacent free slots',
                     text: 'Harness quantum technology to expand your population effortlessly.'
                 },
                 copies: 3
@@ -210,10 +210,10 @@ const deckImages = {
                 title: 'Signal Boost',
                 details: {
                     type: 'Population',
-                    effect: 'Gain 5 Population',
-                    text: 'Boost signal strength to increase your population through enhanced communications.'
+                    effect: 'Gain or Kill [1d8] Population',
+                    text: 'Boost signal strength to increase your population through enhanced communications.',
                 },
-                copies: 4,
+                copies: 3,
             },
             {
                 id: 'hacker_lv3_A',
