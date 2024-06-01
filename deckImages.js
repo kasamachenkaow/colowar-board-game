@@ -41,7 +41,7 @@ const deckImages = {
                 title: 'Galactic Recycler',
                 details: {
                     type: 'Station',
-                    effect: 'Move 1 of your stations',
+                    effect: 'Move 1 of your stations to any free slot',
                     text: 'Utilize advanced recycling techniques to repurpose one of your stations.'
                 },
                 copies: 4
