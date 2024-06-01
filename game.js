@@ -402,10 +402,14 @@ function setBoardState(boardState) {
     slots.forEach((slot, index) => {
         slot.innerHTML = '';
         const state = boardState[index];
+
         if (state) {
+            const row = Math.floor(index / 6) + 1;
+            const col = (index % 6) + 1;
+
             const indicator = document.createElement('div');
             indicator.className = 'slot-indicator';
-            indicator.textContent = state.type || '';
+            indicator.textContent = `${state.type || ''} (${row}, ${col})`;
             slot.appendChild(indicator);
             if (state.playerColor) {
                 slot.style.backgroundColor = state.playerColor;
@@ -768,12 +772,7 @@ function initializeBoard() {
     shuffle(slotTypes);
 
     slots.forEach((slot, index) => {
-        slot.innerHTML = '';
         const type = slotTypes[index];
-        const indicator = document.createElement('div');
-        indicator.className = 'slot-indicator';
-        indicator.textContent = type;
-        slot.appendChild(indicator);
         state.shared.board[index] = { type, playerColor: null };
     });
 }
