@@ -47,17 +47,17 @@ const deckImages = {
                 copies: 4
             },
             {
-                id: 'engineer_lv3_B',
+                id: 'engineer_lv4_A',
                 pattern:  [
-                  [0, 1, 0],
+                  [1, 0, 1],
                   [0, 1, 0],
                   [0, 1, 0]
                 ],
                 title: 'Photon Shift',
                 details: {
                     type: 'Station',
-                    effect: 'Move 2 stations in a group freely to adjacent free slot of the group',
-                    text: 'Manipulate photon energy to shift a station to a new position within the group.'
+                    effect: 'Move a station to any free slot and build your station in the old slot',
+                    text: 'Shift photons to move a station to a new location and construct a new station in its place.'
                 },
                 copies: 4
             },
@@ -74,7 +74,7 @@ const deckImages = {
                     effect: 'Move all adjacent stations to other adjacent free slots (they get destroyed if no free slots)',
                     text: 'Reconfigure the positions of all adjacent stations, reshaping the stellar map.'
                 },
-                copies: 2
+                copies: 3
             },
             {
                 id: 'engineer_lv9_A',
