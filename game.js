@@ -21,6 +21,13 @@ const jobMetadata = {
    },
 }
 
+const STEP = {
+  'roll': 0,
+  'choose': 1,
+  'build': 2,
+  'play': 3,
+}
+
 const initPlayer = {
     peerId: null,
     connected: false,
@@ -47,6 +54,7 @@ const state = {
         playArea: { cardId: null, playerColor: null },
         rollHistory: [],
         cardInfos: {},
+        currentStep: STEP['roll'],
     },
     player: {
         ...initPlayer
@@ -74,6 +82,11 @@ function initSlotsBoard() {
         slot.dataset.index = i;
         slot.addEventListener('click', (e) => {
             e.preventDefault();
+
+
+            if (state.shared.currentStep === STEP.build) {
+               state.shared.currentStep = STEP.play;
+            }
 
             const slotIndex = slot.dataset.index;
             const player = findCurrentPlayer();
@@ -201,6 +214,8 @@ function updateUIFromState() {
         const { deckId, cardId, playerColor, playerJob, playerPeerId } = state.shared.playArea;
         if (deckId && cardId && playerColor && playerJob && playerPeerId) {
             playCard(deckId, cardId, playerColor, playerJob, playerPeerId);
+        } else {
+            clearCardFromPlayArea();
         }
     }
 
@@ -216,6 +231,7 @@ function updateUIFromState() {
     updateDecks();
     updateTotalPopulation();
     updateLargestPlayer();
+    updateStepsUI();
 }
 
 function updateLargestPlayer() {
@@ -352,6 +368,11 @@ document.getElementById('stopGame').addEventListener('click', () => {
     }
 });
 
+function hasStation(die1, die2) {
+    const slotIndex = (die1 - 1) * 6 + (die2 - 1);
+    return state.shared.board[slotIndex].playerColor;
+}
+
 function rollDice(diceType) {
     console.log('Rolling dice:', diceType)
 
@@ -372,6 +393,10 @@ function rollDice(diceType) {
                 const die2 = Math.floor(Math.random() * 6) + 1;
                 result = { playerName: currPlayer.name, values: [die1, die2] };
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
+
+                if(!hasStation(die1, die2)) {
+                    state.shared.currentStep = STEP.choose;
+                }
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
                 result = { playerName: currPlayer.name, values: die1 };
@@ -497,6 +522,7 @@ function loadPlayerDeckImages(job) {
 document.getElementById('rollDice').addEventListener('click', function() {
     if (state.shared.isGameStarted) {
         const diceType = document.getElementById('dice-type').value;
+
         rollDice(diceType);
     }
 });
@@ -526,6 +552,16 @@ function isPlayerDeck(deckId) {
 hand.addEventListener('drop', (e) => {
     if (state.shared.isGameStarted) {
         e.preventDefault();
+
+        switch(state.shared.currentStep) {
+           case STEP.roll:
+              state.shared.currentStep = STEP.choose;
+              break;
+           case STEP.choose:
+              state.shared.currentStep = STEP.build;
+              break;
+        }
+
         const deckId = e.dataTransfer.getData('text/plain');
         console.log('Dropping card from deck:', deckId);
         const deckNode = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
@@ -681,6 +717,9 @@ playArea.addEventListener('dragover', (e) => {
 playArea.addEventListener('drop', (e) => {
     if (state.shared.isGameStarted) {
         e.preventDefault();
+
+        state.shared.currentStep = STEP.play;
+
         const deckCardId = e.dataTransfer.getData('text/plain');
         const [deckId, cardId, playerPeerId] = deckCardId.split(cardIdDelim);
         const card = document.querySelector(`.card[data-deck-card-id='${deckCardId}']`);
@@ -707,6 +746,12 @@ function putCardInPlayArea(card, playerColor, deckId, cardId, playerPeerId) {
         const cardInfo = getCardInfo(deckId, cardId, playerPeerId);
         showCardDetails(cardInfo);
     });
+}
+
+function clearCardFromPlayArea() {
+    const playArea = document.getElementById('play-area');
+    playArea.innerHTML = '';
+    playArea.style.backgroundColor = 'transparent';
 }
 
 // Play a card in the play area
@@ -918,6 +963,15 @@ function decreasePopulation(inputPlayer) {
 }
 
 function increaseResource() {
+    switch (state.shared.currentStep) {
+        case STEP.roll:
+            state.shared.currentStep = STEP.choose;
+            break;
+        case STEP.choose:
+            state.shared.currentStep = STEP.build;
+            break;
+    }
+
     const player = state.shared.players.find(p => p.peerId === peer.id);
     if (player) {
         player.resources += 1;
@@ -933,30 +987,42 @@ function decreaseResource() {
     }
 }
 
+function setActiveStep(stepIndex) {
+    const steps = document.querySelectorAll(".step");
+
+    steps.forEach((step, i) => {
+        if (i === stepIndex) {
+            step.classList.add("active");
+        } else {
+            step.classList.remove("active");
+        }
+    });
+}
+
+function updateStepsUI() {
+    const currentStep = state.shared.currentStep;
+    setActiveStep(currentStep);
+}
+
 function initTurnSteps() {
     const steps = document.querySelectorAll(".step");
     const endTurnButton = document.getElementById("end-turn");
 
-    function setActiveStep(index) {
-        steps.forEach((step, i) => {
-            if (i === index) {
-                step.classList.add("active");
-            } else {
-                step.classList.remove("active");
-            }
-        });
-    }
-
     steps.forEach((step, index) => {
         step.addEventListener("click", () => {
-            setActiveStep(index);
+           state.shared.currentStep = index;
+           updateSharedState();
         });
     });
 
     endTurnButton.addEventListener("click", () => {
-        setActiveStep(0);
-    });
+        state.shared.currentStep = STEP.roll;
 
-    // Initialize the first step as active
-    setActiveStep(0);
+        updateSharedState({
+            ...state.shared,
+            playArea: {},
+        });
+
+        updateSharedState();
+    });
 }
