@@ -890,24 +890,29 @@ function shuffle(array) {
 
 function increaseJobLevel() {
     const player = state.shared.players.find(p => p.peerId === peer.id);
+
     if (player && player.jobLevel < 3) {
         player.jobLevel += 1;
         updateSharedState();
     }
 }
 
-function increasePopulation() {
+function increasePopulation(inputPlayer) {
     const player = state.shared.players.find(p => p.peerId === peer.id);
+    const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
+
     if (player) {
-        player.population += 1;
+        player.population += parseInt(populationChange);
         updateSharedState();
     }
 }
 
-function decreasePopulation() {
+function decreasePopulation(inputPlayer) {
     const player = state.shared.players.find(p => p.peerId === peer.id);
+    const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
+
     if (player) {
-        player.population -= 1;
+        player.population -= parseInt(populationChange);
         updateSharedState();
     }
 }
