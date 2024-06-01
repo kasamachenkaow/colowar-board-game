@@ -105,7 +105,7 @@
             return patternDiv;
         }
 
-        function createCard(card) {
+        function createCard(card, totalCopies) {
             const cardDiv = document.createElement('div');
             cardDiv.classList.add('card');
 
@@ -116,13 +116,15 @@
             const pattern = createPattern(card.pattern);
             cardDiv.appendChild(pattern);
 
+            const percentage = ((card.copies / totalCopies) * 100).toFixed(2);
+
             const details = document.createElement('div');
             details.classList.add('details');
             details.innerHTML = `
                 <p><strong>Type:</strong> ${card.details.type}</p>
                 <p><strong>Effect:</strong> ${card.details.effect}</p>
                 <p><strong>Text:</strong> ${card.details.text}</p>
-                <p><strong>Copies:</strong> ${card.copies}</p>
+                <p><strong>Copies:</strong> ${card.copies} (${percentage}%)</p>
             `;
             cardDiv.appendChild(details);
 
@@ -134,7 +136,7 @@
             sectionDiv.classList.add('job-section');
             sectionDiv.dataset.job = job;
 
-            const totalCopies = cards.reduce((sum, card) => sum += card.copies, 0);
+            const totalCopies = cards.reduce((sum, card) => sum + card.copies, 0);
 
             const header = document.createElement('h2');
             header.textContent = `${job.charAt(0).toUpperCase() + job.slice(1)} (${totalCopies} copies)`;
@@ -143,7 +145,7 @@
             const cardContainer = document.createElement('div');
             cardContainer.classList.add('card-container');
             cards.forEach(card => {
-                const cardElement = createCard(card);
+                const cardElement = createCard(card, totalCopies);
                 cardContainer.appendChild(cardElement);
             });
 
