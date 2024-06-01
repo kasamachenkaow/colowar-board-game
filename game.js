@@ -947,7 +947,7 @@ function increasePopulation(inputPlayer) {
     const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
 
     if (player) {
-        player.population += parseInt(populationChange);
+        player.population += parseInt(populationChange || '1');
         updateSharedState();
     }
 }
@@ -957,7 +957,7 @@ function decreasePopulation(inputPlayer) {
     const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
 
     if (player) {
-        player.population -= parseInt(populationChange);
+        player.population -= parseInt(populationChange || '1');
         updateSharedState();
     }
 }
