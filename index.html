@@ -104,7 +104,7 @@
             box-sizing: border-box;
             text-align: center;
             font-weight: bold;
-            color: white;
+            color: lightgrey;
             font-size: 18px;
         }
         .step {
@@ -118,6 +118,10 @@
         }
         .step:hover {
             background-color: #45a049;
+        }
+        .step.active {
+            background-color: #388E3C;
+            color: white;
         }
         .step + .arrow {
             margin-left: -5px;
@@ -368,6 +372,21 @@
             justify-content: left;
             margin: 10px;
         }
+        #end-turn {
+            margin-top: 10px;
+            margin-left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #FF5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #end-turn:hover {
+            background-color: #E64A19;
+        }
     </style>
 </head>
 <body>
@@ -454,11 +473,12 @@
             <div id="steps-container">
                 <div class="step" id="step-roll">Roll slot dices</div>
                 <div class="arrow">&rarr;</div>
-                <div class="step" id="step-choose">Choose <strong>Resource</strong> or <strong>Tech</strong></div>
+                <div class="step" id="step-choose">Choose [R] or [T]</div>
                 <div class="arrow">&rarr;</div>
                 <div class="step" id="step-build">Build stations</div>
                 <div class="arrow">&rarr;</div>
                 <div class="step" id="step-play">Play tech cards</div>
+                <button id="end-turn">End Turn</button>
             </div>
             <div id="board-container">
                 <div id="snackbar"></div>

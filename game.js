@@ -763,6 +763,7 @@ window.onclick = function(event) {
 document.addEventListener('DOMContentLoaded', () => {
     initSlotsBoard();
     updateUIFromState();
+    initTurnSteps();
 });
 
 function initializeBoard() {
@@ -930,4 +931,32 @@ function decreaseResource() {
         player.resources -= 1;
         updateSharedState();
     }
+}
+
+function initTurnSteps() {
+    const steps = document.querySelectorAll(".step");
+    const endTurnButton = document.getElementById("end-turn");
+
+    function setActiveStep(index) {
+        steps.forEach((step, i) => {
+            if (i === index) {
+                step.classList.add("active");
+            } else {
+                step.classList.remove("active");
+            }
+        });
+    }
+
+    steps.forEach((step, index) => {
+        step.addEventListener("click", () => {
+            setActiveStep(index);
+        });
+    });
+
+    endTurnButton.addEventListener("click", () => {
+        setActiveStep(0);
+    });
+
+    // Initialize the first step as active
+    setActiveStep(0);
 }
