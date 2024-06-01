@@ -93,6 +93,30 @@
             flex-grow: 1;
             width: 100%;
         }
+        #steps-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            border-bottom: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+        }
+        .step {
+            margin: 0 10px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .step:hover {
+            background-color: #45a049;
+        }
         #snackbar {
             visibility: hidden;
             min-width: 250px;
@@ -417,6 +441,12 @@
             </div>
         </div>
         <div id="main-area">
+            <div id="steps-container">
+                <div class="step" id="step-roll">Roll slot dices</div>
+                <div class="step" id="step-choose">Choose <strong>Resource</strong> or <strong>Tech</strong></div>
+                <div class="step" id="step-build">Build stations</div>
+                <div class="step" id="step-play">Play tech cards</div>
+            </div>
             <div id="board-container">
                 <div id="snackbar"></div>
                 <div id="board"></div>
