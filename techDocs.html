@@ -53,7 +53,7 @@
             display: grid;
             grid-template-columns: repeat(3, 20px);
             grid-gap: 2px;
-            margin: 10px 0;
+            margin: 10px 0 20px 0; /* Added margin-bottom */
             position: relative;
         }
         .pattern div {
@@ -68,7 +68,9 @@
         .details {
             font-size: 0.9em;
             color: #555;
-            margin-top: 10px;
+        }
+        .details p {
+            margin: 5px 0; /* Added margin between details */
         }
     </style>
 </head>
@@ -117,9 +119,9 @@
             const details = document.createElement('div');
             details.classList.add('details');
             details.innerHTML = `
-                <strong>Type:</strong> ${card.details.type} <br>
-                <strong>Effect:</strong> ${card.details.effect} <br>
-                <strong>Text:</strong> ${card.details.text}
+                <p><strong>Type:</strong> ${card.details.type}</p>
+                <p><strong>Effect:</strong> ${card.details.effect}</p>
+                <p><strong>Text:</strong> ${card.details.text}</p>
             `;
             cardDiv.appendChild(details);
 
