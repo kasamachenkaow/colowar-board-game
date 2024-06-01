@@ -84,7 +84,7 @@ function initSlotsBoard() {
             e.preventDefault();
 
 
-            if (state.shared.currentStep === STEP.build) {
+            if (state.shared.isGameStarted && state.shared.currentStep === STEP.build) {
                state.shared.currentStep = STEP.play;
             }
 
@@ -351,8 +351,6 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 });
 
 document.getElementById('startGame').addEventListener('click', () => {
-    initializeBoard();
-
     updateSharedState({
         ...state.shared,
         isGameStarted: true
@@ -400,7 +398,7 @@ function rollDice(diceType) {
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
                 result = { playerName: currPlayer.name, values: die1 };
-                diceResult.textContent = `Result: (${result})`;
+                diceResult.textContent = `Result: (${die1})`;
             }
             const newRollHistory = [result, ...state.shared.rollHistory];
 
@@ -531,18 +529,16 @@ document.getElementById('rollDice').addEventListener('click', function() {
 const decks = document.querySelectorAll('.deck-card');
 decks.forEach(deck => {
     deck.addEventListener('dragstart', (e) => {
-        if (state.shared.isGameStarted) {
-            e.dataTransfer.setData('text/plain', deck.dataset.deckId);
-        }
+        e.dataTransfer.setData('text/plain', deck.dataset.deckId);
     });
 });
 
 // Handle dropping cards into the hand
 const hand = document.getElementById('hand');
 hand.addEventListener('dragover', (e) => {
-    if (state.shared.isGameStarted) {
-        e.preventDefault();
-    }
+    e.preventDefault();
+    const deckId = e.dataTransfer.getData('text/plain');
+    return !!deckId;
 });
 
 function isPlayerDeck(deckId) {
@@ -550,44 +546,44 @@ function isPlayerDeck(deckId) {
 }
 
 hand.addEventListener('drop', (e) => {
+    e.preventDefault();
+
     if (state.shared.isGameStarted) {
-        e.preventDefault();
+      switch(state.shared.currentStep) {
+         case STEP.roll:
+            state.shared.currentStep = STEP.choose;
+            break;
+         case STEP.choose:
+            state.shared.currentStep = STEP.build;
+            break;
+      }
+    }
 
-        switch(state.shared.currentStep) {
-           case STEP.roll:
-              state.shared.currentStep = STEP.choose;
-              break;
-           case STEP.choose:
-              state.shared.currentStep = STEP.build;
-              break;
-        }
+    const deckId = e.dataTransfer.getData('text/plain');
+    console.log('Dropping card from deck:', deckId);
+    const deckNode = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
+    const count = parseInt(deckNode.textContent);
+    if (count > 0) {
+        const deck = isPlayerDeck(deckId) ? state.player.decks[deckId] : state.shared.decks[deckId];
+        const card = deck.pop();
+        addCardToHand(deckId, card.id);
 
-        const deckId = e.dataTransfer.getData('text/plain');
-        console.log('Dropping card from deck:', deckId);
-        const deckNode = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
-        const count = parseInt(deckNode.textContent);
-        if (count > 0) {
-            const deck = isPlayerDeck(deckId) ? state.player.decks[deckId] : state.shared.decks[deckId];
-            const card = deck.pop();
-            addCardToHand(deckId, card.id);
-
-            if (isPlayerDeck(deckId)) {
-                updatePlayerState({
-                    ...state.player,
-                    decks: {
-                        ...state.player.decks,
-                        [deckId]: state.player.decks[deckId].slice(0, count - 1)
-                    }
-                });
-            } else {
-                updateSharedState({
-                    ...state.shared,
-                    decks: {
-                        ...state.shared.decks,
-                        [deckId]: state.shared.decks[deckId].slice(0, count - 1)
-                    }
-                });
-            }
+        if (isPlayerDeck(deckId)) {
+            updatePlayerState({
+                ...state.player,
+                decks: {
+                    ...state.player.decks,
+                    [deckId]: state.player.decks[deckId].slice(0, count - 1)
+                }
+            });
+        } else {
+            updateSharedState({
+                ...state.shared,
+                decks: {
+                    ...state.shared.decks,
+                    [deckId]: state.shared.decks[deckId].slice(0, count - 1)
+                }
+            });
         }
     }
 });
@@ -809,6 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSlotsBoard();
     updateUIFromState();
     initTurnSteps();
+    initializeBoard();
 });
 
 function initializeBoard() {
