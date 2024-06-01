@@ -14,7 +14,7 @@ const deckImages = {
                     effect: 'Gain 5 Population',
                     text: 'Enhance biological systems to increase the population swiftly.'
                 },
-                copies: 5
+                copies: 3
             },
             {
                 id: 'engineer_lv2_B',
@@ -29,7 +29,7 @@ const deckImages = {
                     effect: 'Kill 5 Population',
                     text: 'Activate a covert protocol that results in the reduction of the population.'
                 },
-                copies: 5
+                copies: 3
             },
             {
                 id: 'engineer_lv3_A',
@@ -62,11 +62,11 @@ const deckImages = {
                 copies: 4
             },
             {
-                id: 'engineer_lv4_A',
+                id: 'engineer_lv5_A',
                 pattern:  [
-                  [1, 1, 0],
-                  [1, 1, 0],
-                  [0, 0, 0]
+                  [0, 1, 0],
+                  [1, 1, 1],
+                  [0, 1, 0]
                 ],
                 title: 'Stellar Reconfiguration',
                 details: {
@@ -75,6 +75,21 @@ const deckImages = {
                     text: 'Reconfigure the positions of all adjacent stations, reshaping the stellar map.'
                 },
                 copies: 2
+            },
+            {
+                id: 'engineer_lv9_A',
+                pattern:  [
+                  [1, 1, 1],
+                  [1, 1, 1],
+                  [1, 1, 1]
+                ],
+                title: 'Fission Reactor',
+                details: {
+                    type: 'Station',
+                    effect: 'Destroy all adjacent stations for of your stations',
+                    text: 'Trigger a chain reaction that moves all adjacent stations to new positions.'
+                },
+                copies: 1
             },
         ],
         scientist: [
@@ -163,10 +178,25 @@ const deckImages = {
                 title: 'Nova Blast',
                 details: {
                     type: 'Station',
-                    effect: 'Eliminate all stations of 2 adjacent rows/columns',
+                    effect: 'Eliminate all stations of 1 adjacent rows/columns',
                     text: 'Release a massive energy blast, obliterating stations in a wide area.'
                 },
-                copies: 2
+                copies: 3
+            },
+            {
+                id: 'scientist_lv8_A',
+                pattern:  [
+                  [1, 1, 1],
+                  [1, 0, 1],
+                  [1, 1, 1]
+                ],
+                title: 'Singularity',
+                details: {
+                    type: 'Station',
+                    effect: 'Eliminate all stations of 4x4 area',
+                    text: 'Create a singularity to consume all stations within a large area.'
+                },
+                copies: 1
             },
         ],
         hacker: [
