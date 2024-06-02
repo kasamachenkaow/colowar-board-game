@@ -56,7 +56,7 @@ const deckImages = {
                 title: 'Photon Shift',
                 details: {
                     type: 'Station',
-                    effect: 'Move a station to any free slot and build your station in the old slot',
+                    effect: 'Move a station to any free slot and build your new station in the old slot',
                     text: 'Shift photons to move a station to a new location and construct a new station in its place.'
                 },
                 copies: 4
@@ -71,7 +71,7 @@ const deckImages = {
                 title: 'Stellar Reconfiguration',
                 details: {
                     type: 'Station',
-                    effect: 'Move all adjacent stations to other adjacent free slots (they get destroyed if no free slots)',
+                    effect: 'Bounce all adjacent stations to other adjacent free slots (they get destroyed if no free slots)',
                     text: 'Reconfigure the positions of all adjacent stations, reshaping the stellar map.'
                 },
                 copies: 3
@@ -87,7 +87,7 @@ const deckImages = {
                 details: {
                     type: 'Station',
                     effect: 'Destroy all adjacent stations for of your stations',
-                    text: 'Trigger a chain reaction that moves all adjacent stations to new positions.'
+                    text: 'Trigger a fission reaction to obliterate all adjacent stations.'
                 },
                 copies: 1
             },
@@ -210,8 +210,8 @@ const deckImages = {
                 title: 'Signal Boost',
                 details: {
                     type: 'Population',
-                    effect: 'Gain or Kill [1d8] Population',
-                    text: 'Boost signal strength to increase your population through enhanced communications.',
+                    effect: 'Gain or Kill [1d8] Population of 1 opponent',
+                    text: 'Amplify the signal to either increase or decrease the population.',
                 },
                 copies: 3,
             },
@@ -302,7 +302,7 @@ const deckImages = {
                 title: 'Ascension Surge',
                 details: {
                     type: 'Population',
-                    effect: 'Gain 8 Population',
+                    effect: 'Gain X Population, where X is the number of the other players stations',
                     text: 'Trigger a surge of ascension, significantly boosting your population.'
                 },
                 copies: 3
@@ -332,8 +332,8 @@ const deckImages = {
                 title: 'Essence Drain',
                 details: {
                     type: 'Population',
-                    effect: 'Steal 4 Population from an opponent',
-                    text: 'Drain the essence of your rivals, adding their population to yours.'
+                    effect: 'Steal 2 Population from 2 opponents',
+                    text: 'Drain the essence of your enemies, transferring their population to your own.'
                 },
                 copies: 3
             },
@@ -347,7 +347,7 @@ const deckImages = {
                 title: 'Void Purge',
                 details: {
                     type: 'Population',
-                    effect: 'Kill 6 Population from an opponent',
+                    effect: 'Kill 8 Population from an opponent',
                     text: 'Purge your enemies into the void, reducing their population.'
                 },
                 copies: 3
@@ -362,8 +362,8 @@ const deckImages = {
                 title: 'Shadow Erasure',
                 details: {
                     type: 'Population',
-                    effect: 'Kill 6 Population from an opponent',
-                    text: 'Erase the shadows of your foes, eliminating part of their population.'
+                    effect: 'Kill 4 Population from 2 opponents',
+                    text: 'Erase the shadows of your enemies, reducing their population.'
                 },
                 copies: 3
             },
