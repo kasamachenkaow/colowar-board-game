@@ -86,7 +86,7 @@ const deckImages = {
                 title: 'Fission Reactor',
                 details: {
                     type: 'Station',
-                    effect: 'Destroy all adjacent stations for of your stations',
+                    effect: 'Destroy all other adjacent stations',
                     text: 'Trigger a fission reaction to obliterate all adjacent stations.'
                 },
                 copies: 1
