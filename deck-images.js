@@ -160,11 +160,11 @@ const deckImages = {
                   [1, 1, 1],
                   [0, 0, 0]
                 ],
-                title: 'Chrono Distortion',
+                title: 'Bytes Shift',
                 details: {
-                    type: 'Special',
-                    effect: 'Take another turn',
-                    text: 'Distort the fabric of time, allowing you to take an additional turn.'
+                    type: 'Station',
+                    effect: 'Shift a selected row by 1 slot, you can choose the direction',
+                    text: 'Shift bytes to move an entire row of stations by one slot.'
                 },
                 copies: 3
             },
@@ -217,7 +217,6 @@ const deckImages = {
             },
             {
                 id: 'hacker_lv3_A',
-                pattern:  [
                   [0, 0, 0],
                   [0, 1, 1],
                   [1, 0, 0]
