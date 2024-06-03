@@ -124,7 +124,7 @@ function updateSharedState(newSharedState) {
         updateUIFromState();
         broadcastState();
     } else if (conn) {
-        conn.send({ type: 'updateState', sharedState: state.shared });
+        sendSharedStateToHost();
     }
 }
 
@@ -279,6 +279,7 @@ function handleData(data) {
     console.log('Received data:', data);
 
     if (data.type === 'updateState') {
+        data.sharedState.players = fillOtherPlayers(data.sharedState.players)
         updateSharedState(data.sharedState);
     }
 
@@ -290,9 +291,17 @@ function handleData(data) {
 
     if (data.type === 'gameStarted') {
         showSnackbar('Game Started');
+        replaceSharedState(data.sharedState);
         putInitTechCardsToHand();
     }
 }
+
+function fillOtherPlayers(players) {
+    const updatingPlayer = players[0];
+    const otherPlayers = state.shared.players.filter(p => p.peerId !== updatingPlayer.peerId);
+    return [...otherPlayers, updatingPlayer].sort((a, b) => a.id < b.id ? -1 : 1);
+}
+
 
 function putInitTechCardsToHand() {
     const currPlayer = findCurrentPlayer();
@@ -307,9 +316,38 @@ function putCardToHand(deckId, count) {
     }
 }
 
+const broadcastTimeouts = {};
+
 function broadcast(data) {
-    console.log('Broadcasting data:', data);
-    connections.forEach(connection => connection.send(data));
+    if (broadcastTimeouts[data.type]) {
+        clearTimeout(broadcastTimeouts[data.type]);
+    }
+
+    // Boucing the broadcast if multiple broadcasts are happening for the same type
+    broadcastTimeouts[data.type] = setTimeout(() => {
+      console.log('Broadcasting data:', data);
+      connections.forEach(connection => connection.send(data));
+    }, 100);
+}
+
+function sendSharedStateToHost(data) {
+    const sharedStateWithoutOtherPlayers = {
+        ...state.shared,
+        players: state.shared.players.filter(p => p.peerId === peer.id),
+    };
+    sendToHost({ type: 'updateState', sharedState: sharedStateWithoutOtherPlayers });
+}
+const sendToHostTimeouts = {};
+function sendToHost(data) {
+    if (sendToHostTimeouts[data.type]) {
+        clearTimeout(sendToHostTimeouts[data.type]);
+    }
+
+    // Boucing the sending to host if multiple sendings are happening for the same type
+    sendSharedStateToHost[data.type] = setTimeout(() => {
+      console.log('Sending data to host', data);
+      conn.send(data);
+    }, 50);
 }
 
 document.getElementById('startHost').addEventListener('click', () => {
@@ -401,14 +439,12 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 
 document.getElementById('startGame').addEventListener('click', () => {
     const stationsToWin = 17 - (state.shared.players.filter(p => !!p.peerId).length * 2);
-    updateSharedState({
-        ...state.shared,
-        stationsToWin,
-        isGameStarted: true
-    });
+
+    state.shared.stationsToWin = stationsToWin;
+    state.shared.isGameStarted = true;
 
     showSnackbar('Game Started');
-    broadcast({ type: 'gameStarted' });
+    broadcast({ type: 'gameStarted', sharedState: state.shared });
     putInitTechCardsToHand();
 });
 
