@@ -79,7 +79,7 @@ state.shared.players = [
 ];
 
 function findCurrentPlayer() {
-    return state.shared.players.find(p => p.peerId === peer.id);
+    return state.shared.players.find(p => p?.peerId === peer.id);
 }
 
 function initSlotsBoard() {
@@ -134,7 +134,16 @@ function updatePlayerState(newPlayerState) {
 }
 
 function replaceSharedState(newSharedState) {
+    const currPlayer = findCurrentPlayer();
+
     state.shared = newSharedState;
+
+    // only update the other players' state
+    if (currPlayer) {
+        const currPlayerIndex = state.shared.players.findIndex(p => p.peerId === peer.id);
+        state.shared.players[currPlayerIndex] = currPlayer;
+    }
+
     updateUIFromState();
 }
 
@@ -172,7 +181,7 @@ function updatePlayerUI(player, index) {
         icon.src = "images/no-player.png";
         status.textContent = 'Disconnected';
         cards.textContent = 'Cards: 0';
-        population.textContent = 'Population: 10';
+        population.textContent = `Population: ${initPlayer.population}`;
         skill.textContent = 'Skill: None';
         playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
     }
