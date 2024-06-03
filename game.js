@@ -410,7 +410,9 @@ function rollDice(diceType) {
                 result = { playerName: currPlayer.name, values: [die1, die2] };
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
 
-                if(!hasStation(die1, die2)) {
+                if(hasStation(die1, die2)) {
+                    state.shared.currentStep = STEP.roll;
+                } else {
                     state.shared.currentStep = STEP.choose;
                 }
             } else {
