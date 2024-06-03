@@ -340,6 +340,13 @@ document.getElementById('startHost').addEventListener('click', () => {
         console.error('PeerJS error: ', err);
         showSnackbar(`Error: ${err}`);
     });
+
+    peer.on('disconnected', () => {
+        console.log('PeerJS disconnected');
+        showSnackbar('PeerJS disconnected, reconnecting...');
+
+        peer.reconnect();
+    });
 });
 
 document.getElementById('joinGame').addEventListener('click', () => {
