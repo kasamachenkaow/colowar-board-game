@@ -460,10 +460,10 @@ const deckImages = {
               copies: 3,
             },
             {
-              id: 'politician_lv6_A',
+              id: 'politician_lv7_A',
               pattern: [
                 [1, 0, 1],
-                [1, 0, 1],
+                [1, 1, 1],
                 [1, 0, 1]
               ],
               title: `Coup d'état`,
