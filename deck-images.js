@@ -100,7 +100,7 @@ const deckImages = {
                   [1, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'Quantum Expansion',
+                title: 'Growt Serum',
                 details: {
                     type: 'population',
                     effect: 'Gain X Population, where X is the number of the adjacent free slots',
@@ -130,7 +130,7 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 0, 1]
                 ],
-                title: 'Station Multiplexer',
+                title: 'Resource Optimization',
                 details: {
                     type: 'Station',
                     effect: 'Consumes 1 Resource to build 2 stations',
@@ -145,11 +145,11 @@ const deckImages = {
                   [1, 1, 1],
                   [0, 0, 0]
                 ],
-                title: 'Terraforming Beacon',
+                title: 'Technology Breakthrough',
                 details: {
                     type: 'Station',
                     effect: 'Build 1 station',
-                    text: 'Activate a terraforming beacon to construct a new station.'
+                    text: 'Achieve a technological breakthrough to construct a new station without using resources.'
                 },
                 copies: 4
             },
@@ -175,11 +175,11 @@ const deckImages = {
                   [0, 1, 0],
                   [1, 0, 1]
                 ],
-                title: 'Nova Blast',
+                title: 'Photon Cannon',
                 details: {
                     type: 'Station',
                     effect: 'Eliminate all stations of 1 rows/columns',
-                    text: 'Release a massive energy blast, obliterating stations in a wide area.'
+                    text: 'Deploy a photon cannon to eliminate all stations in a row or column.'
                 },
                 copies: 3
             },
@@ -190,11 +190,11 @@ const deckImages = {
                   [1, 0, 1],
                   [1, 1, 1]
                 ],
-                title: 'Singularity',
+                title: 'Synthetic Black Hole',
                 details: {
                     type: 'Station',
                     effect: 'Eliminate all stations of 4x4 area',
-                    text: 'Create a singularity to consume all stations within a large area.'
+                    text: 'Create a synthetic black hole to eliminate all stations in a 4x4 area.'
                 },
                 copies: 1
             },
@@ -222,11 +222,11 @@ const deckImages = {
                   [0, 1, 1],
                   [1, 0, 0]
                 ],
-                title: 'System Reset',
+                title: 'Stations Swap',
                 details: {
                     type: 'Station',
                     effect: 'Swap any 2 slots',
-                    text: 'Trigger a system reset to reposition any two stations.'
+                    text: 'Swap the positions of two stations to reconfigure the layout.'
                 },
                 copies: 4
             },
@@ -237,11 +237,11 @@ const deckImages = {
                   [0, 1, 1],
                   [0, 0, 1]
                 ],
-                title: 'Codebreaker',
+                title: 'System Subotage',
                 details: {
                     type: 'Station',
                     effect: 'Destroy 1 station of your choice',
-                    text: 'Deploy a codebreaking algorithm to dismantle an opposing station.'
+                    text: 'Sabotage the system to destroy a station of your choice.'
                 },
                 copies: 3
             },
