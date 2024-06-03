@@ -225,8 +225,8 @@ const deckImages = {
                 title: 'System Reset',
                 details: {
                     type: 'Station',
-                    effect: 'Move any upto 3 stations to any free slots',
-                    text: 'Initiate a system-wide reset, allowing you to recycle multiple stations.'
+                    effect: 'Swap any 2 slots',
+                    text: 'Trigger a system reset to reposition any two stations.'
                 },
                 copies: 4
             },
