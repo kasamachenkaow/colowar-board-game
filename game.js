@@ -198,7 +198,7 @@ function getSkillTextForJob(job, level) {
      case 'hacker':
        return `Skill: can reroll ${level} once per turn`
      case 'politician':
-       return `Skill: choose upto 1 player, you can use ${level} station(s) of them to play 1 Tech card, if you play that player draws a tech card`
+       return `Skill: choose upto 1 player, you can use ${level} station(s) of them to play 1 Tech card, if you play it this way everyone draws a tech card`
    }
 }
 
