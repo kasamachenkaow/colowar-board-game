@@ -178,7 +178,7 @@ const deckImages = {
                 title: 'Nova Blast',
                 details: {
                     type: 'Station',
-                    effect: 'Eliminate all stations of 1 adjacent rows/columns',
+                    effect: 'Eliminate all stations of 1 rows/columns',
                     text: 'Release a massive energy blast, obliterating stations in a wide area.'
                 },
                 copies: 3
