@@ -55,6 +55,7 @@ const state = {
         rollHistory: [],
         cardInfos: {},
         currentStep: STEP['roll'],
+        stationsToWin: 0,
     },
     player: {
         ...initPlayer
@@ -232,6 +233,11 @@ function updateUIFromState() {
     updateTotalPopulation();
     updateLargestPlayer();
     updateStepsUI();
+    updateStationsToWin();
+}
+
+function updateStationsToWin() {
+    document.getElementById('stations-to-win').textContent = `Stations to win: ${state.shared.stationsToWin}`;
 }
 
 function updateLargestPlayer() {
@@ -358,8 +364,10 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 });
 
 document.getElementById('startGame').addEventListener('click', () => {
+    const stationsToWin = 17 - (state.shared.players.filter(p => !!p.peerId).length * 2);
     updateSharedState({
         ...state.shared,
+        stationsToWin,
         isGameStarted: true
     });
 
