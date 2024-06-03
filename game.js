@@ -19,6 +19,9 @@ const jobMetadata = {
    "hacker": {
       initResources: 2,
    },
+   "politician": {
+      initResources: 1,
+   },
 }
 
 const STEP = {
@@ -180,6 +183,8 @@ function getSkillTextForJob(job, level) {
        return `Skill: can use ${level} adjacent station`
      case 'hacker':
        return `Skill: can reroll ${level} once per turn`
+     case 'politician':
+       return `Skill: choose a player, you can use ${level} station(s) of them to play 1 Tech card, that player draws a tech card`
    }
 }
 

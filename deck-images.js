@@ -383,5 +383,97 @@ const deckImages = {
                 copies: 3
             },
         ],
+        "politician": [
+            {
+              id: 'politician_lv2_A',
+              pattern: [
+                [1, 0, 0],
+                [0, 0, 0],
+                [0, 0, 1]
+              ],
+              title: 'Population Growth',
+              details: {
+                type: 'Population',
+                effect: 'Gain X Population, where X is the number of all players cards in hands times 3',
+                text: 'Implement policies to encourage population growth.'
+              },
+              copies: 3,
+            },
+            {
+              id: 'politician_lv3_A',
+              pattern: [
+                [0, 1, 0],
+                [1, 0, 1],
+                [0, 0, 0]
+              ],
+              title: 'Corruption',
+              details: {
+                type: 'Resource',
+                effect: 'Choose 2 players, those players gain 1 Resource and you gain 2 Resources',
+                text: 'Exploit corruption to gain additional resources.'
+              },
+              copies: 4,
+            },
+            {
+              id: 'politician_lv3_B',
+              pattern: [
+                [0, 0, 0],
+                [1, 0, 1],
+                [0, 1, 0]
+              ],
+              title: 'Population Lockdown',
+              details: {
+                type: 'Resource',
+                effect: 'All players except you cannot gain Population for 1 turn',
+                text: 'Redistribute resources to ensure a more equitable distribution.'
+              },
+              copies: 4,
+            },
+            {
+              id: 'politician_lv4_A',
+              pattern: [
+                [0, 1, 0],
+                [1, 0, 1],
+                [0, 1, 0]
+              ],
+              title: 'Technology Suppliment',
+              details: {
+                type: 'Tech',
+                effect: 'All players draw 2 Tech cards',
+                text: 'Demonstrate generosity to foster technological advancement.'
+              },
+              copies: 4,
+            },
+            {
+              id: 'politician_lv5_A',
+              pattern: [
+                [1, 0, 1],
+                [0, 1, 0],
+                [1, 0, 1]
+              ],
+              title: 'Prisoners Dilemma',
+              details: {
+                type: 'Special',
+                effect: 'All player votes, you choose the order, if the result is you, you gain 20 Population, if it is not you then that voted player destroys their 3 stations, if it is a tie, all other players destroy 1 stations, player can do no-vote',
+                text: 'Create a scenario where cooperation is important.',
+              },
+              copies: 3,
+            },
+            {
+              id: 'politician_lv6_A',
+              pattern: [
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1]
+              ],
+              title: `Coup d'état`,
+              details: {
+                type: 'Special',
+                effect: 'Choose a player, you gain resources equal to the number of their stations, draw tech cards equal to the number of their tech cards in their hands, and your population become equal to their population',
+                text: 'Stage a coup to seize control of an opponent’s resources and population.',
+              },
+              copies: 1,
+            },
+        ],
     }
 };
