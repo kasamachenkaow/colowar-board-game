@@ -9,18 +9,23 @@ const cardIdDelim = '/';
 const jobMetadata = {
    "scientist": {
       initResources: 1,
+      initTechCards: 2,
    },
    "spiritual-leader": {
       initResources: 1,
+      initTechCards: 1,
    },
    "engineer": {
       initResources: 1,
+      initTechCards: 2,
    },
    "hacker": {
       initResources: 2,
+      initTechCards: 1,
    },
    "politician": {
       initResources: 1,
+      initTechCards: 1,
    },
 }
 
@@ -276,6 +281,20 @@ function handleData(data) {
 
     if (data.type === 'gameStarted') {
         showSnackbar('Game Started');
+        putInitTechCardsToHand();
+    }
+}
+
+function putInitTechCardsToHand() {
+    const currPlayer = findCurrentPlayer();
+    const initTechCards = jobMetadata[currPlayer.job].initTechCards;
+    putCardToHand('tech', initTechCards);
+}
+
+function putCardToHand(deckId, count) {
+    for (let i = 0; i < count; i++) {
+        const card = state.player.decks[deckId].pop();
+        addCardToHand(deckId, card.id);
     }
 }
 
@@ -381,6 +400,7 @@ document.getElementById('startGame').addEventListener('click', () => {
 
     showSnackbar('Game Started');
     broadcast({ type: 'gameStarted' });
+    putInitTechCardsToHand();
 });
 
 document.getElementById('stopGame').addEventListener('click', () => {
