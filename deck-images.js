@@ -217,6 +217,7 @@ const deckImages = {
             },
             {
                 id: 'hacker_lv3_A',
+                pattern: [
                   [0, 0, 0],
                   [0, 1, 1],
                   [1, 0, 0]
