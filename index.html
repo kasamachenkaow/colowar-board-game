@@ -390,6 +390,10 @@
         #end-turn:hover {
             background-color: #E64A19;
         }
+        .kick-player-button {
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 <body>
@@ -414,6 +418,9 @@
                 </div>
             </div>
             <div id="player1" class="player-slot">
+                <div class="kick-player-button" style="display:none;">
+                    <button onclick="kickPlayer('player1')">Kick</button>
+                </div>
                 <img src="images/no-player.png" class="player-icon" alt="No Player">
                 <div class="player-name">Name: -</div>
                 <div class="player-job">Job: -</div>
@@ -429,6 +436,9 @@
                 <button class="compact-button" style="display:none;" onclick="decreasePopulation('player1')">Decrease Population</button>
             </div>
             <div id="player2" class="player-slot">
+                <div class="kick-player-button" style="display:none;">
+                    <button onclick="kickPlayer('player2')">Kick</button>
+                </div>
                 <img src="images/no-player.png" class="player-icon" alt="No Player">
                 <div class="player-name">Name: -</div>
                 <div class="player-job">Job: -</div>
@@ -444,6 +454,9 @@
                 <button class="compact-button" style="display:none;" onclick="decreasePopulation('player2')">Decrease Population</button>
             </div>
             <div id="player3" class="player-slot">
+                <div class="kick-player-button" style="display:none;">
+                    <button onclick="kickPlayer('player3')">Kick</button>
+                </div>
                 <img src="images/no-player.png" class="player-icon" alt="No Player">
                 <div class="player-name">Name: -</div>
                 <div class="player-job">Job: -</div>
@@ -459,6 +472,9 @@
                 <button class="compact-button" style="display:none;" onclick="decreasePopulation('player3')">Decrease Population</button>
             </div>
             <div id="player4" class="player-slot">
+                <div class="kick-player-button" style="display:none;">
+                    <button onclick="kickPlayer('player4')">Kick</button>
+                </div>
                 <img src="images/no-player.png" class="player-icon" alt="No Player">
                 <div class="player-name">Name: -</div>
                 <div class="player-job">Job: -</div>

@@ -283,6 +283,9 @@ document.getElementById('startHost').addEventListener('click', () => {
     document.getElementById('startHost').style.display = 'none';
     document.getElementById('join-controls').style.display = 'none';
 
+    const kickPlayerButtons = document.querySelectorAll('.kick-player-button');
+    kickPlayerButtons.forEach(button => button.style.display = 'flex');
+
     peer = new Peer();
 
     peer.on('open', id => {
@@ -1039,4 +1042,13 @@ function initTurnSteps() {
 
         updateSharedState();
     });
+}
+
+function kickPlayer(playerId) {
+    const player = state.shared.players.find(p => p.id === playerId);
+    const playerConnection = connections.find(c => c.peer === player.peerId);
+
+    if (playerConnection) {
+        playerConnection.close();
+    }
 }
