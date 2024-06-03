@@ -62,6 +62,21 @@ const deckImages = {
                 copies: 4
             },
             {
+                id: 'engineer_lv4_B',
+                pattern:  [
+                  [0, 1, 0],
+                  [0, 1, 0],
+                  [1, 0, 1]
+                ],
+                title: 'Technology Advancement',
+                details: {
+                    type: 'Tech',
+                    effect: 'Draw 2 Tech cards',
+                    text: 'Advance your technology to learn new methods and strategies.'
+                },
+                copies: 4
+            },
+            {
                 id: 'engineer_lv5_A',
                 pattern:  [
                   [0, 1, 0],
