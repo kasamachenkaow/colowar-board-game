@@ -37,7 +37,7 @@ const state = {
             equipment: []
         },
         playArea: { cardId: null, playerColor: null },
-        rollHistory: [],
+        eventsHistory: [],
         cardInfos: {},
         currentStep: STEP['roll'],
         stationsToWin: 0,
@@ -206,9 +206,9 @@ function updateUIFromState() {
 
     // Update roll history
     const rollHistoryDiv = document.getElementById('roll-history');
-    rollHistoryDiv.innerHTML = 'Roll History:<br>' + state.shared.rollHistory.slice(0, 30).map(r => Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]}) by [${r.playerName}]` : `(${r.values}) by [${r.playerName}]`).join('<br>');
+    rollHistoryDiv.innerHTML = 'Events:<br>' + state.shared.eventsHistory.slice(0, 30).map(r => Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]}) by [${r.playerName}]` : `(${r.values}) by [${r.playerName}]`).join('<br>');
 
-    const lastRoll = state.shared.rollHistory[0]?.values;
+    const lastRoll = state.shared.eventsHistory[0]?.values;
     if (Array.isArray(lastRoll)) {
       highlightSlot(lastRoll[0], lastRoll[1]);
     }
@@ -457,13 +457,13 @@ function rollDice(diceType) {
                 result = { playerName: currPlayer?.name || 'unknown', values: die1 };
                 diceResult.textContent = `Result: (${die1})`;
             }
-            const newRollHistory = [result, ...state.shared.rollHistory];
+            const newEventHistory = [result, ...state.shared.eventsHistory];
 
-            console.log('New roll history:', newRollHistory)
+            console.log('New events history:', newEventHistory)
 
             updateSharedState({
                 ...state.shared,
-                rollHistory: newRollHistory
+                eventsHistory: newEventHistory
             });
         } else {
             if (diceType === '2d6') {
