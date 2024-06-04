@@ -772,10 +772,21 @@ function recycleStationOnBoard(slotIndex, player) {
     player.resources++;
     player.stations--;
 
+    const [row, col] = getRowColFromSlotIndex(slotIndex);
+
+    const event = buildEventHistory({ playerName: player.name, values: `Recycled a station on slot (${row}, ${col})`, type: 'station' });
+    publishEventHistory(event);
+
     updateSharedState({
         ...state.shared,
         board: newBoard,
     });
+}
+
+function getRowColFromSlotIndex(slotIndex) {
+    const row = Math.floor(slotIndex / 6) + 1;
+    const col = (slotIndex % 6) + 1;
+    return [row, col];
 }
 
 // Place a card on the board
@@ -790,6 +801,11 @@ function placeStationOnBoard(slotIndex, player) {
 
     player.resources--;
     player.stations++;
+
+    const [row, col] = getRowColFromSlotIndex(slotIndex);
+
+    const event = buildEventHistory({ playerName: player.name, values: `Built a station on slot (${row}, ${col})`, type: 'station' });
+    publishEventHistory(event);
 
     updateSharedState({
         ...state.shared,
