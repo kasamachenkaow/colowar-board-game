@@ -270,7 +270,7 @@ const deckImages = {
                 title: 'Circuit Overload',
                 details: {
                     type: 'Station',
-                    effect: 'Move any upto 3 stations to any slots',
+                    effect: 'Move any upto 2 stations to any slots',
                     text: 'Overload the circuit, enabling you to reposition multiple stations.'
                 },
                 copies: 2
