@@ -216,6 +216,36 @@ function updateUIFromState() {
     updateLargestPlayer();
     updateStepsUI();
     updateStationsToWin();
+
+    const winner = getWinner();
+    if (winner) {
+        showSnackbar('Game Over! ' + winner.name + ' wins!');
+        winningConfetti();
+    }
+}
+
+function getWinner() {
+    if (!state.shared.isGameStarted) {
+        return;;
+    }
+
+    const stationLimitPlayer = state.shared.players.find(p => p.stations >= state.shared.stationsToWin);
+    if (stationLimitPlayer) {
+       return stationLimitPlayer;
+    }
+
+    const totalPopulation = getTotalPopulation();
+    const halfPopulation = getHalfPopulation(totalPopulation);
+
+    const populationLimitPlayer = state.shared.players.find(p => p.population >= halfPopulation);
+    if (populationLimitPlayer) {
+       return populationLimitPlayer;
+    }
+
+    const onlyLeftPlayer = state.shared.players.filter(p => p.stations > 0);
+    if (onlyLeftPlayer.length === 1) {
+       return onlyLeftPlayer[0];
+    }
 }
 
 function renderHistory() {
@@ -240,9 +270,17 @@ function updateLargestPlayer() {
     document.getElementById('largest-player').textContent = `Largest player: ${mostStationsPlayer.stations} stations (${mostStationsPlayer.name})`;
 }
 
+function getTotalPopulation() {
+    return state.shared.players.reduce((acc, player) => acc + player.population, 0);
+}
+
+function getHalfPopulation(totalPopulation) {
+    return Math.ceil(totalPopulation / 2);
+}
+
 function updateTotalPopulation() {
-    const totalPopulation = state.shared.players.reduce((acc, player) => acc + player.population, 0);
-    const halfPopulation = Math.ceil(totalPopulation / 2);
+    const totalPopulation = getTotalPopulation();
+    const halfPopulation = getHalfPopulation(totalPopulation);
 
     document.getElementById('total-population').textContent = `Total Population: ${totalPopulation}`;
     document.getElementById('half-population').textContent = `Half Population: ${halfPopulation}`;
@@ -264,6 +302,7 @@ function handleData(data) {
 
     if (data.type === 'gameStarted') {
         showSnackbar('Game Started');
+        startGameConfetti();
         replaceSharedState(data.sharedState);
         putInitTechCardsToHand();
     }
@@ -422,6 +461,7 @@ document.getElementById('startGame').addEventListener('click', () => {
     publishEventHistory(event);
 
     showSnackbar('Game Started');
+    startGameConfetti();
     broadcast({ type: 'gameStarted', sharedState: state.shared });
     putInitTechCardsToHand();
 });
@@ -1191,4 +1231,38 @@ function kickPlayer(playerId) {
     if (playerConnection) {
         playerConnection.close();
     }
+}
+
+function winningConfetti() {
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+}
+
+
+function startGameConfetti() {
+  const defaults = {
+    spread: 360,
+    ticks: 50,
+    gravity: 0,
+    decay: 0.94,
+    startVelocity: 30,
+    colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+  };
+
+  confetti({
+    ...defaults,
+    particleCount: 40,
+    scalar: 1.2,
+    shapes: ['star']
+  });
+
+  confetti({
+    ...defaults,
+    particleCount: 10,
+    scalar: 0.75,
+    shapes: ['circle']
+  });
 }
