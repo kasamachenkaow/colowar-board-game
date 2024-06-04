@@ -9,7 +9,7 @@ const cardIdDelim = '/';
 const jobMetadata = {
    "scientist": {
       initResources: 1,
-      initTechCards: 2,
+      initTechCards: 1,
    },
    "spiritual-leader": {
       initResources: 1,
