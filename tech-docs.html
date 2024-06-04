@@ -90,10 +90,18 @@
         .details p {
             margin: 5px 0;
         }
+        .header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
     </style>
 </head>
 <body>
-    <h1>Tech Cards</h1>
+    <div class="header">
+        <h1>Colowar - Tech Cards</h1><span id="version">n/a</span>
+    </div>
     <div class="tabs">
         <div class="tab active" data-job="all">All</div>
         <div class="tab" data-job="engineer">Engineer</div>
@@ -107,6 +115,7 @@
 
     <script src="./deck-images.js"></script>
     <script src="./job-metadata.js"></script>
+    <script src="./version.js"></script>
     <script>
         const mainContainer = document.getElementById('main-container');
         const tabs = document.querySelectorAll('.tab');
@@ -170,7 +179,7 @@
                 metadataDiv.innerHTML = `
                     <p><strong>Initial Resources:</strong> ${metadata.initResources}</p>
                     <p><strong>Initial Tech Cards:</strong> ${metadata.initTechCards}</p>
-                    <p><strong>Skill:</strong> ${metadata.skill('[job_level]').replace('Skill: ', '')}</p>
+                <p><strong>Skill:</strong> ${metadata.skill('{{job_level}}').replace('Skill: ', '')}</p>
                 `;
                 if (metadata.traits) {
                     const traitsDiv = document.createElement('div');
@@ -223,6 +232,9 @@
 
         // Initially show all sections
         showSection('all');
+
+        const versionNode = document.getElementById('version');
+        versionNode.textContent = `v${version}`;
     </script>
 </body>
 </html>

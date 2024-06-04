@@ -1266,3 +1266,6 @@ function startGameConfetti() {
     shapes: ['circle']
   });
 }
+
+const versionNode = document.getElementById('version');
+versionNode.textContent = `v${version}`;
