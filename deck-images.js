@@ -255,8 +255,8 @@ const deckImages = {
                 title: 'System Subotage',
                 details: {
                     type: 'Station',
-                    effect: 'Destroy 1 station of your choice',
-                    text: 'Sabotage the system to destroy a station of your choice.'
+                    effect: 'Swap any 2 slots and then destroy 1 station of your choice',
+                    text: 'Sabotage the system to reposition stations and destroy a selected station.'
                 },
                 copies: 3
             },
