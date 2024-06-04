@@ -206,7 +206,7 @@ function updateUIFromState() {
 
     // Update roll history
     const rollHistoryDiv = document.getElementById('roll-history');
-    rollHistoryDiv.innerHTML = 'Roll History:<br>' + state.shared.rollHistory.map(r => Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]}) by [${r.playerName}]` : `(${r.values}) by [${r.playerName}]`).join('<br>');
+    rollHistoryDiv.innerHTML = 'Roll History:<br>' + state.shared.rollHistory.slice(0, 30).map(r => Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]}) by [${r.playerName}]` : `(${r.values}) by [${r.playerName}]`).join('<br>');
 
     const lastRoll = state.shared.rollHistory[0]?.values;
     if (Array.isArray(lastRoll)) {
