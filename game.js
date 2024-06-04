@@ -817,6 +817,11 @@ playArea.addEventListener('drop', (e) => {
         if (card) {
             const player = findCurrentPlayer();
             player.cards--;
+
+            const cardTitle = getCardInfo(deckId, cardId, playerPeerId).title;
+            const event = buildEventHistory({ playerName: player.name, values: `Played a ${cardId} [${cardTitle}] card`, type: 'play' });
+            publishEventHistory(event);
+
             updateSharedState({
                 ...state.shared,
                 playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId }
