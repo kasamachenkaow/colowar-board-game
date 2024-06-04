@@ -120,8 +120,10 @@ function updateSharedState(newSharedState) {
     console.log('updateSharedState', newSharedState);
 
     state.shared = newSharedState ?? state.shared;
+
+    updateUIFromState();
+
     if (isHost) {
-        updateUIFromState();
         broadcastState();
     } else if (conn) {
         sendSharedStateToHost();
