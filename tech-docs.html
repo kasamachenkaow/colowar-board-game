@@ -169,7 +169,7 @@
                 metadataDiv.innerHTML = `
                     <p><strong>Initial Resources:</strong> ${metadata.initResources}</p>
                     <p><strong>Initial Tech Cards:</strong> ${metadata.initTechCards}</p>
-                    <p><strong>Skill:</strong> ${metadata.skill(1)}</p>
+                    <p><strong>Skill:</strong> ${metadata.skill('[job_level]').replace('Skill: ', '')}</p>
                 `;
                 if (metadata.traits) {
                     const traitsDiv = document.createElement('div');
