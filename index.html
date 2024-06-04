@@ -252,15 +252,68 @@
             background-color: #f4f4f4;
             border-left: 1px solid #ccc;
             width: 15%;
+            height: 100vh;
         }
+
+        #event-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            width: 90%;
+        }
+
+        .event {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e6e6e6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .player-name {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .event-message {
+            color: #333;
+        }
+
+        #chat-input {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
+        }
+
+        #chat-message {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+
+        #send-chat {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 0 5px 5px 0;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        #send-chat:hover {
+            background-color: #0056b3;
+        }
+
         #dice-result {
             font-size: 20px;
             margin-top: 10px;
-        }
-        #roll-history {
-            margin-top: 10px;
-            width: 100%;
-            text-align: center;
+            margin-bottom: 10px;
         }
         #resource-container {
             display: flex;
@@ -538,7 +591,11 @@
             </select>
             <button id="rollDice">Roll Dice</button>
             <div id="dice-result"></div>
-            <div id="roll-history"></div>
+            <div id="event-history"></div>
+            <div id="chat-input">
+                <input type="text" id="chat-message" placeholder="Enter chat message">
+                <button id="send-chat">Send</button>
+            </div>
         </div>
     </div>
 

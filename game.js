@@ -204,9 +204,7 @@ function updateUIFromState() {
         }
     }
 
-    // Update roll history
-    const rollHistoryDiv = document.getElementById('roll-history');
-    rollHistoryDiv.innerHTML = 'Events:<br>' + state.shared.eventsHistory.slice(0, 30).map(r => Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]}) by [${r.playerName}]` : `(${r.values}) by [${r.playerName}]`).join('<br>');
+    renderHistory();
 
     const lastRoll = state.shared.eventsHistory[0]?.values;
     if (Array.isArray(lastRoll)) {
@@ -218,6 +216,16 @@ function updateUIFromState() {
     updateLargestPlayer();
     updateStepsUI();
     updateStationsToWin();
+}
+
+function renderHistory() {
+    const rollHistoryDiv = document.getElementById('event-history');
+    rollHistoryDiv.innerHTML = state.shared.eventsHistory.map(r => `
+        <div class="event">
+            <span class="player-name">${r.playerName}:</span>
+            <span class="event-message">${r.type === 'dice' ? `Rolled ${Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]})` : `(${r.values})`}` : `${r.values}`}</span>
+        </div>
+    `).join('');
 }
 
 function updateStationsToWin() {
@@ -444,7 +452,7 @@ function rollDice(diceType) {
             if (diceType === '2d6') {
                 const die1 = Math.floor(Math.random() * 6) + 1;
                 const die2 = Math.floor(Math.random() * 6) + 1;
-                result = { playerName: currPlayer.name, values: [die1, die2] };
+                result = buildEventHistory({ playerName: currPlayer.name, values: [die1, die2], type: 'dice' });
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
 
                 if(hasStation(die1, die2)) {
@@ -454,17 +462,11 @@ function rollDice(diceType) {
                 }
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
-                result = { playerName: currPlayer?.name || 'unknown', values: die1 };
+                result = buildEventHistory({ playerName: currPlayer?.name || 'unknown', values: die1, type: 'dice'});
                 diceResult.textContent = `Result: (${die1})`;
             }
-            const newEventHistory = [result, ...state.shared.eventsHistory];
 
-            console.log('New events history:', newEventHistory)
-
-            updateSharedState({
-                ...state.shared,
-                eventsHistory: newEventHistory
-            });
+            publishEventHistory(result);
         } else {
             if (diceType === '2d6') {
                 diceResult.textContent = `Rolling... (${Math.floor(Math.random() * 6) + 1}, ${Math.floor(Math.random() * 6) + 1})`;
@@ -474,6 +476,22 @@ function rollDice(diceType) {
             rolls++;
         }
     }, 50);
+}
+
+function sendChat(msg) {
+    const currPlayer = findCurrentPlayer();
+    const event = buildEventHistory({ playerName: currPlayer?.name || 'unknown', values: msg });
+
+    publishEventHistory(event);
+}
+
+function buildEventHistory({ playerName, values, type }) {
+    return { playerName, values, type };
+}
+
+function publishEventHistory(event) {
+    state.shared.eventsHistory.unshift(event);
+    updateSharedState();
 }
 
 const defaultSlotBackgroundColor = '#f0f0f0';
@@ -572,6 +590,21 @@ function loadPlayerDeckImages(job) {
         }
     })
 }
+
+// also send message when press enter key on chat-message input
+document.getElementById('chat-message').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const chatMessage = document.getElementById('chat-message').value;
+        sendChat(chatMessage);
+        document.getElementById('chat-message').value = '';
+    }
+});
+
+document.getElementById('send-chat').addEventListener('click', () => {
+    const chatMessage = document.getElementById('chat-message').value;
+    sendChat(chatMessage);
+    document.getElementById('chat-message').value = '';
+});
 
 // Roll dice functionality
 document.getElementById('rollDice').addEventListener('click', function() {
