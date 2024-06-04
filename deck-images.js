@@ -178,8 +178,8 @@ const deckImages = {
                 title: 'Bytes Shift',
                 details: {
                     type: 'Station',
-                    effect: 'Shift a selected row by 1 slot, you can choose the direction',
-                    text: 'Shift bytes to move an entire row of stations by one slot.'
+                    effect: 'Shift a selected row or column by 1 slot, you can choose the direction',
+                    text: 'Shift bytes to move a row or column of stations by one slot in any direction.'
                 },
                 copies: 3
             },
