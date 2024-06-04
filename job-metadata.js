@@ -2,7 +2,7 @@ const jobMetadata = {
    "scientist": {
       initResources: 1,
       initTechCards: 1,
-      skill: (level) => `Skill: threat ${level} free slot as your station`,
+      skill: (level) => `Skill: threat ${level} free slot as your station to help play tech cards`,
    },
    "spiritual-leader": {
       initResources: 1,
@@ -12,12 +12,13 @@ const jobMetadata = {
    "engineer": {
       initResources: 1,
       initTechCards: 2,
-      skill: (level) => `Skill: can use ${level} adjacent station`,
+      skill: (level) => `Skill: can use ${level} adjacent station to help play tech cards`,
    },
    "hacker": {
       initResources: 2,
       initTechCards: 1,
       skill: (level) => `Skill: can reroll ${level} once per turn`,
+      traits: ["always-start-first"],
    },
    "politician": {
       initResources: 1,

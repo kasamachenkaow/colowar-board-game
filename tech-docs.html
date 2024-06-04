@@ -34,6 +34,11 @@
             font-size: 1.5em;
             margin: 20px;
         }
+        .job-metadata {
+            margin: 0 20px 20px 20px; /* Added margin for metadata */
+            font-size: 0.9em;
+            color: #555;
+        }
         .card-container {
             display: flex;
             flex-wrap: wrap;
@@ -88,6 +93,7 @@
     <div id="main-container"></div>
 
     <script src="./deck-images.js"></script>
+    <script src="./job-metadata.js"></script>
     <script>
         const mainContainer = document.getElementById('main-container');
         const tabs = document.querySelectorAll('.tab');
@@ -143,6 +149,19 @@
             const header = document.createElement('h2');
             header.textContent = `${job.charAt(0).toUpperCase() + job.slice(1)} (${totalCopies} copies)`;
             sectionDiv.appendChild(header);
+
+            const metadataDiv = document.createElement('div');
+            metadataDiv.classList.add('job-metadata');
+            const metadata = jobMetadata[job];
+            if (metadata) {
+                metadataDiv.innerHTML = `
+                    <p><strong>Initial Resources:</strong> ${metadata.initResources}</p>
+                    <p><strong>Initial Tech Cards:</strong> ${metadata.initTechCards}</p>
+                    <p><strong>Skill:</strong> ${metadata.skill(1)}</p>
+                    ${metadata.traits ? `<p><strong>Traits:</strong> ${metadata.traits.join(', ')}</p>` : ''}
+                `;
+            }
+            sectionDiv.appendChild(metadataDiv);
 
             const cardContainer = document.createElement('div');
             cardContainer.classList.add('card-container');
