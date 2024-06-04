@@ -418,7 +418,7 @@ document.getElementById('startGame').addEventListener('click', () => {
     state.shared.stationsToWin = stationsToWin;
     state.shared.isGameStarted = true;
 
-    const event = buildEventHistory({ playerName: 'Host', values: '[Game Started!]', type: 'game' });
+    const event = buildEventHistory({ playerName: 'Host', values: 'Game Started!', type: 'game' });
     publishEventHistory(event);
 
     showSnackbar('Game Started');
@@ -1160,12 +1160,13 @@ function initTurnSteps() {
     endTurnButton.addEventListener("click", () => {
         state.shared.currentStep = STEP.roll;
 
+        const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `Ended turn`, type: 'turn' });
+        publishEventHistory(event);
+
         updateSharedState({
             ...state.shared,
             playArea: {},
         });
-
-        updateSharedState();
     });
 }
 
