@@ -6,29 +6,6 @@ let conn;
 
 const cardIdDelim = '/';
 
-const jobMetadata = {
-   "scientist": {
-      initResources: 1,
-      initTechCards: 1,
-   },
-   "spiritual-leader": {
-      initResources: 1,
-      initTechCards: 1,
-   },
-   "engineer": {
-      initResources: 1,
-      initTechCards: 2,
-   },
-   "hacker": {
-      initResources: 2,
-      initTechCards: 1,
-   },
-   "politician": {
-      initResources: 1,
-      initTechCards: 1,
-   },
-}
-
 const STEP = {
   'roll': 0,
   'choose': 1,
@@ -190,18 +167,7 @@ function updatePlayerUI(player, index) {
 }
 
 function getSkillTextForJob(job, level) {
-   switch (job) {
-     case 'scientist':
-       return `Skill: threat ${level} free slot as your station`
-     case 'spiritual-leader':
-       return `Skill: gain ${level*5} population each turn`
-     case 'engineer':
-       return `Skill: can use ${level} adjacent station`
-     case 'hacker':
-       return `Skill: can reroll ${level} once per turn`
-     case 'politician':
-       return `Skill: choose upto 1 player, you can use ${level} station(s) of them to help playing for 1 Tech card, if you play it this way everyone draws a tech card`
-   }
+   return jobMetadata[job].skill(level);
 }
 
 function updateUIFromState() {
