@@ -23,6 +23,6 @@ const jobMetadata = {
    "politician": {
       initResources: 1,
       initTechCards: 1,
-      skill: (level) => `Skill: choose upto 1 player, you can use ${level} station(s) of them to help playing for 1 Tech card, if you play it this way everyone draws a tech card`,
+      skill: (level) => `Skill: choose upto 1 player, you can use ${level} station(s) of them to help playing for Tech cards, if you play it this way everyone draws a tech card`,
    },
 }
