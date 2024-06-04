@@ -1070,6 +1070,10 @@ function increaseJobLevel() {
 
     if (player && player.jobLevel < 3) {
         player.jobLevel += 1;
+
+        const event = buildEventHistory({ playerName: player.name, values: `Increased job level to ${player.jobLevel}`, type: 'job' });
+        publishEventHistory(event);
+
         updateSharedState();
     }
 }
