@@ -1084,7 +1084,6 @@ function increaseResource() {
         player.resources += 1;
 
         const event = buildEventHistory({ playerName: player.name, values: `Gained +1 resource`, type: 'resource' });
-
         publishEventHistory(event);
 
         updateSharedState();
@@ -1095,6 +1094,10 @@ function decreaseResource() {
     const player = state.shared.players.find(p => p.peerId === peer.id);
     if (player) {
         player.resources -= 1;
+
+        const event = buildEventHistory({ playerName: player.name, values: `Lost -1 resource`, type: 'resource' });
+        publishEventHistory(event);
+
         updateSharedState();
     }
 }
