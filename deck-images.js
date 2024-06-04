@@ -501,7 +501,7 @@ const deckImages = {
               title: 'Rule Paragraph 2 - Section B',
               details: {
                 type: 'Population',
-                effect: 'Kill X*4 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule',
+                effect: 'Kill X*3 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule',
                 text: 'Punish violators to maintain order and stability.'
               },
               copies: 3,
@@ -531,7 +531,7 @@ const deckImages = {
               title: 'Rule Paragraph 3 - Section B',
               details: {
                 type: 'Resource',
-                effect: 'Seize X Resources from players, where X is the (number of the violations / 2) (rounded up) of the last rule declared by you, you can only choose players who violated the rule',
+                effect: 'Seize X Resources from players, where X is the (number of the violations / 2) (rounded down) of the last rule declared by you, you can only choose players who violated the rule',
                 text: 'Confiscate resources from violators to maintain order and stability.'
               },
               copies: 4,
@@ -546,7 +546,7 @@ const deckImages = {
               title: 'Rule Paragraph 4 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Destroy X stations, where X is the (number of the violations / 2) (rounded up) of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Destroy X stations, where X is the (number of the violations / 2) (rounded down) of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Eradicate illegal stations to maintain order and stability.'
               },
               copies: 3,
