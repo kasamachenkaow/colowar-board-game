@@ -757,6 +757,9 @@ function addCardToHand(deckId, cardId) {
     const card = createCardElement(deckId, cardId, currPlayer.job, currPlayer.peerId);
     hand.appendChild(card);
 
+    const event = buildEventHistory({ playerName: currPlayer.name, values: `Added a [${deckId} card] to hands`, type: 'card' });
+    publishEventHistory(event);
+
     updateSharedState();
 }
 
