@@ -322,7 +322,9 @@ document.getElementById('startHost').addEventListener('click', () => {
     const kickPlayerButtons = document.querySelectorAll('.kick-player-button');
     kickPlayerButtons.forEach(button => button.style.display = 'flex');
 
-    peer = new Peer();
+    const peerUrl = document.getElementById('peerUrl').value;
+
+    peer = initPeer();
 
     peer.on('open', id => {
         console.log('Host ID: ' + id);
@@ -913,6 +915,22 @@ function newPlayer(peerId, name, job) {
     }
 }
 
+function generateUID() {
+    // I generate the UID from two parts here
+    // to ensure the random number provide enough bits.
+    var firstPart = (Math.random() * 46656) | 0;
+    var secondPart = (Math.random() * 46656) | 0;
+    firstPart = ("000" + firstPart.toString(36)).slice(-3);
+    secondPart = ("000" + secondPart.toString(36)).slice(-3);
+    return firstPart + secondPart;
+}
+
+function initPeer() {
+    const peerUrl = document.getElementById('peerUrl').value;
+
+    return peerUrl ? new Peer(generateUID(), { host: peerUrl, port: "443" }) : new Peer();
+}
+
 joinButton.addEventListener('click', () => {
     const hostId = document.getElementById('peerId').value;
     const playerName = document.getElementById('playerName').value;
@@ -929,7 +947,7 @@ joinButton.addEventListener('click', () => {
             updateUIFromState();
         } else {
             if (hostId) {
-                peer = new Peer();
+                peer = initPeer();
                 peer.on('open', () => {
                     console.log('Client peer opened');
                     conn = peer.connect(hostId, {
