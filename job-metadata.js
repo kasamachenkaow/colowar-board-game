@@ -25,4 +25,9 @@ const jobMetadata = {
       initTechCards: 1,
       skill: (level) => `Skill: choose upto 1 player, you can use ${level} station(s) of them to help playing for Tech cards, if you play it this way everyone draws a tech card`,
    },
+   "ruler": {
+      initResources: 1,
+      initTechCards: 1,
+      skill: (level) => `Skill: each turn you must declare to activate ${level} law(s), options are ['no-build', 'no-gain-resource', 'no-draw', 'no-play-card'], at least 1 law must be changed each turn`,
+   },
 }

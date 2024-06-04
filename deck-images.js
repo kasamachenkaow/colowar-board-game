@@ -475,5 +475,112 @@ const deckImages = {
               copies: 1,
             },
         ],
+        "ruler": [
+            {
+              id: 'ruler_lv2_A',
+              pattern: [
+                [0, 0, 0],
+                [1, 1, 0],
+                [0, 0, 0]
+              ],
+              title: 'Rule Paragraph 2 - Section A',
+              details: {
+                type: 'Population',
+                effect: 'Seize X*2 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule',
+                text: 'Punish violators to maintain order and stability.'
+              },
+              copies: 3,
+            },
+            {
+              id: 'ruler_lv2_B',
+              pattern: [
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 0, 0]
+              ],
+              title: 'Rule Paragraph 2 - Section B',
+              details: {
+                type: 'Population',
+                effect: 'Kill X*4 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule',
+                text: 'Punish violators to maintain order and stability.'
+              },
+              copies: 3,
+            },
+            {
+              id: 'ruler_lv3_A',
+              pattern: [
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0]
+              ],
+              title: 'Rule Paragraph 3 - Section A',
+              details: {
+                type: 'Station',
+                effect: 'Move any X stations to any free slots, where X is the (number of the violations / 2) (rouned down) of the last rule declared by you, you can only choose stations of players who violated the rule',
+                text: 'Realocate illegal stations to maintain order and stability.'
+              },
+              copies: 4,
+            },
+            {
+              id: 'ruler_lv3_B',
+              pattern: [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+              ],
+              title: 'Rule Paragraph 3 - Section B',
+              details: {
+                type: 'Resource',
+                effect: 'Seize X Resources from players, where X is the (number of the violations / 2) (rounded up) of the last rule declared by you, you can only choose players who violated the rule',
+                text: 'Confiscate resources from violators to maintain order and stability.'
+              },
+              copies: 4,
+            },
+            {
+              id: 'ruler_lv4_A',
+              pattern: [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+              ],
+              title: 'Rule Paragraph 4 - Section A',
+              details: {
+                type: 'Station',
+                effect: 'Destroy X stations, where X is the (number of the violations / 2) (rounded up) of the last rule declared by you, you can only choose stations of players who violated the rule',
+                text: 'Eradicate illegal stations to maintain order and stability.'
+              },
+              copies: 3,
+            },
+            {
+              id: 'ruler_lv5_A',
+              pattern: [
+                [1, 1, 1],
+                [0, 1, 0],
+                [0, 1, 0]
+              ],
+              title: 'Rule Paragraph 5 - Section A',
+              details: {
+                type: 'Station',
+                effect: 'Build X stations, where X is the number of violations of the last rule declared by you',
+                text: 'Construct new stations to enforce the rules.'
+              },
+              copies: 2,
+            },
+            {
+              id: 'ruler_lv7_A',
+              pattern: [
+                [1, 1, 1],
+                [1, 1, 1],
+                [0, 1, 0]
+              ],
+              title: 'Rule Paragraph 7 - Section A',
+              details: {
+                type: 'Special',
+                effect: 'Player who violated the last rule declared by you the most loses the game, if there are multiple players, they all lose the game',
+                text: 'Death sentence for the most notorious violators.'
+              },
+              copies: 1,
+            },
+        ],
     }
 };
