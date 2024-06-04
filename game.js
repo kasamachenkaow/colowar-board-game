@@ -1083,7 +1083,12 @@ function increasePopulation(inputPlayer) {
     const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
 
     if (player) {
-        player.population += parseInt(populationChange || '1');
+        const change = parseInt(populationChange || '1');
+        player.population += parseInt(change);
+
+        const event = buildEventHistory({ playerName: player.name, values: `Gained +${change} population`, type: 'population' });
+        publishEventHistory(event);
+
         updateSharedState();
     }
 }
@@ -1093,7 +1098,12 @@ function decreasePopulation(inputPlayer) {
     const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
 
     if (player) {
-        player.population -= parseInt(populationChange || '1');
+        const change = parseInt(populationChange || '1');
+        player.population -= parseInt(change);
+
+        const event = buildEventHistory({ playerName: player.name, values: `Lost -${change} population`, type: 'population' });
+        publishEventHistory(event);
+
         updateSharedState();
     }
 }
