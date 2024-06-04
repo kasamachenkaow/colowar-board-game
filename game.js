@@ -418,6 +418,9 @@ document.getElementById('startGame').addEventListener('click', () => {
     state.shared.stationsToWin = stationsToWin;
     state.shared.isGameStarted = true;
 
+    const event = buildEventHistory({ playerName: 'Host', values: '[Game Started!]', type: 'game' });
+    publishEventHistory(event);
+
     showSnackbar('Game Started');
     broadcast({ type: 'gameStarted', sharedState: state.shared });
     putInitTechCardsToHand();
