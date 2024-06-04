@@ -79,7 +79,7 @@ state.shared.players = [
 ];
 
 function findCurrentPlayer() {
-    return state.shared.players.find(p => p?.peerId === peer.id);
+    return state.shared.players.find(p => p?.peerId === peer?.id);
 }
 
 function initSlotsBoard() {
@@ -211,9 +211,6 @@ function updateUIFromState() {
       document.getElementById('startGame').style.display = state.shared.isGameStarted ? 'none' : 'block';
       document.getElementById('stopGame').style.display = state.shared.isGameStarted ? 'block' : 'none';
     }
-
-    document.getElementById('dice-type').disabled = !state.shared.isGameStarted;
-    document.getElementById('rollDice').disabled = !state.shared.isGameStarted;
 
     setBoardState(state.shared.board);
 
@@ -489,7 +486,7 @@ function rollDice(diceType) {
                 }
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
-                result = { playerName: currPlayer.name, values: die1 };
+                result = { playerName: currPlayer?.name || 'unknown', values: die1 };
                 diceResult.textContent = `Result: (${die1})`;
             }
             const newRollHistory = [result, ...state.shared.rollHistory];
@@ -610,11 +607,13 @@ function loadPlayerDeckImages(job) {
 
 // Roll dice functionality
 document.getElementById('rollDice').addEventListener('click', function() {
-    if (state.shared.isGameStarted) {
-        const diceType = document.getElementById('dice-type').value;
+    const diceType = document.getElementById('dice-type').value;
 
-        rollDice(diceType);
+    if (diceType === '2d6' && !state.shared.isGameStarted) {
+       return;
     }
+
+    rollDice(diceType);
 });
 
 // Initialize the decks
