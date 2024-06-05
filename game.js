@@ -161,9 +161,9 @@ function updatePlayerUI(player, index) {
         skill.textContent = getSkillTextForJob(player.job, player.jobLevel);
         stations.textContent = `Stations: ${player.stations}`;
         if (peer.id === player.peerId) {
-            playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'block');
+            playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'block');
         } else {
-            playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
+            playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'none');
         }
     } else {
         playerSlot.style.backgroundColor = '#f0f0f0';
@@ -172,7 +172,7 @@ function updatePlayerUI(player, index) {
         cards.textContent = 'Cards: 0';
         population.textContent = `Population: ${initPlayer.population}`;
         skill.textContent = 'Skill: None';
-        playerSlot.querySelectorAll('.compact-button').forEach(button => button.style.display = 'none');
+        playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'none');
     }
 }
 
@@ -474,14 +474,9 @@ document.getElementById('startHost').addEventListener('click', () => {
             });
             connection.on('close', () => {
                 console.log('Client disconnected');
-                const player = state.shared.players.find(p => p.peerId === connection.peer);
-                if (player) {
-                    player.connected = false;
-                    player.peerId = null;
 
-                    updateSharedState(state.shared);
-                    showSnackbar(`Player ${state.shared.players.indexOf(player) + 1} disconnected`);
-                }
+                removePlayer(connection.peer);
+
                 connections = connections.filter(conn => conn !== connection);
                 if (connections.length < 1) {
                     document.getElementById('startGame').disabled = true;
@@ -504,6 +499,16 @@ document.getElementById('startHost').addEventListener('click', () => {
         peer.reconnect();
     });
 });
+
+function removePlayer(peerId) {
+    const player = state.shared.players.find(p => p.peerId === peerId);
+    if (player) {
+        player.connected = false;
+        player.peerId = null;
+        updateSharedState(state.shared);
+        showSnackbar(`Player ${state.shared.players.indexOf(player) + 1} - ${player.name} disconnected`);
+    }
+}
 
 document.getElementById('joinGame').addEventListener('click', () => {
     showModal('client');
@@ -1319,6 +1324,7 @@ function kickPlayer(playerId) {
     const playerConnection = connections.find(c => c.peer === player.peerId);
 
     if (playerConnection) {
+        removePlayer(player.peerId);
         playerConnection.close();
     }
 }
