@@ -23,7 +23,7 @@ const jobMetadata = {
    "politician": {
       initResources: 1,
       initTechCards: 1,
-      skill: (level) => `Skill: choose upto 1 player, you can use ${level} station(s) of them to help playing for Tech cards, if you play it this way everyone draws a tech card`,
+      skill: (level) => `Skill: during the beginning of playing card phase choose upto 1 player, you can use ${level} station(s) of them to help playing for Tech cards, if you play it this way everyone draws a tech card, the drawing effect happens only once each turn`,
    },
    "ruler": {
       initResources: 1,
