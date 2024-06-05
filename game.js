@@ -253,7 +253,7 @@ function renderHistory() {
     rollHistoryDiv.innerHTML = state.shared.eventsHistory.map(r => `
         <div class="event">
             <span class="player-name">${r.playerName}:</span>
-            <span class="event-message">${r.type === 'dice' ? `Rolled ${Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]})` : `(${r.values})`}` : `${r.values}`}</span>
+            <span class="event-message">${r.type === 'dice' ? `${emojis.Dice} Rolled ${Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]})` : `(${r.values})`}` : `${r.values}`}</span>
         </div>
     `).join('');
 }
@@ -457,7 +457,7 @@ document.getElementById('startGame').addEventListener('click', () => {
     state.shared.stationsToWin = stationsToWin;
     state.shared.isGameStarted = true;
 
-    const event = buildEventHistory({ playerName: 'Host', values: 'Game Started!', type: 'game' });
+    const event = buildEventHistory({ playerName: 'Host', values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
     publishEventHistory(event);
 
     showSnackbar('Game Started');
@@ -800,7 +800,7 @@ function addCardToHand(deckId, cardId) {
     const card = createCardElement(deckId, cardId, currPlayer.job, currPlayer.peerId);
     hand.appendChild(card);
 
-    const event = buildEventHistory({ playerName: currPlayer.name, values: `Added a [${deckId} card] to hands`, type: 'card' });
+    const event = buildEventHistory({ playerName: currPlayer.name, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
     publishEventHistory(event);
 
     updateSharedState();
@@ -817,7 +817,7 @@ function recycleStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `Recycled a station on slot (${row}, ${col})`, type: 'station' });
+    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station} Recycled a station on slot (${row}, ${col})`, type: 'station' });
     publishEventHistory(event);
 
     updateSharedState({
@@ -847,7 +847,7 @@ function placeStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `Built a station on slot (${row}, ${col})`, type: 'station' });
+    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station} Built a station on slot (${row}, ${col})`, type: 'station' });
     publishEventHistory(event);
 
     updateSharedState({
@@ -878,7 +878,7 @@ playArea.addEventListener('drop', (e) => {
             player.cards--;
 
             const cardTitle = getCardInfo(deckId, cardId, playerPeerId).title;
-            const event = buildEventHistory({ playerName: player.name, values: `Played a ${cardId} [${cardTitle}] card`, type: 'play' });
+            const event = buildEventHistory({ playerName: player.name, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
             publishEventHistory(event);
 
             updateSharedState({
@@ -1111,7 +1111,7 @@ function increaseJobLevel() {
     if (player && player.jobLevel < 3) {
         player.jobLevel += 1;
 
-        const event = buildEventHistory({ playerName: player.name, values: `Increased job level to ${player.jobLevel}`, type: 'job' });
+        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
         publishEventHistory(event);
 
         updateSharedState();
@@ -1126,7 +1126,7 @@ function increasePopulation(inputPlayer) {
         const change = parseInt(populationChange || '1');
         player.population += parseInt(change);
 
-        const event = buildEventHistory({ playerName: player.name, values: `Gained +${change} population`, type: 'population' });
+        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
         publishEventHistory(event);
 
         updateSharedState();
@@ -1141,7 +1141,7 @@ function decreasePopulation(inputPlayer) {
         const change = parseInt(populationChange || '1');
         player.population -= parseInt(change);
 
-        const event = buildEventHistory({ playerName: player.name, values: `Lost -${change} population`, type: 'population' });
+        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
         publishEventHistory(event);
 
         updateSharedState();
@@ -1164,7 +1164,7 @@ function increaseResource() {
     if (player) {
         player.resources += 1;
 
-        const event = buildEventHistory({ playerName: player.name, values: `Gained +1 resource`, type: 'resource' });
+        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
         publishEventHistory(event);
 
         updateSharedState();
@@ -1176,7 +1176,7 @@ function decreaseResource() {
     if (player) {
         player.resources -= 1;
 
-        const event = buildEventHistory({ playerName: player.name, values: `Lost -1 resource`, type: 'resource' });
+        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
         publishEventHistory(event);
 
         updateSharedState();
@@ -1214,7 +1214,7 @@ function initTurnSteps() {
     endTurnButton.addEventListener("click", () => {
         state.shared.currentStep = STEP.roll;
 
-        const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `Ended turn`, type: 'turn' });
+        const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `${emojis.Turn} Ended turn`, type: 'turn' });
         publishEventHistory(event);
 
         updateSharedState({
