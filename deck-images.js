@@ -11,7 +11,7 @@ const deckImages = {
                 title: 'Bio-Enhancement',
                 details: {
                     type: 'Population',
-                    effect: 'Gain X Population, where X is the number of the adjacent stations',
+                    effect: 'Gain X*2 Population, where X is the number of the adjacent stations',
                     text: 'Enhance biological systems to increase the population swiftly.'
                 },
                 copies: 3
@@ -23,20 +23,20 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'Dark Protocol',
+                title: 'Remote Station Construction',
                 details: {
-                    type: 'population',
-                    effect: 'Kill X Population, where X is the number of the adjacent stations',
-                    text: 'Activate a covert protocol that results in the reduction of the population.'
+                    type: 'Station',
+                    effect: 'Build 1 station, you can only build on a slot that has no adjacent stations',
+                    text: 'Construct a new station in a location that is free of adjacent stations.'
                 },
                 copies: 3
             },
             {
                 id: 'engineer_lv3_A',
                 pattern:  [
+                  [0, 0, 0],
                   [1, 0, 0],
-                  [1, 1, 0],
-                  [0, 0, 0]
+                  [1, 1, 0]
                 ],
                 title: 'Galactic Recycler',
                 details: {
@@ -117,8 +117,8 @@ const deckImages = {
                 ],
                 title: 'Growt Serum',
                 details: {
-                    type: 'population',
-                    effect: 'Gain X Population, where X is the number of the adjacent free slots',
+                    type: 'Population',
+                    effect: 'Gain X*2 Population, where X is the number of the adjacent free slots',
                     text: 'Harness quantum technology to expand your population effortlessly.'
                 },
                 copies: 3
@@ -355,9 +355,9 @@ const deckImages = {
             {
                 id: 'spiritual_leader_lv3_E',
                 pattern:  [
+                  [0, 0, 0],
                   [1, 0, 0],
-                  [1, 1, 0],
-                  [0, 0, 0]
+                  [1, 1, 0]
                 ],
                 title: 'Void Purge',
                 details: {
@@ -394,28 +394,13 @@ const deckImages = {
               title: 'Population Growth',
               details: {
                 type: 'Population',
-                effect: 'Gain X Population, where X is the number of all players cards in hands times 2',
+                effect: 'Gain X*2 Population, where X is the number of all players cards in hands',
                 text: 'Implement policies to encourage population growth.'
               },
               copies: 3,
             },
             {
               id: 'politician_lv3_B',
-              pattern: [
-                [0, 1, 0],
-                [1, 0, 1],
-                [0, 0, 0]
-              ],
-              title: 'Corruption',
-              details: {
-                type: 'Resource',
-                effect: 'Choose 2 players, those players gain 1 Resource and you gain 2 Resources',
-                text: 'Exploit corruption to gain additional resources.'
-              },
-              copies: 4,
-            },
-            {
-              id: 'politician_lv3_C',
               pattern: [
                 [0, 0, 0],
                 [1, 0, 1],
@@ -427,7 +412,7 @@ const deckImages = {
                 effect: 'All players except you cannot gain Population for 1 turn',
                 text: 'Redistribute resources to ensure a more equitable distribution.'
               },
-              copies: 4,
+              copies: 3,
             },
             {
               id: 'politician_lv4_A',
@@ -445,6 +430,21 @@ const deckImages = {
               copies: 4,
             },
             {
+              id: 'politician_lv4_B',
+              pattern: [
+                [1, 0, 1],
+                [0, 0, 0],
+                [1, 0, 1]
+              ],
+              title: 'Corruption',
+              details: {
+                type: 'Resource',
+                effect: 'Choose (X - 2) players, where X equals to number of players, those players gain 1 Resource and you gain 2 Resources',
+                text: 'Exploit corruption to gain additional resources.'
+              },
+              copies: 4,
+            },
+            {
               id: 'politician_lv5_A',
               pattern: [
                 [1, 0, 1],
@@ -454,10 +454,10 @@ const deckImages = {
               title: 'Prisoners Dilemma',
               details: {
                 type: 'Special',
-                effect: 'All player votes, you choose the order, if the result is you, you gain 20 Population, if it is not you then that voted player destroys their 3 stations, if it is a tie, all other players destroy 1 stations, player can do no-vote',
+                effect: 'All player votes for a player, you choose the order, if the result is you, you gain 20 Population, if it is not you then that voted player destroys their own 3 stations, if it is a tie, all other players destroy 1 stations, player can do no-vote',
                 text: 'Create a scenario where cooperation is important.',
               },
-              copies: 3,
+              copies: 2,
             },
             {
               id: 'politician_lv7_A',
@@ -469,7 +469,7 @@ const deckImages = {
               title: `Coup d'état`,
               details: {
                 type: 'Special',
-                effect: 'Choose a player, you gain resources equal to the number of their stations, draw tech cards equal to the number of their tech cards in their hands, and your population become equal to their population',
+                effect: 'Choose a player, you gain resources equal to the number of their stations, draw tech cards equal to the number of their tech cards in their hands, and your population become equal to their population if you have lower',
                 text: 'Stage a coup to seize control of an opponent’s resources and population.',
               },
               copies: 1,
@@ -486,8 +486,8 @@ const deckImages = {
               title: 'Rule Paragraph 2 - Section A',
               details: {
                 type: 'Population',
-                effect: 'Seize X*2 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule',
-                text: 'Punish violators to maintain order and stability.'
+                effect: 'Seize X*2 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule and you can give any amount of them to any non-violated players',
+                text: 'Rob the bad to give the good.'
               },
               copies: 3,
             },
@@ -500,9 +500,9 @@ const deckImages = {
               ],
               title: 'Rule Paragraph 2 - Section B',
               details: {
-                type: 'Population',
-                effect: 'Kill X*3 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule',
-                text: 'Punish violators to maintain order and stability.'
+                type: 'Station',
+                effect: 'Push an adjacent station to the next slot, you cannot push if there is no free slot and you can only push stations of players who violated the rule',
+                text: 'Exile illegal stations to maintain order and stability.'
               },
               copies: 3,
             },
@@ -516,10 +516,10 @@ const deckImages = {
               title: 'Rule Paragraph 3 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Move any X stations to any free slots, where X is the (number of the violations / 2) (rouned down) of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Move any X / 4 (rounded down) stations to any free slots, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Realocate illegal stations to maintain order and stability.'
               },
-              copies: 4,
+              copies: 3,
             },
             {
               id: 'ruler_lv3_B',
@@ -531,28 +531,28 @@ const deckImages = {
               title: 'Rule Paragraph 3 - Section B',
               details: {
                 type: 'Resource',
-                effect: 'Seize X Resources from players, where X is the (number of the violations / 2) (rounded down) of the last rule declared by you, you can only choose players who violated the rule',
-                text: 'Confiscate resources from violators to maintain order and stability.'
+                effect: 'Seize X / 2 (rounded down) Resources from players, where X is the number of the violations (rounded down) of the last rule declared by you, you can only choose players who violated the rule, you can give any amount of them to any non-violated players',
+                text: 'Rob the bad to give the good.'
               },
-              copies: 4,
+              copies: 3,
             },
             {
-              id: 'ruler_lv4_A',
+              id: 'ruler_lv5_A',
               pattern: [
-                [0, 0, 0],
+                [0, 1, 0],
                 [1, 1, 1],
                 [0, 1, 0]
               ],
               title: 'Rule Paragraph 4 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Destroy X stations, where X is the (number of the violations / 2) (rounded down) of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Destroy X / 3 (rounded down) stations, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Eradicate illegal stations to maintain order and stability.'
               },
-              copies: 3,
+              copies: 2,
             },
             {
-              id: 'ruler_lv5_A',
+              id: 'ruler_lv5_B',
               pattern: [
                 [1, 1, 1],
                 [0, 1, 0],
@@ -561,7 +561,7 @@ const deckImages = {
               title: 'Rule Paragraph 5 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Build X stations, where X is the number of violations of the last rule declared by you',
+                effect: 'Build X / 3 (rounded down) stations, where X is the number of violations of the last rule declared by you',
                 text: 'Construct new stations to enforce the rules.'
               },
               copies: 2,
@@ -579,7 +579,7 @@ const deckImages = {
                 effect: 'Player who violated the last rule declared by you the most loses the game, if there are multiple players, they all lose the game',
                 text: 'Death sentence for the most notorious violators.'
               },
-              copies: 1,
+              copies: 2,
             },
         ],
     }
