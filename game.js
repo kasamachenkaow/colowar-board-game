@@ -96,7 +96,12 @@ function broadcastState() {
 function updateSharedState(newSharedState) {
     console.log('updateSharedState', newSharedState);
 
-    state.shared = newSharedState ?? state.shared;
+    if (newSharedState) {
+        state.shared = {
+          ...newSharedState,
+          eventsHistory: state.shared.eventsHistory,
+        };
+    }
 
     updateUIFromState();
 
@@ -277,7 +282,7 @@ function pinEvent(eventId) {
         event.pinned = true
     }
 
-    updateSharedState();
+    sendToHost({ type: 'update-event', event })
 }
 
 function unpinEvent(eventId) {
@@ -286,7 +291,7 @@ function unpinEvent(eventId) {
         event.pinned = false
     }
 
-    updateSharedState();
+    sendToHost({ type: 'update-event', event })
 }
 
 function updateStationsToWin() {
@@ -337,6 +342,17 @@ function handleData(data) {
         replaceSharedState(data.sharedState);
         putInitTechCardsToHand();
     }
+
+    if (data.type === 'add-event') {
+        state.shared.eventsHistory.unshift(data.event);
+        updateSharedState();
+    }
+
+    if (data.type === 'update-event') {
+        const eventIndex = state.shared.eventsHistory.findIndex(e => e.eventId === data.event.eventId);
+        state.shared.eventsHistory[eventIndex] = data.event;
+        updateSharedState();
+    }
 }
 
 function fillOtherPlayers(players) {
@@ -374,19 +390,29 @@ function broadcast(data) {
 }
 
 function sendSharedStateToHost(data) {
-    const sharedStateWithoutOtherPlayers = {
+    const reducedSharedState = {
         ...state.shared,
         players: state.shared.players.filter(p => p.peerId === peer.id),
+        eventsHistory: [],
     };
-    sendToHost({ type: 'updateState', sharedState: sharedStateWithoutOtherPlayers });
+
+    sendToHost({ type: 'updateState', sharedState: reducedSharedState });
 }
+
 const sendToHostTimeouts = {};
 function sendToHost(data) {
+    updateUIFromState();
+
+    if (isHost) {
+      updateSharedState();
+      return;
+    }
+
     if (sendToHostTimeouts[data.type]) {
         clearTimeout(sendToHostTimeouts[data.type]);
     }
 
-    // Boucing the sending to host if multiple sendings are happening for the same type
+    // Deboucing the sending to host if multiple sendings are happening for the same type
     sendSharedStateToHost[data.type] = setTimeout(() => {
       console.log('Sending data to host', data);
       conn.send(data);
@@ -567,7 +593,8 @@ function buildEventHistory({ playerName, values, type }) {
 
 function publishEventHistory(event) {
     state.shared.eventsHistory.unshift(event);
-    updateSharedState();
+
+    sendToHost({ type: 'add-event', event });
 }
 
 const defaultSlotBackgroundColor = '#f0f0f0';
