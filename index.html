@@ -170,6 +170,7 @@
             margin-top: 20px;
         }
         .slot {
+            cursor: pointer;
             border: 1px solid #000;
             display: flex;
             align-items: center;
@@ -256,23 +257,49 @@
         }
 
         #event-history {
-            flex-grow: 1;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            width: 90%;
+          flex-grow: 1;
+          overflow-y: hidden;
+          border: 1px solid #ccc;
+          padding: 10px;
+          margin-bottom: 10px;
+          background-color: #fff;
+          border-radius: 5px;
+          width: 90%;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+
+        #event-container {
+          display: flex;
+          flex-direction: column-reverse;
+          flex-grow: 1;
+          overflow-y: auto;
+          padding: 5px;
+        }
+
+        #pinned-event-container {
+          max-height: 30%;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 10px;
+          flex-shrink: 0;
+          padding: 5px;
         }
 
         .event {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #e6e6e6;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+          cursor: pointer;
+          margin-bottom: 10px;
+          padding: 10px;
+          border-radius: 5px;
+          background-color: #e6e6e6;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+
+        .pinned-event {
+          background-color: #eae994;
         }
 
         .player-name {
@@ -591,7 +618,10 @@
             </select>
             <button id="rollDice">Roll Dice</button>
             <div id="dice-result"></div>
-            <div id="event-history"></div>
+            <div id="event-history">
+              <div id="pinned-event-container"></div>
+              <div id="event-container"></div>
+            </div>
             <div id="chat-input">
                 <input type="text" id="chat-message" placeholder="Enter chat message">
                 <button id="send-chat">Send</button>

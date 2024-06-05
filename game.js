@@ -249,13 +249,44 @@ function getWinner() {
 }
 
 function renderHistory() {
-    const rollHistoryDiv = document.getElementById('event-history');
-    rollHistoryDiv.innerHTML = state.shared.eventsHistory.map(r => `
-        <div class="event">
-            <span class="player-name">${r.playerName}:</span>
-            <span class="event-message">${r.type === 'dice' ? `${emojis.Dice} Rolled ${Array.isArray(r.values) ? `(${r.values[0]}, ${r.values[1]})` : `(${r.values})`}` : `${r.values}`}</span>
+    const pinnedEventContainer = document.getElementById('pinned-event-container');
+    const eventConainer = document.getElementById('event-container');
+
+    const pinnedEvents = state.shared.eventsHistory.filter(e => e.pinned);
+    const allEvents = state.shared.eventsHistory
+
+    const pinnedMessages = pinnedEvents.map(event => getEventMessageItem(event, true)).join('');
+    const allMessage = allEvents.map(event => getEventMessageItem(event)).join('');
+
+    pinnedEventContainer.innerHTML = pinnedMessages;
+    eventConainer.innerHTML = allMessage;
+}
+
+function getEventMessageItem(event, isPinned) {
+    return `
+        <div class="event${isPinned ? ' pinned-event' : ''}" onclick="${isPinned ? 'unpinEvent' : 'pinEvent'}('${event.eventId}')">
+            <span class="player-name">${event.playerName}:</span>
+            <span class="event-message">${event.type === 'dice' ? `${emojis.Dice} Rolled ${Array.isArray(event.values) ? `(${event.values[0]}, ${event.values[1]})` : `(${event.values})`}` : `${event.values}`}</span>
         </div>
-    `).join('');
+    `;
+}
+
+function pinEvent(eventId) {
+    const event = state.shared.eventsHistory.find(e => e.eventId === eventId);
+    if (event) {
+        event.pinned = true
+    }
+
+    updateSharedState();
+}
+
+function unpinEvent(eventId) {
+    const event = state.shared.eventsHistory.find(e => e.eventId === eventId);
+    if (event) {
+        event.pinned = false
+    }
+
+    updateSharedState();
 }
 
 function updateStationsToWin() {
@@ -529,7 +560,9 @@ function sendChat(msg) {
 }
 
 function buildEventHistory({ playerName, values, type }) {
-    return { playerName, values, type };
+    const eventId = generateUID();
+    const eventTime = new Date().toLocaleTimeString();
+    return { eventId, eventTime, playerName, values, type };
 }
 
 function publishEventHistory(event) {
