@@ -3,6 +3,7 @@ let peer;
 let connections = [];
 let isHost = false;
 let conn;
+let stationMode = 'build';
 
 const cardIdDelim = '/';
 
@@ -79,7 +80,11 @@ function initSlotsBoard() {
 
             const isSlotOccupied = state.shared.board[slotIndex].playerColor;
 
-            isSlotOccupied ? recycleStationOnBoard(slotIndex, player) : placeStationOnBoard(slotIndex, player);
+            isSlotOccupied
+              ? stationMode === 'build'
+                ? recycleStationOnBoard(slotIndex, player)
+                : destroyStationOnBoard(slotIndex, player)
+              : placeStationOnBoard(slotIndex, player);
         });
         board.appendChild(slot);
     }
@@ -883,9 +888,31 @@ function recycleStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station} Recycled a station on slot (${row}, ${col})`, type: 'station' });
+    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
     publishEventHistory(event);
 
+    updateSharedState();
+}
+
+// Destroy a station on the board
+function destroyStationOnBoard(slotIndex, player) {
+    console.log(`Destroying station on board at slot ${slotIndex}, with color ${player.color}`);
+
+    const slot = state.shared.board[slotIndex];
+
+    if (slot.playerColor !== player.color) {
+        return;
+    }
+
+    slot.playerColor = null;
+
+    player.stations--;
+
+    const [row, col] = getRowColFromSlotIndex(slotIndex);
+
+    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
+
+    publishEventHistory(event);
     updateSharedState();
 }
 
@@ -910,7 +937,7 @@ function placeStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station} Built a station on slot (${row}, ${col})`, type: 'station' });
+    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
     publishEventHistory(event);
 
     updateSharedState({
@@ -1328,6 +1355,20 @@ function startGameConfetti() {
     scalar: 0.75,
     shapes: ['circle']
   });
+}
+
+function toggleMode(element) {
+    element.classList.toggle('on');
+    const textElement = document.querySelector('.toggle-text');
+    if (element.classList.contains('on')) {
+        stationMode = 'destroy';
+        textElement.textContent = 'Destroy Mode';
+        textElement.classList.add('on');
+    } else {
+        stationMode = 'build';
+        textElement.textContent = 'Build Mode';
+        textElement.classList.remove('on');
+    }
 }
 
 const versionNode = document.getElementById('version');

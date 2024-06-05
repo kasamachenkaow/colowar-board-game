@@ -479,6 +479,7 @@
             margin-bottom: 10px;
         }
     </style>
+    <link rel="stylesheet" href="toggle.css">
 </head>
 <body>
     <div id="game-container">
@@ -594,6 +595,10 @@
             <div id="resource-container">
                 <button class="gain-resource-button" onclick="increaseResource()">Gain [1 resource]</button>
                 <button class="release-resource-button" onclick="decreaseResource()">Release [1 resource]</button>
+                <div class="toggle-container">
+                    <div class="toggle-switch" onclick="toggleMode(this)"></div>
+                    <span class="toggle-text">Build Mode</span>
+                </div>
             </div>
             <div class="hand-container">
                 <div id="play-area-container">
@@ -603,7 +608,7 @@
                 <div id="hand" class="hand"></div>
                 <div class="tech-deck-container">
                   <div class="deck-label"><a href="/tech-docs" target="_blank">Tech Deck </a></div>
-                    <div class="deck-card" id="tech-deck" data-deck-id="tech" draggable="true">0</div>
+                  <div class="deck-card" id="tech-deck" data-deck-id="tech" draggable="true">0</div>
                 </div>
             </div>
         </div>
