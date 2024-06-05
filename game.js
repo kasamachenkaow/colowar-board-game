@@ -870,7 +870,13 @@ function addCardToHand(deckId, cardId) {
 function recycleStationOnBoard(slotIndex, player) {
     console.log(`Recycling station on board at slot ${slotIndex}, with color ${player.color}`);
 
-    const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: null }) : s)
+    const slot = state.shared.board[slotIndex];
+
+    if (slot.playerColor !== player.color) {
+        return;
+    }
+
+    slot.playerColor = null;
 
     player.resources++;
     player.stations--;
@@ -880,10 +886,7 @@ function recycleStationOnBoard(slotIndex, player) {
     const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station} Recycled a station on slot (${row}, ${col})`, type: 'station' });
     publishEventHistory(event);
 
-    updateSharedState({
-        ...state.shared,
-        board: newBoard,
-    });
+    updateSharedState();
 }
 
 function getRowColFromSlotIndex(slotIndex) {
