@@ -344,11 +344,10 @@
         }
         #resource-container {
             display: flex;
-            justify-content: center;
+            justify-content: space-evenly;
             align-items: center;
-        }
-        #resource-container > .gain-resource-button {
-            font-size: 20px;
+            margin-bottom: 20px;
+            width: 85%;
         }
         .tech-deck-container {
             display: flex;
@@ -479,7 +478,8 @@
             margin-bottom: 10px;
         }
     </style>
-    <link rel="stylesheet" href="toggle.css">
+    <link rel="stylesheet" href="css/toggle.css">
+    <link rel="stylesheet" href="css/button.css">
 </head>
 <body>
     <div id="game-container">
@@ -593,8 +593,8 @@
                 <div id="board"></div>
             </div>
             <div id="resource-container">
-                <button class="gain-resource-button" onclick="increaseResource()">Gain [1 resource]</button>
-                <button class="release-resource-button" onclick="decreaseResource()">Release [1 resource]</button>
+                <button class="release-resource-button" onclick="decreaseResource()">🗑️ Release [1 resource]</button>
+                <button class="gain-resource-button" onclick="increaseResource()">💰 Gain [1 resource]</button>
                 <div class="toggle-container">
                     <div class="toggle-switch" onclick="toggleMode(this)"></div>
                     <span class="toggle-text">Build Mode</span>
