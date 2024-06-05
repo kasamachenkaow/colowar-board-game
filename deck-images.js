@@ -501,7 +501,7 @@ const deckImages = {
               title: 'Rule Paragraph 2 - Section B',
               details: {
                 type: 'Station',
-                effect: 'Push an adjacent station to the next slot, you cannot push if there is no free slot and you can only push stations of players who violated the rule',
+                effect: 'Push an adjacent station to the next slot, you cannot push if there is no free slot and you can only push stations of players who violated the rule, if you do you can spend 1 resource to build a staion in that slot',
                 text: 'Exile illegal stations to maintain order and stability.'
               },
               copies: 3,
