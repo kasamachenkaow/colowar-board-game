@@ -1061,7 +1061,7 @@ function generateUID() {
 function initPeer() {
     const peerUrl = document.getElementById('peerUrl').value;
 
-    return peerUrl ? new Peer(generateUID(), { host: peerUrl, port: "443" }) : new Peer();
+    return peerUrl ? new Peer(generateUID(), { host: peerUrl, port: "443" }) : new Peer(generateUID());
 }
 
 joinButton.addEventListener('click', () => {
