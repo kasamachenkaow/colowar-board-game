@@ -385,6 +385,21 @@ const deckImages = {
         ],
         "politician": [
             {
+              id: 'politician_lv2_A',
+              pattern: [
+                [0, 1, 0],
+                [0, 0, 0],
+                [0, 1, 0]
+              ],
+              title: 'Corruption',
+              details: {
+                type: 'Resource',
+                effect: 'Choose 1 player, give them 1 resource and you can use 1 of their stations to help playing tech cards for 1 turn, this effect can stack',
+                text: 'Use your influence to gain access to resources and stations.'
+              },
+              copies: 4,
+            },
+            {
               id: 'politician_lv3_A',
               pattern: [
                 [1, 0, 1],
@@ -426,21 +441,6 @@ const deckImages = {
                 type: 'Tech',
                 effect: 'All players draw 2 Tech cards',
                 text: 'Demonstrate generosity to foster technological advancement.'
-              },
-              copies: 4,
-            },
-            {
-              id: 'politician_lv4_B',
-              pattern: [
-                [1, 0, 1],
-                [0, 0, 0],
-                [1, 0, 1]
-              ],
-              title: 'Corruption',
-              details: {
-                type: 'Resource',
-                effect: 'Choose (X - 2) players, where X equals to number of players, those players gain 1 Resource and you gain 2 Resources',
-                text: 'Exploit corruption to gain additional resources.'
               },
               copies: 4,
             },
