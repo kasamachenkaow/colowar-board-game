@@ -385,9 +385,9 @@ const deckImages = {
         ],
         "politician": [
             {
-              id: 'politician_lv2_A',
+              id: 'politician_lv3_A',
               pattern: [
-                [1, 0, 0],
+                [1, 0, 1],
                 [0, 0, 0],
                 [0, 0, 1]
               ],
@@ -400,7 +400,7 @@ const deckImages = {
               copies: 3,
             },
             {
-              id: 'politician_lv3_A',
+              id: 'politician_lv3_B',
               pattern: [
                 [0, 1, 0],
                 [1, 0, 1],
@@ -415,7 +415,7 @@ const deckImages = {
               copies: 4,
             },
             {
-              id: 'politician_lv3_B',
+              id: 'politician_lv3_C',
               pattern: [
                 [0, 0, 0],
                 [1, 0, 1],
