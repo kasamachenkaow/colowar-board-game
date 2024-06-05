@@ -33,7 +33,7 @@
             align-items: center;
             justify-content: flex-start;
             padding: 10px;
-            width: 15%;
+            width: 20%;
             background-color: #f4f4f4;
             border-right: 1px solid #ccc;
         }
@@ -446,14 +446,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .game-info-container {
-            display: flex;
-            flex-direction: column;
-            align-items: left;
-            justify-content: left;
-            margin: 10px;
-            gap: 10px;
-        }
         #end-turn {
             margin-top: 10px;
             margin-left: 20px;
@@ -477,10 +469,15 @@
             font-size: 12px;
             margin-bottom: 10px;
         }
+
+        #hostIdDisplay {
+            margin: 20px;
+        }
     </style>
     <link rel="stylesheet" href="css/toggle.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/select.css">
+    <link rel="stylesheet" href="css/game-info-card.css">
 </head>
 <body>
     <div id="game-container">
@@ -497,12 +494,13 @@
                 <button id="startGame" style="display:none;">Start Game</button>
                 <button id="stopGame" style="display:none;">Stop Game</button>
                 <div id="hostIdDisplay"></div>
-                <div class="game-info-container">
-                  <div id="total-population">Total population: 80</div>
-                  <div id="largest-player">Largest player: 0 stations (n/a)</div>
-                  <div>[wining conditions]</div>
-                  <div id="half-population">Half population: 40</div>
-                  <div id="stations-to-win">Stations to win: 0</div>
+                <div class="game-info-card">
+                    <h3>Game Info</h3>
+                    <p id="total-population">Total population: 80</p>
+                    <p id="largest-player">Largest player: 0 stations (n/a)</p>
+                    <p>[wining conditions]</p>
+                    <p id="half-population">Half population: 40</p>
+                    <p id="stations-to-win">Stations to win: 0</p>
                 </div>
             </div>
             <div id="player1" class="player-slot">

@@ -438,7 +438,7 @@ document.getElementById('startHost').addEventListener('click', () => {
     peer.on('open', id => {
         console.log('Host ID: ' + id);
         const hostIdDisplay = document.getElementById('hostIdDisplay');
-        hostIdDisplay.textContent = 'Game ID: ' + id;
+        hostIdDisplay.textContent = 'Game ID: ' + id + ' 📋';
         hostIdDisplay.style.display = 'block';
         isHost = true;
         showModal('host', id);
