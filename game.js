@@ -347,6 +347,7 @@ function handleData(data) {
         startGameConfetti();
         replaceSharedState(data.sharedState);
         putInitTechCardsToHand();
+        peer.disconnect();
     }
 
     if (data.type === 'add-event') {
@@ -497,16 +498,18 @@ document.getElementById('startHost').addEventListener('click', () => {
     });
 
     peer.on('disconnected', () => {
-        console.log('PeerJS disconnected');
-        showSnackbar('PeerJS disconnected, reconnecting...');
+        console.log('Peer server disconnected');
 
-        setTimeout(() => {
-           retriesPeerServer++;
+        if (!state.shared.isGameStarted) {
+            setTimeout(() => {
+               showSnackbar('Reconnecting peer server...');
+               retriesPeerServer++;
 
-           if (retriesPeerServer <= maxRetriesPeerServer) {
-               peer.reconnect();
-           }
-        }, (retriesPeerServer + 1) * 2 * 1000);
+               if (retriesPeerServer <= maxRetriesPeerServer) {
+                   peer.reconnect();
+               }
+            }, (retriesPeerServer + 1) * 2 * 1000);
+        }
     });
 });
 
@@ -533,6 +536,8 @@ document.getElementById('startGame').addEventListener('click', () => {
 
     state.shared.stationsToWin = stationsToWin;
     state.shared.isGameStarted = true;
+
+    peer.disconnect();
 
     const event = buildEventHistory({ playerName: 'Host', values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
     publishEventHistory(event);
@@ -1133,11 +1138,18 @@ function generateUID() {
 function initPeer() {
     const peerUrl = document.getElementById('peerUrl').value;
 
-    const newPeer = peerUrl ? new Peer(generateUID(), { host: peerUrl, port: "443", proxied: true }) : new Peer(generateUID());
+    const [protocol, host, path, port] = getHostInfo(peerUrl);
+
+    const newPeer = peerUrl ? new Peer(generateUID(), { host, path, port }) : new Peer(generateUID());
 
     connectedPeerId = newPeer.id;
 
     return newPeer;
+}
+
+function getHostInfo(peerUrl) {
+    const url = new URL(peerUrl);
+    return [url.protocol, url.host, url.pathname, url.port];
 }
 
 joinButton.addEventListener('click', () => {
