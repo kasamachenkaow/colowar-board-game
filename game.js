@@ -277,7 +277,7 @@ function getEventMessageItem(event, isPinned) {
     return `
         <div class="event${isPinned ? ' pinned-event' : ''}" onclick="${isPinned ? 'unpinEvent' : 'pinEvent'}('${event.eventId}')">
             <span class="player-name">${event.playerName}:</span>
-            <span class="event-message">${event.type === 'dice' ? `${emojis.Dice} Rolled ${Array.isArray(event.values) ? `(${event.values[0]}, ${event.values[1]})` : `(${event.values})`}` : `${event.values}`}</span>
+            <span class="event-message">${event.type.includes('dice') ? `${emojis.Dice} Rolled ${Array.isArray(event.values) ? `(${event.values[0]}, ${event.values[1]})` : `(${event.values})`}` : `${event.values}`}</span>
         </div>
     `;
 }
@@ -352,6 +352,7 @@ function handleData(data) {
 
     if (data.type === 'add-event') {
         state.shared.eventsHistory.unshift(data.event);
+        stete.shared.currentStep = data.event.payload.currentStep;
         updateSharedState();
     }
 
@@ -577,14 +578,15 @@ function rollDice(diceType) {
             if (diceType === '2d6') {
                 const die1 = Math.floor(Math.random() * 6) + 1;
                 const die2 = Math.floor(Math.random() * 6) + 1;
-                result = buildEventHistory({ playerName: currPlayer.name, values: [die1, die2], type: 'dice' });
-                diceResult.textContent = `Result: (${die1}, ${die2})`;
 
                 if(hasStation(die1, die2)) {
                     state.shared.currentStep = STEP.roll;
                 } else {
                     state.shared.currentStep = STEP.choose;
                 }
+
+                diceResult.textContent = `Result: (${die1}, ${die2})`;
+                result = buildEventHistory({ playerName: currPlayer.name, values: [die1, die2], type: 'roll-dice' });
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
                 result = buildEventHistory({ playerName: currPlayer?.name || 'unknown', values: die1, type: 'dice'});
@@ -613,7 +615,8 @@ function sendChat(msg) {
 function buildEventHistory({ playerName, values, type }) {
     const eventId = generateUID();
     const eventTime = new Date().toLocaleTimeString();
-    return { eventId, eventTime, playerName, values, type };
+    const payload = { currentStep: state.shared.currentStep }
+    return { eventId, eventTime, playerName, values, type, payload };
 }
 
 function publishEventHistory(event) {
