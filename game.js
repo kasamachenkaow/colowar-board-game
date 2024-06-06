@@ -1138,9 +1138,19 @@ function generateUID() {
 function initPeer() {
     const peerUrl = document.getElementById('peerUrl').value;
 
+    if (!peerUrl) {
+       const newPeer = new Peer(generateUID());
+       connectedPeerId = newPeer.id;
+
+       return newPeer;
+    }
+
     const [protocol, host, path, port] = getHostInfo(peerUrl);
 
-    const newPeer = peerUrl ? new Peer(generateUID(), { host, path, port }) : new Peer(generateUID());
+    console.log('Peer URL:', peerUrl)
+    console.log({ protocol, host, path, port })
+
+    const newPeer = new Peer(generateUID(), { host, path, port });
 
     connectedPeerId = newPeer.id;
 
