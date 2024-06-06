@@ -4,6 +4,7 @@ let connections = [];
 let isHost = false;
 let conn;
 let stationMode = 'build';
+let connectedPeerId;
 
 const cardIdDelim = '/';
 
@@ -57,7 +58,7 @@ state.shared.players = [
 ];
 
 function findCurrentPlayer() {
-    return state.shared.players.find(p => p?.peerId === peer?.id);
+    return state.shared.players.find(p => p?.peerId === connectedPeerId);
 }
 
 function initSlotsBoard() {
@@ -129,7 +130,7 @@ function replaceSharedState(newSharedState) {
 
     // only update the other players' state
     if (currPlayer) {
-        const currPlayerIndex = state.shared.players.findIndex(p => p.peerId === peer.id);
+        const currPlayerIndex = state.shared.players.findIndex(p => p.peerId === connectedPeerId);
         state.shared.players[currPlayerIndex] = currPlayer;
     }
 
@@ -160,7 +161,7 @@ function updatePlayerUI(player, index) {
         population.textContent = `Population: ${player.population}`;
         skill.textContent = getSkillTextForJob(player.job, player.jobLevel);
         stations.textContent = `Stations: ${player.stations}`;
-        if (peer.id === player.peerId) {
+        if (connectedPeerId === player.peerId) {
             playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'block');
         } else {
             playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'none');
@@ -190,14 +191,14 @@ function updateUIFromState() {
 
     setBoardState(state.shared.board);
 
-    if (peer) {
+    if (connectedPeerId) {
       const currPlayer = findCurrentPlayer();
 
       let playerIndex = 1
       updatePlayerUI(currPlayer, playerIndex);
 
       state.shared.players.forEach((player) => {
-          if (player.peerId !== peer.id) {
+          if (player.peerId !== connectedPeerId) {
             playerIndex++;
             updatePlayerUI(player, playerIndex);
           }
@@ -397,7 +398,7 @@ function broadcast(data) {
 function sendSharedStateToHost(data) {
     const reducedSharedState = {
         ...state.shared,
-        players: state.shared.players.filter(p => p.peerId === peer.id),
+        players: state.shared.players.filter(p => p.peerId === connectedPeerId),
         eventsHistory: [],
     };
 
@@ -423,6 +424,9 @@ function sendToHost(data) {
       conn.send(data);
     }, 50);
 }
+
+let maxRetriesPeerServer = 3;
+let retriesPeerServer = 0;
 
 document.getElementById('startHost').addEventListener('click', () => {
     document.getElementById('startHost').style.display = 'none';
@@ -496,7 +500,13 @@ document.getElementById('startHost').addEventListener('click', () => {
         console.log('PeerJS disconnected');
         showSnackbar('PeerJS disconnected, reconnecting...');
 
-        peer.reconnect();
+        setTimeout(() => {
+           retriesPeerServer++;
+
+           if (retriesPeerServer <= maxRetriesPeerServer) {
+               peer.reconnect();
+           }
+        }, (retriesPeerServer + 1) * 2 * 1000);
     });
 });
 
@@ -679,7 +689,7 @@ function loadSharedDeckImages() {
 
 // Load player-specific deck images based on job when joining or becoming a host
 function loadPlayerDeckImages(job) {
-    if (state.shared.cardInfos[peer.id]) {
+    if (state.shared.cardInfos[connectedPeerId]) {
         console.log('Player deck images already loaded');
         return;
     }
@@ -693,13 +703,13 @@ function loadPlayerDeckImages(job) {
     const shuffledImages = shuffle([...multipleCopies]);
     state.player.decks.tech = shuffledImages;
 
-    console.log({ peerId: peer.id, cardInfos: state.shared.cardInfos })
+    console.log({ peerId: connectedPeerId, cardInfos: state.shared.cardInfos })
 
     updateSharedState({
         ...state.shared,
         cardInfos: {
           ...state.shared.cardInfos,
-          [peer.id]: [...shuffledImages],
+          [connectedPeerId]: [...shuffledImages],
         }
     })
 }
@@ -1123,7 +1133,11 @@ function generateUID() {
 function initPeer() {
     const peerUrl = document.getElementById('peerUrl').value;
 
-    return peerUrl ? new Peer(generateUID(), { host: peerUrl, port: "443" }) : new Peer(generateUID());
+    const newPeer = peerUrl ? new Peer(generateUID(), { host: peerUrl, port: "443", proxied: true }) : new Peer(generateUID());
+
+    connectedPeerId = newPeer.id;
+
+    return newPeer;
 }
 
 joinButton.addEventListener('click', () => {
@@ -1133,7 +1147,7 @@ joinButton.addEventListener('click', () => {
 
     if (playerName && playerJob) {
         if (isHost) {
-            newPlayer(peer.id, playerName, playerJob)
+            newPlayer(connectedPeerId, playerName, playerJob)
 
             loadPlayerDeckImages(playerJob);
 
@@ -1201,7 +1215,7 @@ function shuffle(array) {
 }
 
 function increaseJobLevel() {
-    const player = state.shared.players.find(p => p.peerId === peer.id);
+    const player = findCurrentPlayer();
 
     if (player && player.jobLevel < 3) {
         player.jobLevel += 1;
@@ -1214,7 +1228,7 @@ function increaseJobLevel() {
 }
 
 function increasePopulation(inputPlayer) {
-    const player = state.shared.players.find(p => p.peerId === peer.id);
+    const player = findCurrentPlayer();
     const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
 
     if (player) {
@@ -1229,7 +1243,7 @@ function increasePopulation(inputPlayer) {
 }
 
 function decreasePopulation(inputPlayer) {
-    const player = state.shared.players.find(p => p.peerId === peer.id);
+    const player = findCurrentPlayer();
     const populationChange = document.getElementById(`${inputPlayer}-population-change`).value;
 
     if (player) {
@@ -1255,7 +1269,7 @@ function increaseResource() {
       }
     }
 
-    const player = state.shared.players.find(p => p.peerId === peer.id);
+    const player = findCurrentPlayer();
     if (player) {
         player.resources += 1;
 
@@ -1267,7 +1281,7 @@ function increaseResource() {
 }
 
 function decreaseResource() {
-    const player = state.shared.players.find(p => p.peerId === peer.id);
+    const player = findCurrentPlayer();
     if (player) {
         player.resources -= 1;
 
