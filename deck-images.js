@@ -454,7 +454,7 @@ const deckImages = {
               title: 'Prisoners Dilemma',
               details: {
                 type: 'Special',
-                effect: 'All player votes for a player, you choose the order, if the result is you, you gain 20 Population, if it is not you then that voted player destroys their own 3 stations, if it is a tie, all other players destroy 1 stations, player can do no-vote',
+                effect: 'Everyone gets to vote for any player, including themselves. You decide the voting order. If you end up with the most votes, you get 20 Population points. If someone else gets the most votes, they have to destroy 3 of their own stations. If there’s a tie, all other players each destroy 1 station. Players can also choose not to vote at all.',
                 text: 'Create a scenario where cooperation is important.',
               },
               copies: 2,
