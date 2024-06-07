@@ -38,6 +38,11 @@
             border-right: 1px solid #ccc;
         }
         #player-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            flex-direction: column;
             width: 100%;
         }
         .compact-button {
@@ -440,6 +445,10 @@
         #hostIdDisplay {
             margin: 20px;
         }
+
+        #join-controls {
+            display: flex;
+        }
     </style>
     <link rel="stylesheet" href="css/toggle.css">
     <link rel="stylesheet" href="css/button.css">
@@ -462,7 +471,7 @@
                 <button id="startGame" style="display:none;">Start Game</button>
                 <button id="stopGame" style="display:none;">Stop Game</button>
                 <div id="hostIdDisplay"></div>
-                <div class="game-info-card">
+                <div id="game-info-card" class="game-info-card" style="display:none;">
                     <h3>Game Info</h3>
                     <p id="total-population">Total population: 80</p>
                     <p id="largest-player">Largest player: 0 stations (n/a)</p>

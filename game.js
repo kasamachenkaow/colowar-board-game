@@ -160,6 +160,7 @@ function updateUIFromState() {
     }
 
 
+    document.getElementById('game-info-card').style.display = state.shared.isGameStarted ? 'block' : 'none';
     document.getElementById('peerUrl').style.display = state.shared.isGameStarted ? 'none' : 'block';
     document.getElementById('hostIdDisplay').style.display = state.shared.isGameStarted ? 'none' : 'block';
 
@@ -1096,7 +1097,7 @@ function getFullPlayerContent (player) {
               </div>
               <div class="player-actions" style="display: block;">
                 <button class="player-button player-input" onclick="increaseJobLevel('${player.id}')">Increase Job Level</button>
-                <input class="player-input" type="number" id="${player.id}-population-change" />
+                <input class="player-input" type="number" id="${player.id}-population-change" value="5" />
                 <button class="player-button player-input" onclick="increasePopulation('${player.id}')">Increase Population</button>
                 <button class="player-button player-input" onclick="decreasePopulation('${player.id}')">Decrease Population</button>
               </div>
