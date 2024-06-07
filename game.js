@@ -161,7 +161,7 @@ function updateUIFromState() {
 
 
     document.getElementById('game-info-card').style.display = state.shared.isGameStarted ? 'block' : 'none';
-    document.getElementById('peerUrl').style.display = state.shared.isGameStarted ? 'none' : 'block';
+    document.getElementById('peerUrl').style.display = connectedPeerId ? 'none' : 'block';
     document.getElementById('hostIdDisplay').style.display = state.shared.isGameStarted ? 'none' : 'block';
 
     setBoardState(state.shared.board);
