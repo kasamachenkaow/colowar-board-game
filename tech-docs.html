@@ -83,6 +83,9 @@
         .pattern div.active {
             background-color: #333;
         }
+        .pattern div.x {
+            background-color: #faa;
+        }
         .details {
             font-size: 0.9em;
             color: #555;
@@ -110,6 +113,7 @@
         <div class="tab" data-job="spiritual-leader">Spiritual Leader</div>
         <div class="tab" data-job="politician">Politician</div>
         <div class="tab" data-job="ruler">Ruler</div>
+        <div class="tab" data-job="spy">Spy</div>
     </div>
     <div id="main-container"></div>
 
@@ -128,6 +132,9 @@
                     const cellDiv = document.createElement('div');
                     if (cell === 1) {
                         cellDiv.classList.add('active');
+                    }
+                    if (cell === 'X') {
+                        cellDiv.classList.add('x')
                     }
                     patternDiv.appendChild(cellDiv);
                 });

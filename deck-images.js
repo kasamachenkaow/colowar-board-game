@@ -538,9 +538,9 @@ const deckImages = {
               copies: 3,
             },
             {
-              id: 'ruler_lv5_A',
+              id: 'ruler_lv4_A',
               pattern: [
-                [0, 1, 0],
+                [0, 0, 0],
                 [1, 1, 1],
                 [0, 1, 0]
               ],
@@ -582,6 +582,68 @@ const deckImages = {
               },
               copies: 2,
             },
+        ],
+        "spy": [
+            {
+              id: 'spy_lv1_A',
+              pattern: [
+                [0, X, 0],
+                [X, 1, X],
+                [0, X, 0]
+              ],
+              title: 'Persuation',
+              details: {
+                type: 'Population',
+                effect: 'Steal 5 Population from the player you are spying',
+                text: 'Use your charm to persuade others to join your cause.'
+              },
+              copies: 5,
+            },
+            {
+              id: 'spy_lv2_A',
+              pattern: [
+                [0, 0, 0],
+                [1, 0, 1],
+                [0, 0, 0]
+              ],
+              title: 'Information Leak',
+              details: {
+                type: 'Station',
+                effect: 'Build X station(s), where X is the number of stations that has been built by players your are spying',
+                text: 'Leak information to gain an advantage over your opponents.',
+              },
+              copies: 5,
+            },
+            {
+              id: 'spy_lv3_A',
+              pattern: [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+              ],
+              title: 'Station Compromise',
+              details: {
+                type: 'Station',
+                effect: 'Steal 1 station from the player you are spying',
+                text: 'Compromise the stations of your enemies to weaken their defenses.'
+              },
+              copies: 3,
+            },
+            {
+              id: 'spy_lv5_A',
+              pattern: [
+                [1, X, 1],
+                [X, 1, X],
+                [1, X, 1]
+              ],
+              title: 'Propaganda',
+              details: {
+                type: 'Population',
+                effect: 'Gain X*3 Population, where X is the number of the stations for players you are spying',
+                text: 'Spread propaganda to increase your population.'
+              },
+              copies: 2,
+            }
         ],
     }
 };
