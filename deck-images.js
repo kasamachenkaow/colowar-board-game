@@ -303,7 +303,7 @@ const deckImages = {
                 title: 'Celestial Awakening',
                 details: {
                     type: 'Population',
-                    effect: 'Gain 8 Population',
+                    effect: 'Gain 6 Population',
                     text: 'Invoke a celestial awakening to greatly increase your population.'
                 },
                 copies: 3
@@ -333,7 +333,7 @@ const deckImages = {
                 title: 'Soul Siphon',
                 details: {
                     type: 'Population',
-                    effect: 'Steal 4 Population from an opponent',
+                    effect: 'Steal 3 Population from an opponent',
                     text: 'Siphon the souls of your opponents, transferring their population to your own.'
                 },
                 copies: 3
@@ -363,7 +363,7 @@ const deckImages = {
                 title: 'Void Purge',
                 details: {
                     type: 'Population',
-                    effect: 'Kill 8 Population from an opponent',
+                    effect: 'Kill 6 Population from an opponent',
                     text: 'Purge your enemies into the void, reducing their population.'
                 },
                 copies: 3
@@ -378,7 +378,7 @@ const deckImages = {
                 title: 'Shadow Erasure',
                 details: {
                     type: 'Population',
-                    effect: 'Kill 4 Population from 2 opponents',
+                    effect: 'Kill 3 Population from 2 opponents',
                     text: 'Erase the shadows of your enemies, reducing their population.'
                 },
                 copies: 3
@@ -517,7 +517,7 @@ const deckImages = {
               title: 'Rule Paragraph 3 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Move any X / 4 (rounded down) stations to any free slots, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Move any X / 3 (rounded down) stations to any free slots, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Realocate illegal stations to maintain order and stability.'
               },
               copies: 3,
@@ -547,7 +547,7 @@ const deckImages = {
               title: 'Rule Paragraph 4 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Destroy X / 3 (rounded down) stations, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Destroy X / 2 (rounded down) stations, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Eradicate illegal stations to maintain order and stability.'
               },
               copies: 2,
@@ -562,7 +562,7 @@ const deckImages = {
               title: 'Rule Paragraph 5 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Build X / 3 (rounded down) stations, where X is the number of violations of the last rule declared by you',
+                effect: 'Build X / 2 (rounded down) stations, where X is the number of violations of the last rule declared by you',
                 text: 'Construct new stations to enforce the rules.'
               },
               copies: 2,
