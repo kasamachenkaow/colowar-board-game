@@ -856,15 +856,12 @@ function createCardElement(deckId, cardId, playerJob, playerPeerId) {
 
                 // Draw X
                 if (pattern[i][j] === 'X') {
-                    ctx.strokeStyle = 'black';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    // Draw two diagonal lines to form an X
-                    ctx.moveTo(startX + j * boxSize, startY + i * boxSize);
-                    ctx.lineTo(startX + j * boxSize + boxSize, startY + i * boxSize + boxSize);
-                    ctx.moveTo(startX + j * boxSize + boxSize, startY + i * boxSize);
-                    ctx.lineTo(startX + j * boxSize, startY + i * boxSize + boxSize);
-                    ctx.stroke();
+                    ctx.fillStyle = '#faa';
+                    ctx.fillRect(startX + j * boxSize, startY + i * boxSize, boxSize, boxSize);
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(startX + j * boxSize, startY + i * boxSize, boxSize, boxSize);
+                    ctx.fillStyle = 'black';
                 }
             }
         }
