@@ -609,7 +609,7 @@ const deckImages = {
               title: 'Information Leak',
               details: {
                 type: 'Station',
-                effect: 'Build X station(s), where X is the number of stations that has been built by players your are spying',
+                effect: 'Build X station(s), where X is the number of stations that has been built by players your are spying this turn',
                 text: 'Leak information to gain an advantage over your opponents.',
               },
               copies: 5,
@@ -624,7 +624,7 @@ const deckImages = {
               title: 'Station Compromise',
               details: {
                 type: 'Station',
-                effect: 'Steal 1 station from the player you are spying',
+                effect: 'Steal 1 station from the player you are spying, you can steal even if you are not the least station player but they must have plaed a tech card this turn',
                 text: 'Compromise the stations of your enemies to weaken their defenses.'
               },
               copies: 3,
