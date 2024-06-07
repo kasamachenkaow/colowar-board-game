@@ -1243,7 +1243,6 @@ joinButton.addEventListener('click', () => {
 
                         document.getElementById('startHost').style.display = 'none';
                         document.getElementById('join-controls').style.display = 'none';
-                        document.getElementById('leaveGame').style.display = 'block';
 
                         modal.style.display = 'none';
                     });
