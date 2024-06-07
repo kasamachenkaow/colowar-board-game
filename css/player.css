@@ -1,0 +1,162 @@
+#players-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    flex-direction: column;
+    width: 100%;
+}
+
+.player-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.player-slot:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.player-header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.player-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+
+.player-details {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.player-name,
+.player-job,
+.player-status,
+.player-cards,
+.player-population,
+.player-resources,
+.player-stations,
+.player-skill {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.player-skill-content {
+    background: whitesmoke;
+    padding: 5px;
+}
+
+.player-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.player-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.player-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    width: 100%;
+}
+
+.player-button:hover {
+    background-color: #0056b3;
+}
+
+.kick-player-button {
+    align-self: flex-end;
+    margin-bottom: 10px;
+}
+
+.player-slot-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.player-header-compact {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+}
+
+.player-title-compact {
+    margin-right: 10px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.player-name-compact {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.player-job-compact {
+    font-size: 10px;
+}
+
+.player-skill-compact {
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+.player-details-compact {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.kick-player-button-compact {
+    align-self: flex-start;
+    display: flex;
+}
+
+.player-cards-compact,
+.player-population-compact,
+.player-resources-compact,
+.player-stations-compact {
+    font-size: 14px;
+}
+

@@ -20,8 +20,8 @@ const initPlayer = {
     connected: false,
     cards: 0,
     population: 25,
-    name: '-',
-    job: '-',
+    name: '',
+    job: '',
     jobLevel: 1,
     color: null,
     decks: {
@@ -138,46 +138,15 @@ function replaceSharedState(newSharedState) {
 }
 
 function updatePlayerUI(player, index) {
-    const playerSlot = document.getElementById(`player${index}`);
-    const icon = playerSlot.querySelector('.player-icon');
-    const status = playerSlot.querySelector('.player-status');
-    const cards = playerSlot.querySelector('.player-cards');
-    const population = playerSlot.querySelector('.player-population');
-    const name = playerSlot.querySelector('.player-name');
-    const job = playerSlot.querySelector('.player-job');
-    const resources = playerSlot.querySelector('.player-resources');
-    const skill = playerSlot.querySelector('.player-skill');
-    const stations = playerSlot.querySelector('.player-stations');
+    const playerSlot = document.getElementById(player.id);
 
-    name.textContent = `Name: ${player.name}`;
-    job.textContent = `Job: ${player.job} (Level ${player.jobLevel})`;
-    resources.textContent = `Resources: ${player.resources}`;
-
-    if (player.connected) {
-        playerSlot.style.backgroundColor = player.color;
-        icon.src = "images/player-icon.png";
-        status.textContent = 'Connected';
-        cards.textContent = `Cards: ${player.cards}`;
-        population.textContent = `Population: ${player.population}`;
-        skill.textContent = getSkillTextForJob(player.job, player.jobLevel);
-        stations.textContent = `Stations: ${player.stations}`;
-        if (connectedPeerId === player.peerId) {
-            playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'block');
-        } else {
-            playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'none');
-        }
-    } else {
-        playerSlot.style.backgroundColor = '#f0f0f0';
-        icon.src = "images/no-player.png";
-        status.textContent = 'Disconnected';
-        cards.textContent = 'Cards: 0';
-        population.textContent = `Population: ${initPlayer.population}`;
-        skill.textContent = 'Skill: None';
-        playerSlot.querySelectorAll('.player-button').forEach(button => button.style.display = 'none');
-    }
+    playerSlot.outerHTML = getPlayerContent(player);
 }
 
 function getSkillTextForJob(job, level) {
+   if (!job) {
+     return '-';
+   }
    return jobMetadata[job].skill(level);
 }
 
@@ -186,24 +155,17 @@ function updateUIFromState() {
 
     if (isHost) {
       document.getElementById('startGame').style.display = state.shared.isGameStarted ? 'none' : 'block';
-      document.getElementById('stopGame').style.display = state.shared.isGameStarted ? 'block' : 'none';
+      // document.getElementById('stopGame').style.display = state.shared.isGameStarted ? 'block' : 'none';
+      //
     }
+
+
+    document.getElementById('peerUrl').style.display = state.shared.isGameStarted ? 'none' : 'block';
+    document.getElementById('hostIdDisplay').style.display = state.shared.isGameStarted ? 'none' : 'block';
 
     setBoardState(state.shared.board);
 
-    if (connectedPeerId) {
-      const currPlayer = findCurrentPlayer();
-
-      let playerIndex = 1
-      updatePlayerUI(currPlayer, playerIndex);
-
-      state.shared.players.forEach((player) => {
-          if (player.peerId !== connectedPeerId) {
-            playerIndex++;
-            updatePlayerUI(player, playerIndex);
-          }
-      });
-    }
+    renderPlayersUI();
 
     // Update play area
     if (state.shared.playArea) {
@@ -328,6 +290,12 @@ function updateTotalPopulation() {
     document.getElementById('half-population').textContent = `Half Population: ${halfPopulation}`;
 }
 
+function fillOtherPlayers(players) {
+    const updatingPlayer = players[0];
+    const otherPlayers = state.shared.players.filter(p => p.peerId !== updatingPlayer.peerId);
+    return [...otherPlayers, updatingPlayer].sort((a, b) => a.id < b.id ? -1 : 1);
+}
+
 function handleData(data) {
     console.log('Received data:', data);
 
@@ -363,10 +331,14 @@ function handleData(data) {
     }
 }
 
-function fillOtherPlayers(players) {
-    const updatingPlayer = players[0];
-    const otherPlayers = state.shared.players.filter(p => p.peerId !== updatingPlayer.peerId);
-    return [...otherPlayers, updatingPlayer].sort((a, b) => a.id < b.id ? -1 : 1);
+function sortToPutCurrentPlayerLast(players) {
+    const currentPlayer = findCurrentPlayer();
+    if (!currentPlayer) {
+        return players;
+    }
+
+    const otherPlayers = state.shared.players.filter(p => p.id !== currentPlayer.id);
+    return [currentPlayer, ...otherPlayers];
 }
 
 
@@ -431,11 +403,10 @@ let maxRetriesPeerServer = 3;
 let retriesPeerServer = 0;
 
 document.getElementById('startHost').addEventListener('click', () => {
+    isHost = true;
+
     document.getElementById('startHost').style.display = 'none';
     document.getElementById('join-controls').style.display = 'none';
-
-    const kickPlayerButtons = document.querySelectorAll('.kick-player-button');
-    kickPlayerButtons.forEach(button => button.style.display = 'flex');
 
     const peerUrl = document.getElementById('peerUrl').value;
 
@@ -446,7 +417,6 @@ document.getElementById('startHost').addEventListener('click', () => {
         const hostIdDisplay = document.getElementById('hostIdDisplay');
         hostIdDisplay.textContent = 'Game ID: ' + id + ' 📋';
         hostIdDisplay.style.display = 'block';
-        isHost = true;
         showModal('host', id);
         // Enable copy game ID
         hostIdDisplay.classList.add('copy-btn');
@@ -1084,11 +1054,78 @@ window.onclick = function(event) {
 
 // Load decks images after page load
 document.addEventListener('DOMContentLoaded', () => {
+    renderPlayersUI();
     initSlotsBoard();
     updateUIFromState();
     initTurnSteps();
     initializeBoard();
 });
+
+function renderPlayersUI() {
+    const playersContainer = document.getElementById('players-container');
+    const sortPlayers = sortToPutCurrentPlayerLast(state.shared.players);
+    console.log({ sortPlayers })
+    const playerContents = sortPlayers.map((player, index) => {
+        return getPlayerContent(player);
+    });
+
+    playersContainer.innerHTML = playerContents.join('');
+}
+
+function getPlayerContent(player) {
+    const isCurrentPlayer = connectedPeerId === player.peerId;
+
+    return isCurrentPlayer ? getFullPlayerContent(player) : getCompactPlayerContent(player);
+}
+
+function getFullPlayerContent (player) {
+    return `
+           <div id="${player.id}" class="player-slot">
+              <div class="player-header" style="background-color: ${player.color};">
+              </div>
+              <div class="player-details">
+                <div class="player-name">Name: ${player.name || '-'}</div>
+                <div class="player-job">Job: ${player.job || '-'} (Level ${player.jobLevel || '0'})</div>
+                <div class="player-cards">${emojis.Card} Cards: ${player.cards}</div>
+                <div class="player-population">${emojis.Population} Population: ${player.population}</div>
+                <div class="player-resources">${emojis.Resource} Resources: ${player.resources}</div>
+                <div class="player-stations">${emojis.Station} Stations: ${player.stations}</div>
+                <div class="player-skill">Skill:
+                    <p class="player-skill-content">${getSkillTextForJob(player.job, player.jobLevel)}</p>
+                 </div>
+              </div>
+              <div class="player-actions" style="display: block;">
+                <button class="player-button player-input" onclick="increaseJobLevel('${player.id}')">Increase Job Level</button>
+                <input class="player-input" type="number" id="${player.id}-population-change" />
+                <button class="player-button player-input" onclick="increasePopulation('${player.id}')">Increase Population</button>
+                <button class="player-button player-input" onclick="decreasePopulation('${player.id}')">Decrease Population</button>
+              </div>
+            </div>
+    `
+}
+
+function getCompactPlayerContent (player) {
+    return `
+        <div id="${player.id}" class="player-slot-compact">
+          <div class="player-header-compact" style="background-color: ${player.color};">
+            <div class="player-title-compact">
+                <div class="player-name-compact">${player.name || '-'}</div>
+                <div class="player-job-compact">${player.job || '-'} (Level ${player.jobLevel || '0'})</div>
+                <div class="player-skill-compact">${getSkillTextForJob(player.job, player.jobLevel)}</div>
+            </div>
+            <div class="kick-player-button-compact" style="display: ${isHost ? 'flex' : 'none'};">
+              <button class="player-button player-input" onclick="kickPlayer('${player.id}')">Kick</button>
+            </div>
+          </div>
+          <div class="player-details-compact">
+            <div class="player-cards-compact">🃏${player.cards}</div>
+            <div class="player-population-compact">👥${player.population}</div>
+            <div class="player-resources-compact">💰${player.resources}</div>
+            <div class="player-stations-compact">🏢${player.stations}</div>
+          </div>
+        </div>
+    `
+}
 
 function initializeBoard() {
     const slots = document.querySelectorAll('.slot');

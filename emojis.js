@@ -2,7 +2,7 @@ const emojis = {
   PartyPepper: '&#127881;',
   Resource: '&#128176;',
   Station: '&#127970;',
-  Card: '&#127009;',
+  Card: '🃏',
   Population: '&#128101;',
   Up: '&#11141;',
   Down: '&#11143;',
