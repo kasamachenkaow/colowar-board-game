@@ -31,7 +31,7 @@ const jobMetadata = {
       skill: (level) => `Each turn you must declare to activate ${level} law(s), options are ['no-build', 'no-gain-resource', 'no-draw', 'no-play-card'], at least 1 law must be changed each turn`,
    },
    "spy": {
-      initResources: 0,
+      initResources: 1,
       initTechCards: 0,
       skill: (level) => `After the end of your turn you can choose to spy upto ${level} player(s), whenever they play a tech card you can draw a tech card, you can only play tech cards when no player has less stations than you`,
    }
