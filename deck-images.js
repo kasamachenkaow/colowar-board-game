@@ -1,3 +1,4 @@
+const X = 'X';
 const deckImages = {
     tech: {
         engineer: [

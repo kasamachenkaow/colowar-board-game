@@ -352,7 +352,7 @@ function handleData(data) {
 
     if (data.type === 'add-event') {
         state.shared.eventsHistory.unshift(data.event);
-        stete.shared.currentStep = data.event.payload.currentStep;
+        state.shared.currentStep = data.event.payload.currentStep;
         updateSharedState();
     }
 
@@ -852,6 +852,19 @@ function createCardElement(deckId, cardId, playerJob, playerPeerId) {
                     ctx.strokeStyle = 'white';
                     ctx.lineWidth = 1;
                     ctx.strokeRect(startX + j * boxSize, startY + i * boxSize, boxSize, boxSize);
+                }
+
+                // Draw X
+                if (pattern[i][j] === 'X') {
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    // Draw two diagonal lines to form an X
+                    ctx.moveTo(startX + j * boxSize, startY + i * boxSize);
+                    ctx.lineTo(startX + j * boxSize + boxSize, startY + i * boxSize + boxSize);
+                    ctx.moveTo(startX + j * boxSize + boxSize, startY + i * boxSize);
+                    ctx.lineTo(startX + j * boxSize, startY + i * boxSize + boxSize);
+                    ctx.stroke();
                 }
             }
         }
