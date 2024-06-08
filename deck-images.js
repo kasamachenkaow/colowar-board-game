@@ -24,13 +24,13 @@ const deckImages = {
                   [0, 1, 0],
                   [0, 0, 0]
                 ],
-                title: 'Remote Station Construction',
+                title: 'Galactic Recycler',
                 details: {
                     type: 'Station',
-                    effect: 'Build 1 station, you can only build on a slot that has no adjacent stations',
-                    text: 'Construct a new station in a location that is free of adjacent stations.'
+                    effect: 'Move 1 of your stations to any free slot',
+                    text: 'Utilize advanced recycling techniques to repurpose one of your stations.'
                 },
-                copies: 3
+                copies: 4
             },
             {
                 id: 'engineer_lv3_A',
@@ -39,13 +39,13 @@ const deckImages = {
                   [1, 0, 0],
                   [1, 1, 0]
                 ],
-                title: 'Galactic Recycler',
+                title: 'Remote Station Construction',
                 details: {
                     type: 'Station',
-                    effect: 'Move 1 of your stations to any free slot',
-                    text: 'Utilize advanced recycling techniques to repurpose one of your stations.'
+                    effect: 'Build 1 station, you can only build on a slot that has no adjacent stations',
+                    text: 'Construct a new station in a location that is free of adjacent stations.'
                 },
-                copies: 4
+                copies: 3
             },
             {
                 id: 'engineer_lv4_A',
