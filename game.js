@@ -322,7 +322,7 @@ function handleData(data) {
 
     if (data.type === 'add-events') {
         state.shared.eventsHistory.unshift(...data.events);
-        state.shared.currentStep = data.event.payload.currentStep;
+        state.shared.currentStep = data.events[0].payload.currentStep;
         updateSharedState();
     }
 
@@ -382,7 +382,7 @@ function sendSharedStateToHost(data) {
 }
 
 const sendToHostTimeouts = {};
-function sendToHost(data) {
+function sendToHost(data, deboucingTimeout = 0) {
     updateUIFromState();
 
     if (isHost) {
@@ -394,11 +394,18 @@ function sendToHost(data) {
         clearTimeout(sendToHostTimeouts[data.type]);
     }
 
+    if(deboucingTimeout == 0) {
+       console.log('Sending data to host', data);
+       conn.send(data);
+
+       return;
+    }
+
     // Deboucing the sending to host if multiple sendings are happening for the same type
-    // sendSharedStateToHost[data.type] = setTimeout(() => {
-    console.log('Sending data to host', data);
-    conn.send(data);
-    // }, 50);
+    sendSharedStateToHost[data.type] = setTimeout(() => {
+       console.log('[debouced] Sending data to host', data);
+       conn.send(data);
+    }, deboucingTimeout);
 }
 
 let maxRetriesPeerServer = 3;
@@ -512,12 +519,13 @@ document.getElementById('startGame').addEventListener('click', () => {
 
     peer.disconnect();
 
-    const event = buildEventHistory({ playerName: 'Host', values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
-    publishEventsHistory([event]);
-
     showSnackbar('Game Started');
     startGameConfetti();
     broadcast({ type: 'gameStarted', sharedState: state.shared });
+
+    const event = buildEventHistory({ playerName: 'Host', values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
+    publishEventsHistory([event]);
+
     putInitTechCardsToHand();
 });
 
@@ -594,7 +602,7 @@ function buildEventHistory({ playerName, values, type }) {
 function publishEventsHistory(events) {
     state.shared.eventsHistory.unshift(...events);
 
-    sendToHost({ type: 'add-events', events });
+    sendToHost({ type: 'add-events', events }, 200);
 }
 
 const defaultSlotBackgroundColor = '#f0f0f0';
@@ -871,9 +879,10 @@ function addCardToHand(deckId, cardId) {
     hand.appendChild(card);
 
     const event = buildEventHistory({ playerName: currPlayer.name, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
-    publishEventsHistory([event]);
 
     updateSharedState();
+
+    publishEventsHistory([event]);
 }
 
 // Recycle a station on the board
@@ -897,9 +906,9 @@ function recycleStationOnBoard(slotIndex, player) {
     const recycledEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
     const populationDecreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
 
-    publishEventsHistory([populationDecreasedEvent, recycledEvent]);
-
     updateSharedState();
+
+    publishEventsHistory([populationDecreasedEvent, recycledEvent]);
 }
 
 // Destroy a station on the board
@@ -922,9 +931,9 @@ function destroyStationOnBoard(slotIndex, player) {
     const destroyEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
     const populationDecreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
 
-    publishEventsHistory([populationDecreasedEvent, destroyEvent]);
-
     updateSharedState();
+
+    publishEventsHistory([populationDecreasedEvent, destroyEvent]);
 }
 
 function getRowColFromSlotIndex(slotIndex) {
@@ -954,12 +963,12 @@ function placeStationOnBoard(slotIndex, player) {
 
     const populationIncreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population increased by ${stationPopulation}`, type: 'population' });
 
-    publishEventsHistory([populationIncreasedEvent, buildEvent]);
-
     updateSharedState({
         ...state.shared,
         board: newBoard,
     });
+
+    publishEventsHistory([populationIncreasedEvent, buildEvent]);
 }
 // Add these lines in the appropriate place, likely after initializing the board and hand event listeners
 
@@ -984,13 +993,14 @@ playArea.addEventListener('drop', (e) => {
             player.cards--;
 
             const cardTitle = getCardInfo(deckId, cardId, playerPeerId).title;
-            const event = buildEventHistory({ playerName: player.name, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
-            publishEventsHistory([event]);
 
             updateSharedState({
                 ...state.shared,
                 playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId }
             });
+
+            const event = buildEventHistory({ playerName: player.name, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
+            publishEventsHistory([event]);
         }
     }
 });
@@ -1304,10 +1314,10 @@ function increaseJobLevel() {
     if (player && player.jobLevel < 3) {
         player.jobLevel += 1;
 
+        updateSharedState();
+
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
         publishEventsHistory([event]);
-
-        updateSharedState();
     }
 }
 
@@ -1319,10 +1329,10 @@ function increasePopulation(inputPlayer) {
         const change = parseInt(populationChange || '1');
         player.population += parseInt(change);
 
+        updateSharedState();
+
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
         publishEventsHistory([event]);
-
-        updateSharedState();
     }
 }
 
@@ -1334,10 +1344,11 @@ function decreasePopulation(inputPlayer) {
         const change = parseInt(populationChange || '1');
         player.population -= parseInt(change);
 
+        updateSharedState();
+
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
         publishEventsHistory([event]);
 
-        updateSharedState();
     }
 }
 
@@ -1357,10 +1368,10 @@ function increaseResource() {
     if (player) {
         player.resources += 1;
 
+        updateSharedState();
+
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
         publishEventsHistory([event]);
-
-        updateSharedState();
     }
 }
 
@@ -1369,10 +1380,10 @@ function decreaseResource() {
     if (player) {
         player.resources -= 1;
 
+        updateSharedState();
+
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
         publishEventsHistory([event]);
-
-        updateSharedState();
     }
 }
 
@@ -1407,13 +1418,13 @@ function initTurnSteps() {
     endTurnButton.addEventListener("click", () => {
         state.shared.currentStep = STEP.roll;
 
-        const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `${emojis.Turn} Ended turn`, type: 'turn' });
-        publishEventsHistory([event]);
-
         updateSharedState({
             ...state.shared,
             playArea: {},
         });
+
+        const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `${emojis.Turn} Ended turn`, type: 'turn' });
+        publishEventsHistory([event]);
     });
 }
 
