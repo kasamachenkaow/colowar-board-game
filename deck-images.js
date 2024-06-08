@@ -57,10 +57,10 @@ const deckImages = {
                 title: 'Photon Shift',
                 details: {
                     type: 'Station',
-                    effect: 'Move a station to any free slot and build your new station in the old slot',
+                    effect: 'Move a station to any adjacent free slot and build your new station in the old slot',
                     text: 'Shift photons to move a station to a new location and construct a new station in its place.'
                 },
-                copies: 4
+                copies: 3
             },
             {
                 id: 'engineer_lv4_B',
@@ -75,7 +75,7 @@ const deckImages = {
                     effect: 'Draw 2 Tech cards',
                     text: 'Advance your technology to learn new methods and strategies.'
                 },
-                copies: 4
+                copies: 3
             },
             {
                 id: 'engineer_lv5_A',

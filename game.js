@@ -504,7 +504,7 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 });
 
 document.getElementById('startGame').addEventListener('click', () => {
-    const stationsToWin = 15 - (state.shared.players.filter(p => !!p.peerId).length * 2);
+    const stationsToWin = Math.max(15 - (state.shared.players.filter(p => !!p.peerId).length * 2), 9);
 
     state.shared.stationsToWin = stationsToWin;
     state.shared.isGameStarted = true;
