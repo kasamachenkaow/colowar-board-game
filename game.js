@@ -240,6 +240,7 @@ function renderHistory() {
 function getEventMessageItem(event, isPinned) {
     return `
         <div class="event${isPinned ? ' pinned-event' : ''}" onclick="${isPinned ? 'unpinEvent' : 'pinEvent'}('${event.eventId}')">
+            <span class="player-color-box" style="background-color: ${event.playerColor}"></span>
             <span class="player-name">${event.playerName}:</span>
             <span class="event-message">${event.type.includes('dice') ? `${emojis.Dice} Rolled ${Array.isArray(event.values) ? `(${event.values[0]}, ${event.values[1]})` : `(${event.values})`}` : `${event.values}`}</span>
         </div>
@@ -523,7 +524,7 @@ document.getElementById('startGame').addEventListener('click', () => {
     startGameConfetti();
     broadcast({ type: 'gameStarted', sharedState: state.shared });
 
-    const event = buildEventHistory({ playerName: 'Host', values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
+    const event = buildEventHistory({ values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
     publishEventsHistory([event]);
 
     putInitTechCardsToHand();
@@ -566,10 +567,10 @@ function rollDice(diceType) {
                 }
 
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
-                result = buildEventHistory({ playerName: currPlayer.name, values: [die1, die2], type: 'roll-dice' });
+                result = buildEventHistory({ player: currPlayer, values: [die1, die2], type: 'roll-dice' });
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
-                result = buildEventHistory({ playerName: currPlayer?.name || 'unknown', values: die1, type: 'dice'});
+                result = buildEventHistory({ player: currPlayer, values: die1, type: 'dice'});
                 diceResult.textContent = `Result: (${die1})`;
             }
 
@@ -587,16 +588,18 @@ function rollDice(diceType) {
 
 function sendChat(msg) {
     const currPlayer = findCurrentPlayer();
-    const event = buildEventHistory({ playerName: currPlayer?.name || 'unknown', values: msg, type: 'chat' });
+    const event = buildEventHistory({ player: currPlayer, values: msg, type: 'chat' });
 
     publishEventsHistory([event]);
 }
 
-function buildEventHistory({ playerName, values, type }) {
+function buildEventHistory({ player, values, type }) {
     const eventId = generateUID();
     const eventTime = new Date().toLocaleTimeString();
     const payload = { currentStep: state.shared.currentStep }
-    return { eventId, eventTime, playerName, values, type, payload };
+    const playerName = player?.name || 'Host';
+    const playerColor = player?.color || '#000';
+    return { eventId, eventTime, playerName, playerColor, values, type, payload };
 }
 
 function publishEventsHistory(events) {
@@ -880,7 +883,7 @@ function addCardToHand(deckId, cardId) {
     const card = createCardElement(deckId, cardId, currPlayer.job, currPlayer.peerId);
     hand.appendChild(card);
 
-    const event = buildEventHistory({ playerName: currPlayer.name, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
+    const event = buildEventHistory({ player: currPlayer, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
 
     updateSharedState();
 
@@ -905,8 +908,8 @@ function recycleStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const recycledEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
-    const populationDecreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
+    const recycledEvent = buildEventHistory({ player, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
+    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
 
     updateSharedState();
 
@@ -930,8 +933,8 @@ function destroyStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const destroyEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
-    const populationDecreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
+    const destroyEvent = buildEventHistory({ player, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
+    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
 
     updateSharedState();
 
@@ -961,9 +964,9 @@ function placeStationOnBoard(slotIndex, player) {
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const buildEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
+    const buildEvent = buildEventHistory({ player, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
 
-    const populationIncreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population increased by ${stationPopulation}`, type: 'population' });
+    const populationIncreasedEvent = buildEventHistory({ player, values: `${emojis.Population} Population increased by ${stationPopulation}`, type: 'population' });
 
     updateSharedState({
         ...state.shared,
@@ -1001,7 +1004,7 @@ playArea.addEventListener('drop', (e) => {
                 playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId }
             });
 
-            const event = buildEventHistory({ playerName: player.name, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
+            const event = buildEventHistory({ player, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
             publishEventsHistory([event]);
         }
     }
@@ -1318,7 +1321,7 @@ function increaseJobLevel() {
 
         updateSharedState();
 
-        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
+        const event = buildEventHistory({ player, values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
         publishEventsHistory([event]);
     }
 }
@@ -1333,7 +1336,7 @@ function increasePopulation(inputPlayer) {
 
         updateSharedState();
 
-        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
+        const event = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
         publishEventsHistory([event]);
     }
 }
@@ -1348,7 +1351,7 @@ function decreasePopulation(inputPlayer) {
 
         updateSharedState();
 
-        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
+        const event = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
         publishEventsHistory([event]);
 
     }
@@ -1372,7 +1375,7 @@ function increaseResource() {
 
         updateSharedState();
 
-        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
+        const event = buildEventHistory({ player, values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
         publishEventsHistory([event]);
     }
 }
@@ -1384,7 +1387,7 @@ function decreaseResource() {
 
         updateSharedState();
 
-        const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
+        const event = buildEventHistory({ player, values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
         publishEventsHistory([event]);
     }
 }
@@ -1425,7 +1428,7 @@ function initTurnSteps() {
             playArea: {},
         });
 
-        const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `${emojis.Turn} Ended turn`, type: 'turn' });
+        const event = buildEventHistory({ player: findCurrentPlayer(), values: `${emojis.Turn} Ended turn`, type: 'turn' });
         publishEventsHistory([event]);
     });
 }

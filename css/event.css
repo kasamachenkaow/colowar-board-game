@@ -21,7 +21,7 @@
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
   100% {
     transform: scale(1);
@@ -30,6 +30,6 @@
 
 #event-container > :first-child {
   animation: grow 0.5s ease-in-out;
-  animation-iteration-count: 2;
+  animation-iteration-count: 1;
 }
 
