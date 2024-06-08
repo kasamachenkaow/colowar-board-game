@@ -394,10 +394,10 @@ function sendToHost(data) {
     }
 
     // Deboucing the sending to host if multiple sendings are happening for the same type
-    sendSharedStateToHost[data.type] = setTimeout(() => {
-      console.log('Sending data to host', data);
-      conn.send(data);
-    }, 50);
+    // sendSharedStateToHost[data.type] = setTimeout(() => {
+    console.log('Sending data to host', data);
+    conn.send(data);
+    // }, 50);
 }
 
 let maxRetriesPeerServer = 3;
