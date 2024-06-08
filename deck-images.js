@@ -72,7 +72,7 @@ const deckImages = {
                 title: 'Technology Advancement',
                 details: {
                     type: 'Tech',
-                    effect: 'Draw 2 Tech cards',
+                    effect: 'Draw 2 Tech cards, you can only play this card once per turn',
                     text: 'Advance your technology to learn new methods and strategies.'
                 },
                 copies: 3
