@@ -649,13 +649,14 @@ function updateDecks() {
 
 function updateDeck(deckId, type) {
     const deck = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
+    const deckCount = document.getElementById(`${deckId}-deck-count`);
 
     if (!deck) {
         return;
     }
 
     const count = state[type].decks[deckId].length;
-    deck.textContent = count;
+    deckCount.textContent = count;
 
     if (count === 0) {
         deck.setAttribute('draggable', 'false');
@@ -764,8 +765,9 @@ hand.addEventListener('drop', (e) => {
 
     const deckId = e.dataTransfer.getData('text/plain');
     console.log('Dropping card from deck:', deckId);
-    const deckNode = document.querySelector(`.deck-card[data-deck-id='${deckId}']`);
-    const count = parseInt(deckNode.textContent);
+    const deckCountNode = document.getElementById(`${deckId}-deck-count`)
+
+    const count = parseInt(deckCountNode.textContent);
     if (count > 0) {
         const deck = isPlayerDeck(deckId) ? state.player.decks[deckId] : state.shared.decks[deckId];
         const card = deck.pop();
