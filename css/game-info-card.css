@@ -7,6 +7,7 @@
     width: 78%;
     max-width: 300px;
     margin-top: 20px;
+    align-self: center;
 }
 
 .game-info-card h3 {
