@@ -303,7 +303,7 @@ const deckImages = {
                 title: 'Celestial Awakening',
                 details: {
                     type: 'Population',
-                    effect: 'Gain 6 Population',
+                    effect: 'Gain 8 Population',
                     text: 'Invoke a celestial awakening to greatly increase your population.'
                 },
                 copies: 3
@@ -333,7 +333,7 @@ const deckImages = {
                 title: 'Soul Siphon',
                 details: {
                     type: 'Population',
-                    effect: 'Steal 3 Population from an opponent',
+                    effect: 'Steal 4 Population from an opponent',
                     text: 'Siphon the souls of your opponents, transferring their population to your own.'
                 },
                 copies: 3
@@ -348,7 +348,7 @@ const deckImages = {
                 title: 'Essence Drain',
                 details: {
                     type: 'Population',
-                    effect: 'Steal 2 Population from 2 opponents',
+                    effect: 'Steal 3 Population from 2 opponents',
                     text: 'Drain the essence of your enemies, transferring their population to your own.'
                 },
                 copies: 3
