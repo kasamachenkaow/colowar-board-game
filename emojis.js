@@ -1,6 +1,6 @@
 const emojis = {
   PartyPepper: '&#127881;',
-  Resource: '&#128176;',
+  Resource: '💰',
   Station: '&#127970;',
   Card: '🃏',
   Population: '&#128101;',

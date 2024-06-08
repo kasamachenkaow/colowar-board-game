@@ -544,6 +544,10 @@ function hasStation(die1, die2) {
 function rollDice(diceType) {
     console.log('Rolling dice:', diceType)
 
+    if (diceType === '2d6') {
+        resetHighlightSlot();;
+    }
+
     const diceResult = document.getElementById('dice-result');
     diceResult.textContent = 'Rolling...';
     let rolls = 0;
@@ -586,6 +590,11 @@ function rollDice(diceType) {
     }, 50);
 }
 
+function resetHighlightSlot() {
+    const slots = document.querySelectorAll('.slot');
+    slots.forEach(slot => slot.classList.remove('highlight'));
+}
+
 function sendChat(msg) {
     const currPlayer = findCurrentPlayer();
     const event = buildEventHistory({ player: currPlayer, values: msg, type: 'chat' });
@@ -619,10 +628,18 @@ function setBoardState(boardState) {
             const row = Math.floor(index / 6) + 1;
             const col = (index % 6) + 1;
 
+            const coord = document.createElement('div');
+            coord.className = 'slot-coord';
             const indicator = document.createElement('div');
             indicator.className = 'slot-indicator';
-            indicator.textContent = `${state.type || ''} (${row}, ${col})`;
+
+            const symbol = state.type === 'T' ? emojis.Card : state.type === 'R' ? emojis.Resource : '';
+            indicator.textContent = `${symbol}`;
+            coord.textContent = `${row}-${col}`;
+
             slot.appendChild(indicator);
+            slot.appendChild(coord);
+
             if (state.playerColor) {
                 slot.style.backgroundColor = state.playerColor;
             } else {
