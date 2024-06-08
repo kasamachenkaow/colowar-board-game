@@ -3,16 +3,19 @@ const jobMetadata = {
       initResources: 1,
       initTechCards: 2,
       skill: (level) => `Threat ${level} free slot(s) as your station to help play tech cards`,
+      traits: ["beginner-friendly"],
    },
    "spiritual-leader": {
       initResources: 1,
       initTechCards: 1,
       skill: (level) => `Gain ${isNaN(level) ? level + '*4' : level*4} population each turn`,
+      traits: ["beginner-friendly"],
    },
    "engineer": {
       initResources: 1,
       initTechCards: 2,
       skill: (level) => `Can use ${level} adjacent station(s) to help play tech cards`,
+      traits: ["beginner-friendly"],
    },
    "hacker": {
       initResources: 2,
@@ -29,6 +32,7 @@ const jobMetadata = {
       initResources: 1,
       initTechCards: 1,
       skill: (level) => `Each turn you must declare to activate ${level} law(s), options are ['no-build', 'no-gain-resource', 'no-draw', 'no-play-card'], at least 1 law must be changed each turn`,
+      traits: ["advanced-strategy-required"],
    },
    "spy": {
       initResources: 1,
