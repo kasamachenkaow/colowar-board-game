@@ -5,6 +5,7 @@ let isHost = false;
 let conn;
 let stationMode = 'build';
 let connectedPeerId;
+const stationPopulation = 5;
 
 const cardIdDelim = '/';
 
@@ -19,7 +20,7 @@ const initPlayer = {
     peerId: null,
     connected: false,
     cards: 0,
-    population: 25,
+    population: 20,
     name: '',
     job: '',
     jobLevel: 1,
@@ -319,8 +320,8 @@ function handleData(data) {
         peer.disconnect();
     }
 
-    if (data.type === 'add-event') {
-        state.shared.eventsHistory.unshift(data.event);
+    if (data.type === 'add-events') {
+        state.shared.eventsHistory.unshift(...data.events);
         state.shared.currentStep = data.event.payload.currentStep;
         updateSharedState();
     }
@@ -512,7 +513,7 @@ document.getElementById('startGame').addEventListener('click', () => {
     peer.disconnect();
 
     const event = buildEventHistory({ playerName: 'Host', values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
-    publishEventHistory(event);
+    publishEventsHistory([event]);
 
     showSnackbar('Game Started');
     startGameConfetti();
@@ -564,7 +565,7 @@ function rollDice(diceType) {
                 diceResult.textContent = `Result: (${die1})`;
             }
 
-            publishEventHistory(result);
+            publishEventsHistory([result]);
         } else {
             if (diceType === '2d6') {
                 diceResult.textContent = `Rolling... (${Math.floor(Math.random() * 6) + 1}, ${Math.floor(Math.random() * 6) + 1})`;
@@ -580,7 +581,7 @@ function sendChat(msg) {
     const currPlayer = findCurrentPlayer();
     const event = buildEventHistory({ playerName: currPlayer?.name || 'unknown', values: msg, type: 'chat' });
 
-    publishEventHistory(event);
+    publishEventsHistory([event]);
 }
 
 function buildEventHistory({ playerName, values, type }) {
@@ -590,10 +591,10 @@ function buildEventHistory({ playerName, values, type }) {
     return { eventId, eventTime, playerName, values, type, payload };
 }
 
-function publishEventHistory(event) {
-    state.shared.eventsHistory.unshift(event);
+function publishEventsHistory(events) {
+    state.shared.eventsHistory.unshift(...events);
 
-    sendToHost({ type: 'add-event', event });
+    sendToHost({ type: 'add-events', events });
 }
 
 const defaultSlotBackgroundColor = '#f0f0f0';
@@ -870,7 +871,7 @@ function addCardToHand(deckId, cardId) {
     hand.appendChild(card);
 
     const event = buildEventHistory({ playerName: currPlayer.name, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
-    publishEventHistory(event);
+    publishEventsHistory([event]);
 
     updateSharedState();
 }
@@ -889,11 +890,14 @@ function recycleStationOnBoard(slotIndex, player) {
 
     player.resources++;
     player.stations--;
+    player.population-=stationPopulation;
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
-    publishEventHistory(event);
+    const recycledEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
+    const populationDecreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
+
+    publishEventsHistory([populationDecreasedEvent, recycledEvent]);
 
     updateSharedState();
 }
@@ -911,12 +915,15 @@ function destroyStationOnBoard(slotIndex, player) {
     slot.playerColor = null;
 
     player.stations--;
+    player.population-=stationPopulation;
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
+    const destroyEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
+    const populationDecreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
 
-    publishEventHistory(event);
+    publishEventsHistory([populationDecreasedEvent, destroyEvent]);
+
     updateSharedState();
 }
 
@@ -925,6 +932,7 @@ function getRowColFromSlotIndex(slotIndex) {
     const col = (slotIndex % 6) + 1;
     return [row, col];
 }
+
 
 // Place a card on the board
 function placeStationOnBoard(slotIndex, player) {
@@ -938,11 +946,15 @@ function placeStationOnBoard(slotIndex, player) {
 
     player.resources--;
     player.stations++;
+    player.population+=stationPopulation;
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const event = buildEventHistory({ playerName: player.name, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
-    publishEventHistory(event);
+    const buildEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
+
+    const populationIncreasedEvent = buildEventHistory({ playerName: player.name, values: `${emojis.Population} Population increased by ${stationPopulation}`, type: 'population' });
+
+    publishEventsHistory([populationIncreasedEvent, buildEvent]);
 
     updateSharedState({
         ...state.shared,
@@ -973,7 +985,7 @@ playArea.addEventListener('drop', (e) => {
 
             const cardTitle = getCardInfo(deckId, cardId, playerPeerId).title;
             const event = buildEventHistory({ playerName: player.name, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
-            publishEventHistory(event);
+            publishEventsHistory([event]);
 
             updateSharedState({
                 ...state.shared,
@@ -1293,7 +1305,7 @@ function increaseJobLevel() {
         player.jobLevel += 1;
 
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
-        publishEventHistory(event);
+        publishEventsHistory([event]);
 
         updateSharedState();
     }
@@ -1308,7 +1320,7 @@ function increasePopulation(inputPlayer) {
         player.population += parseInt(change);
 
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
-        publishEventHistory(event);
+        publishEventsHistory([event]);
 
         updateSharedState();
     }
@@ -1323,7 +1335,7 @@ function decreasePopulation(inputPlayer) {
         player.population -= parseInt(change);
 
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
-        publishEventHistory(event);
+        publishEventsHistory([event]);
 
         updateSharedState();
     }
@@ -1346,7 +1358,7 @@ function increaseResource() {
         player.resources += 1;
 
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
-        publishEventHistory(event);
+        publishEventsHistory([event]);
 
         updateSharedState();
     }
@@ -1358,7 +1370,7 @@ function decreaseResource() {
         player.resources -= 1;
 
         const event = buildEventHistory({ playerName: player.name, values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
-        publishEventHistory(event);
+        publishEventsHistory([event]);
 
         updateSharedState();
     }
@@ -1396,7 +1408,7 @@ function initTurnSteps() {
         state.shared.currentStep = STEP.roll;
 
         const event = buildEventHistory({ playerName: findCurrentPlayer().name, values: `${emojis.Turn} Ended turn`, type: 'turn' });
-        publishEventHistory(event);
+        publishEventsHistory([event]);
 
         updateSharedState({
             ...state.shared,
