@@ -148,7 +148,9 @@ function getSkillTextForJob(job, level) {
    if (!job) {
      return '-';
    }
-   return jobMetadata[job].skill(level);
+
+   const playersCount = getTotalPlayersCount();
+   return jobMetadata[job].skill(level, playersCount);
 }
 
 function updateUIFromState() {
@@ -512,8 +514,10 @@ document.getElementById('leaveGame').addEventListener('click', () => {
     location.reload(); // Simple way to leave the game
 });
 
+
+
 document.getElementById('startGame').addEventListener('click', () => {
-    const stationsToWin = Math.max(15 - (state.shared.players.filter(p => !!p.peerId).length * 2), 9);
+    const stationsToWin = Math.max(15 - (getTotalPlayersCount() * 2), 9);
 
     state.shared.stationsToWin = stationsToWin;
     state.shared.isGameStarted = true;
