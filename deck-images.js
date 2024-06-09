@@ -591,13 +591,13 @@ const deckImages = {
                 [X, 1, X],
                 [0, X, 0]
               ],
-              title: 'Persuation',
+              title: 'Mission Change',
               details: {
-                type: 'Population',
-                effect: 'Steal 5 Population from the player you are spying',
-                text: 'Use your charm to persuade others to join your cause.'
+                type: 'Station',
+                effect: 'Move 1 of your stations to any adjacent free slot',
+                text: 'Change your mission to gain an advantage over your opponents.'
               },
-              copies: 5,
+              copies: 3,
             },
             {
               id: 'spy_lv2_A',
@@ -624,10 +624,10 @@ const deckImages = {
               title: 'Station Compromise',
               details: {
                 type: 'Station',
-                effect: 'Steal 1 station from the player you are spying, you can steal even if you are not the least station player but they must have plaed a tech card this turn',
-                text: 'Compromise the stations of your enemies to weaken their defenses.'
+                effect: 'Steal 1 station from the player you are spyin',
+                text: 'Compromise the stations of your opponents to gain an advantage.'
               },
-              copies: 3,
+              copies: 5,
             },
             {
               id: 'spy_lv5_A',
