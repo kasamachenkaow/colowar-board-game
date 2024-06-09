@@ -645,5 +645,82 @@ const deckImages = {
               copies: 2,
             }
         ],
+        "botanist": [
+            {
+              id: 'botanist_lv1_A',
+              pattern: [
+                [X, 0, X],
+                [0, 1, 0],
+                [X, 0, X]
+              ],
+              title: 'Nature Calling',
+              details: {
+                type: 'Station',
+                effect: 'Pull 1 station towards your station',
+                text: 'Answer the call of nature to gain an advantage over your opponents.'
+              },
+              copies: 4,
+            },
+            {
+              id: 'botanist_lv2_A',
+              pattern: [
+                [0, X, 0],
+                [X, 1, X],
+                [0, 1, 0]
+              ],
+              title: 'Watering',
+              details: {
+                type: 'Station',
+                effect: 'Build 1 station adjacent to your station',
+                text: 'Water your stations to help them grow and flourish.',
+              },
+              copies: 6,
+            },
+            {
+              id: 'botanist_lv3_A',
+              pattern: [
+                [X, 1, X],
+                [0, 1, 0],
+                [0, 1, 0]
+              ],
+              title: 'Fertilizer',
+              details: {
+                type: 'Station',
+                effect: 'Push 1 station then build 1 stsation in the old slot',
+                text: 'Fertilize your stations to help them grow and flourish.'
+              },
+              copies: 6,
+            },
+            {
+              id: 'botanist_lv5_A',
+              pattern: [
+                [1, 1, 1],
+                [0, 1, 0],
+                [0, 1, 0]
+              ],
+              title: 'Cultivate',
+              details: {
+                type: 'Special',
+                effect: 'Roll slot dices 5 times, only you get the effects',
+                text: 'Cultivate your stations to help them grow and flourish.'
+              },
+              copies: 3,
+            },
+            {
+              id: 'botanist_lv7_A',
+              pattern: [
+                [1, 1, 1],
+                [1, 1, 1],
+                [0, 1, 0]
+              ],
+              title: 'Global Warming',
+              details: {
+                type: 'Station',
+                effect: 'Destroy all stations that are not connected to your stations',
+                text: 'Increase the temperature to destroy all stations that are not connected to your stations.'
+              },
+              copies: 1,
+            },
+        ],
     }
 };

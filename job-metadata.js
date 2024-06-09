@@ -38,5 +38,11 @@ const jobMetadata = {
       initResources: 1,
       initTechCards: 0,
       skill: (level) => `After the end of your turn you can choose to spy upto ${level} player(s), whenever they play a tech card you can draw a tech card, you can only play tech cards when no player has less stations than you`,
-   }
+   },
+   "botanist": {
+      initResources: 2,
+      initTechCards: 1,
+      skill: (level) => `When the slot roll matches with one of your stations, you gain upto ${level+1} extra effect(s), depending on the number of connected slots with the same slot type`,
+      traits: ["beginner-friendly"],
+   },
 }
