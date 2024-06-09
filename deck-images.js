@@ -78,11 +78,11 @@ const deckImages = {
                 copies: 3
             },
             {
-                id: 'engineer_lv5_A',
+                id: 'engineer_lv6_A',
                 pattern:  [
-                  [0, 1, 0],
+                  [0, 0, 0],
                   [1, 1, 1],
-                  [0, 1, 0]
+                  [1, 1, 1]
                 ],
                 title: 'Stellar Reconfiguration',
                 details: {
