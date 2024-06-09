@@ -930,7 +930,7 @@ function recycleStationOnBoard(slotIndex, player) {
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
     const recycledEvent = buildEventHistory({ player, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
-    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
+    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Down} Lost -${stationPopulation} population`, type: 'population' });
 
     updateSharedState();
 
@@ -955,7 +955,7 @@ function destroyStationOnBoard(slotIndex, player) {
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
     const destroyEvent = buildEventHistory({ player, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
-    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} Population decreased by ${stationPopulation}`, type: 'population' });
+    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Down} Lost -${stationPopulation} population`, type: 'population' });
 
     updateSharedState();
 
@@ -987,7 +987,7 @@ function placeStationOnBoard(slotIndex, player) {
 
     const buildEvent = buildEventHistory({ player, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
 
-    const populationIncreasedEvent = buildEventHistory({ player, values: `${emojis.Population} Population increased by ${stationPopulation}`, type: 'population' });
+    const populationIncreasedEvent = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Up} Gained +${stationPopulation} population`, type: 'population' });
 
     updateSharedState({
         ...state.shared,
