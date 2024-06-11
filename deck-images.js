@@ -42,7 +42,7 @@ const deckImages = {
                 title: 'Remote Station Construction',
                 details: {
                     type: 'Station',
-                    effect: 'Build 1 station, you can only build on a slot that has no adjacent stations',
+                    effect: 'Gain 1 resource then build 1 station, you can only build on a slot that has no adjacent stations',
                     text: 'Construct a new station in a location that is free of adjacent stations.'
                 },
                 copies: 3
@@ -57,7 +57,7 @@ const deckImages = {
                 title: 'Photon Shift',
                 details: {
                     type: 'Station',
-                    effect: 'Move a station to any adjacent free slot and build your new station in the old slot',
+                    effect: 'Move a station to any adjacent free slot and gain 1 resource and build your new station in the old slot',
                     text: 'Shift photons to move a station to a new location and construct a new station in its place.'
                 },
                 copies: 3
@@ -90,7 +90,7 @@ const deckImages = {
                     effect: 'Bounce all adjacent stations to other adjacent free slots (they get destroyed if no free slots)',
                     text: 'Reconfigure the positions of all adjacent stations, reshaping the stellar map.'
                 },
-                copies: 3
+                copies: 2
             },
             {
                 id: 'engineer_lv9_A',
@@ -134,7 +134,7 @@ const deckImages = {
                 title: 'Resource Alchemy',
                 details: {
                     type: 'Resource',
-                    effect: 'Gain 1 Resource',
+                    effect: 'Gain 2 resource, you can only play this card if you have not build a station and only once this turn',
                     text: 'Transform basic elements into valuable resources through alchemical processes.'
                 },
                 copies: 4
@@ -149,7 +149,7 @@ const deckImages = {
                 title: 'Resource Optimization',
                 details: {
                     type: 'Station',
-                    effect: 'Consumes 1 Resource to build 2 stations',
+                    effect: 'Consumes 1 resource to build 2 stations',
                     text: 'Utilize multiplexing technology to establish multiple stations simultaneously.'
                 },
                 copies: 4
@@ -164,7 +164,7 @@ const deckImages = {
                 title: 'Technology Breakthrough',
                 details: {
                     type: 'Station',
-                    effect: 'Build 1 station',
+                    effect: 'Gain 1 resource and build 1 station',
                     text: 'Achieve a technological breakthrough to construct a new station without using resources.'
                 },
                 copies: 4
@@ -241,7 +241,7 @@ const deckImages = {
                 title: 'Stations Swap',
                 details: {
                     type: 'Station',
-                    effect: 'Swap any 2 slots',
+                    effect: 'Choose 2 slots and swap the stations in them (you can choose free slots too)',
                     text: 'Swap the positions of two stations to reconfigure the layout.'
                 },
                 copies: 4
@@ -256,7 +256,7 @@ const deckImages = {
                 title: 'System Subotage',
                 details: {
                     type: 'Station',
-                    effect: 'Swap any 2 slots and then destroy 1 station of your choice',
+                    effect: 'Choose 2 slots and swap the stations in them (you can choose free slots too), then destroy 1 station',
                     text: 'Sabotage the system to reposition stations and destroy a selected station.'
                 },
                 copies: 3
@@ -286,7 +286,7 @@ const deckImages = {
                 title: 'Data Heist',
                 details: {
                     type: 'Station',
-                    effect: 'Steal 3 adjacent stations',
+                    effect: 'Steal 3 other adjacent stations',
                     text: 'Execute a data heist to seize control of nearby stations.'
                 },
                 copies: 1
@@ -562,7 +562,7 @@ const deckImages = {
               title: 'Rule Paragraph 5 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Build X / 2 (rounded down) stations, where X is the number of violations of the last rule declared by you',
+                effect: 'Gain X / 2 (rounded down) and build that many stations, where X is the number of violations of the last rule declared by you',
                 text: 'Construct new stations to enforce the rules.'
               },
               copies: 2,
@@ -609,7 +609,7 @@ const deckImages = {
               title: 'Information Leak',
               details: {
                 type: 'Station',
-                effect: 'Build X station(s), where X is the number of stations that has been built by players your are spying this turn',
+                effect: 'Gain X resource(s) and build that many station(s), where X is the number of stations that has been built by players your are spying this turn',
                 text: 'Leak information to gain an advantage over your opponents.',
               },
               copies: 5,
@@ -656,7 +656,7 @@ const deckImages = {
               title: 'Nature Calling',
               details: {
                 type: 'Station',
-                effect: 'Pull 1 station towards your station',
+                effect: 'Push 1 adjacent station to the next slot',
                 text: 'Answer the call of nature to gain an advantage over your opponents.'
               },
               copies: 4,
@@ -671,7 +671,7 @@ const deckImages = {
               title: 'Watering',
               details: {
                 type: 'Station',
-                effect: 'Build 1 station adjacent to your station',
+                effect: 'Build 1 station',
                 text: 'Water your stations to help them grow and flourish.',
               },
               copies: 6,
@@ -686,7 +686,7 @@ const deckImages = {
               title: 'Fertilizer',
               details: {
                 type: 'Station',
-                effect: 'Push 1 station then build 1 stsation in the old slot',
+                effect: 'Push 1 station then build 1 station in the old slot',
                 text: 'Fertilize your stations to help them grow and flourish.'
               },
               copies: 6,

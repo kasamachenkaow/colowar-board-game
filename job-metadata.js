@@ -14,7 +14,7 @@ const jobMetadata = {
    "engineer": {
       initResources: 1,
       initTechCards: 2,
-      skill: (level) => `Can use ${level} adjacent station(s) to help play tech cards`,
+      skill: (level) => `Can use ${level} other adjacent station(s) to help play tech cards`,
       traits: ["beginner-friendly"],
    },
    "hacker": {
