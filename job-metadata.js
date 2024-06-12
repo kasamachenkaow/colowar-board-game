@@ -42,7 +42,7 @@ const jobMetadata = {
    "botanist": {
       initResources: 2,
       initTechCards: 1,
-      skill: (level) => `When the slot roll matches with one of your stations, you gain upto ${level+1} extra effect(s), depending on the number of connected slots with the same slot type`,
+      skill: (level) => `When the slot roll matches with one of your stations, you gain upto ${level} extra effect(s), depending on the number of connected slots with the same slot type`,
       traits: ["beginner-friendly"],
    },
 }
