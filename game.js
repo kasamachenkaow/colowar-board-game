@@ -30,26 +30,6 @@ const initPlayer = {
     }
 }
 
-const state = {
-    shared: {
-        isGameStarted: false,
-        board: new Array(36).fill({ type: null, playerColor: null }),
-        players: [], // Initialize as an empty array
-        decks: {
-            spell: [],
-            equipment: []
-        },
-        playArea: { cardId: null, playerColor: null },
-        eventsHistory: [],
-        cardInfos: {},
-        currentStep: STEP['roll'],
-        stationsToWin: 0,
-    },
-    player: {
-        ...initPlayer
-    }
-};
-
 // Initialize the players array after defining the state
 state.shared.players = [
     { ...initPlayer, id: 'player1', color: playerColors[0], resources: 0, stations: 0 },
@@ -110,14 +90,13 @@ function updateSharedState(newSharedState) {
         };
     }
 
+    eventReducer(state);
+
     updateUIFromState();
 
     if (isHost) {
         broadcastState();
-    } else if (conn) {
-        sendSharedStateToHost();
     }
-}
 
 function updatePlayerState(newPlayerState) {
     state.player = newPlayerState;
@@ -374,16 +353,6 @@ function broadcast(data) {
     }, 100);
 }
 
-function sendSharedStateToHost(data) {
-    const reducedSharedState = {
-        ...state.shared,
-        players: state.shared.players.filter(p => p.peerId === connectedPeerId),
-        eventsHistory: [],
-    };
-
-    sendToHost({ type: 'updateState', sharedState: reducedSharedState });
-}
-
 const sendToHostTimeouts = {};
 function sendToHost(data, deboucingTimeout = 0) {
     updateUIFromState();
@@ -405,7 +374,7 @@ function sendToHost(data, deboucingTimeout = 0) {
     }
 
     // Deboucing the sending to host if multiple sendings are happening for the same type
-    sendSharedStateToHost[data.type] = setTimeout(() => {
+    sendToHostTimeouts[data.type] = setTimeout(() => {
        console.log('[debouced] Sending data to host', data);
        conn.send(data);
     }, deboucingTimeout);
@@ -606,13 +575,14 @@ function sendChat(msg) {
     publishEventsHistory([event]);
 }
 
-function buildEventHistory({ player, values, type }) {
+function buildEventHistory({ player, values, type, eventName, eventPayload }) {
     const eventId = generateUID();
     const eventTime = new Date().toLocaleTimeString();
-    const payload = { currentStep: state.shared.currentStep }
+    const payload = { currentStep: state.shared.currentStep, ...eventPayload }
     const playerName = player?.name || 'Host';
     const playerColor = player?.color || '#000';
-    return { eventId, eventTime, playerName, playerColor, values, type, payload };
+
+    return { eventId, eventName, eventTime, playerName, playerColor, values, type, payload };
 }
 
 function publishEventsHistory(events) {
@@ -900,11 +870,16 @@ function getCardNodeId(deckId, cardId, playerPeerId) {
 function addCardToHand(deckId, cardId) {
     console.log(`Adding card to hand from ${deckId}, card index: ${cardId}`);
     const currPlayer = findCurrentPlayer();
-    currPlayer.cards++;
     const card = createCardElement(deckId, cardId, currPlayer.job, currPlayer.peerId);
     hand.appendChild(card);
 
-    const event = buildEventHistory({ player: currPlayer, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
+    const event = buildEventHistory({
+      player: currPlayer,
+      values: `${emojis.Card} Added a [${deckId} card] to hands`,
+      type: 'card' ,
+      eventName: 'card-added-to-hands',
+      eventPayload: { playerPeerId: currPlayer.peerId }
+    });
 
     updateSharedState();
 
