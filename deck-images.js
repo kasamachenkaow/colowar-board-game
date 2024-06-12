@@ -72,7 +72,7 @@ const deckImages = {
                 title: 'Technology Advancement',
                 details: {
                     type: 'Tech',
-                    effect: 'Draw 2 Tech cards, you can only play this card once per turn',
+                    effect: 'Draw 2 Tech cards, you can only play this card',
                     text: 'Advance your technology to learn new methods and strategies.'
                 },
                 copies: 3
@@ -134,7 +134,7 @@ const deckImages = {
                 title: 'Resource Alchemy',
                 details: {
                     type: 'Resource',
-                    effect: 'Gain 2 resource, you can only play this card if you have not build a station and only once this turn',
+                    effect: 'Gain 2 resource, you can only play this card if you have not build a station',
                     text: 'Transform basic elements into valuable resources through alchemical processes.'
                 },
                 copies: 4
