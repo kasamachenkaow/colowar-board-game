@@ -671,7 +671,7 @@ const deckImages = {
               title: 'Watering',
               details: {
                 type: 'Station',
-                effect: 'Build 1 station',
+                effect: 'Choose 2 stations and swap them',
                 text: 'Water your stations to help them grow and flourish.',
               },
               copies: 6,
