@@ -110,11 +110,11 @@ const deckImages = {
         ],
         scientist: [
             {
-                id: 'scientist_lv2_A',
+                id: 'scientist_lv3_A',
                 pattern:  [
-                  [0, 0, 0],
-                  [1, 1, 0],
-                  [0, 0, 0]
+                  [0, 1, 0],
+                  [0, 1, 0],
+                  [0, 1, 0]
                 ],
                 title: 'Growt Serum',
                 details: {
@@ -125,7 +125,7 @@ const deckImages = {
                 copies: 3
             },
             {
-                id: 'scientist_lv3_A',
+                id: 'scientist_lv3_B',
                 pattern:  [
                   [0, 0, 1],
                   [0, 1, 0],
@@ -140,7 +140,7 @@ const deckImages = {
                 copies: 4
             },
             {
-                id: 'scientist_lv3_B',
+                id: 'scientist_lv3_C',
                 pattern:  [
                   [1, 0, 0],
                   [0, 1, 0],
@@ -155,7 +155,7 @@ const deckImages = {
                 copies: 4
             },
             {
-                id: 'scientist_lv3_C',
+                id: 'scientist_lv3_D',
                 pattern:  [
                   [0, 0, 0],
                   [1, 1, 1],
@@ -653,11 +653,11 @@ const deckImages = {
                 [0, 1, 0],
                 [X, 0, X]
               ],
-              title: 'Nature Calling',
+              title: 'Nature Push',
               details: {
                 type: 'Station',
                 effect: 'Push 1 adjacent station to the next free slot',
-                text: 'Answer the call of nature to gain an advantage over your opponents.'
+                text: 'Push nature to help your stations grow and flourish.'
               },
               copies: 4,
             },
