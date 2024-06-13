@@ -656,7 +656,7 @@ const deckImages = {
               title: 'Nature Calling',
               details: {
                 type: 'Station',
-                effect: 'Push 1 adjacent station to the next slot',
+                effect: 'Push 1 adjacent station to the next free slot',
                 text: 'Answer the call of nature to gain an advantage over your opponents.'
               },
               copies: 4,
