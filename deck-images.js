@@ -197,7 +197,7 @@ const deckImages = {
                     effect: 'Eliminate all stations of 1 rows/columns',
                     text: 'Deploy a photon cannon to eliminate all stations in a row or column.'
                 },
-                copies: 3
+                copies: 2
             },
             {
                 id: 'scientist_lv8_A',
