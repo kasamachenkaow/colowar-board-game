@@ -37,7 +37,7 @@ const jobMetadata = {
    "spy": {
       initResources: 1,
       initTechCards: 0,
-      skill: (level) => `After the end of your turn you can choose to spy upto ${level} player(s), whenever they play a tech card you can draw a tech card, you can only play tech cards when no player has less stations than you`,
+      skill: (level) => `After the end of your turn you can choose to spy upto ${level} player(s), whenever they play a tech card you can draw a tech card, you can only play tech cards when no player has less stations than you, you can play the same tech card 2 times in a turn`,
    },
    "botanist": {
       initResources: 2,
