@@ -490,7 +490,7 @@ const deckImages = {
                 effect: 'Seize X*2 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule and you can give any amount of them to any non-violated players',
                 text: 'Rob the bad to give the good.'
               },
-              copies: 3,
+              copies: 2,
             },
             {
               id: 'ruler_lv2_B',
@@ -505,7 +505,7 @@ const deckImages = {
                 effect: 'Push an adjacent station to the next slot, you cannot push if there is no free slot and you can only push stations of players who violated the rule, if you do you can spend 1 resource to build a staion in that slot',
                 text: 'Exile illegal stations to maintain order and stability.'
               },
-              copies: 3,
+              copies: 2,
             },
             {
               id: 'ruler_lv3_A',
@@ -520,7 +520,7 @@ const deckImages = {
                 effect: 'Move any X / 3 (rounded down) stations to any free slots, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Realocate illegal stations to maintain order and stability.'
               },
-              copies: 3,
+              copies: 2,
             },
             {
               id: 'ruler_lv3_B',
@@ -532,10 +532,10 @@ const deckImages = {
               title: 'Rule Paragraph 3 - Section B',
               details: {
                 type: 'Resource',
-                effect: 'Seize X / 2 (rounded down) Resources from players, where X is the number of the violations (rounded down) of the last rule declared by you, you can only choose players who violated the rule, you can give any amount of them to any non-violated players',
+                effect: 'Players who have not violated the rule(s) declared by you draw X / 2 (rounded up) tech cards, where X is the number of the violations of the last rule declared by you',
                 text: 'Rob the bad to give the good.'
               },
-              copies: 3,
+              copies: 2,
             },
             {
               id: 'ruler_lv4_A',
