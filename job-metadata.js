@@ -2,7 +2,7 @@ const jobMetadata = {
    "scientist": {
       initResources: 1,
       initTechCards: 2,
-      skill: (level) => `Threat ${level} free slot(s) as your station to help play tech cards`,
+      skill: (level) => `Treat ${level} nearby (both diagonal and adjacent) free slot(s) as your station to help play tech cards`,
       traits: ["beginner-friendly"],
    },
    "spiritual-leader": {
