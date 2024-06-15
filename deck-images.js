@@ -134,7 +134,7 @@ const deckImages = {
                 title: 'Resource Alchemy',
                 details: {
                     type: 'Resource',
-                    effect: 'Gain 2 resource, you can only play this card if you have not build a station',
+                    effect: 'Gain 2 resource, you can only play this card if you have not build a station and you cannot build a station this turn',
                     text: 'Transform basic elements into valuable resources through alchemical processes.'
                 },
                 copies: 4
