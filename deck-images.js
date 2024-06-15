@@ -395,7 +395,7 @@ const deckImages = {
               title: 'Corruption',
               details: {
                 type: 'Resource',
-                effect: 'Choose 1 player, give them 1 resource and you can use 1 of their stations to help playing tech cards for 1 turn, this effect can stack',
+                effect: 'Choose 1 opponent, they gain 1 resource and you can use 1 of their stations to help playing tech cards for 1 turn, this effect can stack',
                 text: 'Use your influence to gain access to resources and stations.'
               },
               copies: 4,
