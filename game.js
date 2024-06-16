@@ -349,7 +349,7 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 
 
 document.getElementById('startGame').addEventListener('click', () => {
-  const stationsToWin = Math.max(15 - (getTotalPlayersCount() * 2), 9);
+  const stationsToWin = Math.max(16 - (getTotalPlayersCount() * 2), 10);
 
   state.shared.stationsToWin = stationsToWin;
   state.shared.isGameStarted = true;
