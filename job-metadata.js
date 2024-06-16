@@ -29,7 +29,7 @@ const jobMetadata = {
       skill: (level) => `During the beginning of playing card phase choose upto 1 player, you can use ${level} station(s) of them to help playing for Tech cards, if you play it this way everyone draws a tech card, the drawing effect happens only once each turn`,
    },
    "ruler": {
-      initResources: 1,
+      initResources: 2,
       initTechCards: 1,
       skill: (level) => `Each turn you must declare to activate ${level} law(s), options are ['no-build', 'no-gain-resource', 'no-draw', 'no-play-card'], at least 1 law must be changed each turn`,
       traits: ["advanced-strategy-required"],
