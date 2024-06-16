@@ -1,63 +1,3 @@
-const playerColors = ['#ff9999', '#99ff99', '#9999ff', '#ffcc99']; // Colors for players
-let peer;
-let connections = [];
-let isHost = false;
-let conn;
-let stationMode = 'build';
-let connectedPeerId;
-const stationPopulation = 5;
-
-const cardIdDelim = '/';
-
-const STEP = {
-  'roll': 0,
-  'choose': 1,
-  'build': 2,
-  'play': 3,
-}
-
-const initPlayer = {
-    peerId: null,
-    connected: false,
-    cards: 0,
-    population: 20,
-    name: '',
-    job: '',
-    jobLevel: 1,
-    color: null,
-    decks: {
-      tech: [],
-    }
-}
-
-const state = {
-    shared: {
-        isGameStarted: false,
-        board: new Array(36).fill({ type: null, playerColor: null }),
-        players: [], // Initialize as an empty array
-        decks: {
-            spell: [],
-            equipment: []
-        },
-        playArea: { cardId: null, playerColor: null },
-        eventsHistory: [],
-        cardInfos: {},
-        currentStep: STEP['roll'],
-        stationsToWin: 0,
-    },
-    player: {
-        ...initPlayer
-    }
-};
-
-// Initialize the players array after defining the state
-state.shared.players = [
-    { ...initPlayer, id: 'player1', color: playerColors[0], resources: 0, stations: 0 },
-    { ...initPlayer, id: 'player2', color: playerColors[1], resources: 0, stations: 0 },
-    { ...initPlayer, id: 'player3', color: playerColors[2], resources: 0, stations: 0 },
-    { ...initPlayer, id: 'player4', color: playerColors[3], resources: 0, stations: 0 },
-];
-
 function findCurrentPlayer() {
     return state.shared.players.find(p => p?.peerId === connectedPeerId);
 }
@@ -72,11 +12,6 @@ function initSlotsBoard() {
         slot.addEventListener('click', (e) => {
             e.preventDefault();
 
-
-            if (state.shared.isGameStarted && state.shared.currentStep === STEP.build) {
-               state.shared.currentStep = STEP.play;
-            }
-
             const slotIndex = slot.dataset.index;
             const player = findCurrentPlayer();
 
@@ -89,33 +24,6 @@ function initSlotsBoard() {
               : placeStationOnBoard(slotIndex, player);
         });
         board.appendChild(slot);
-    }
-}
-
-function broadcastState() {
-    if (isHost) {
-       broadcast({ type: 'broadcastState', sharedState: state.shared });
-    } else {
-       throw new Error('Only host can broadcast')
-    }
-}
-
-function updateSharedState(newSharedState) {
-    console.log('updateSharedState', newSharedState);
-
-    if (newSharedState) {
-        state.shared = {
-          ...newSharedState,
-          eventsHistory: state.shared.eventsHistory,
-        };
-    }
-
-    updateUIFromState();
-
-    if (isHost) {
-        broadcastState();
-    } else if (conn) {
-        sendSharedStateToHost();
     }
 }
 
@@ -229,8 +137,8 @@ function renderHistory() {
     const pinnedEventContainer = document.getElementById('pinned-event-container');
     const eventConainer = document.getElementById('event-container');
 
-    const pinnedEvents = state.shared.eventsHistory.filter(e => e.pinned);
-    const allEvents = state.shared.eventsHistory
+    const pinnedEvents = state.shared.eventsHistory.filter(e => e.pinned).filter(e => !!e.values);
+    const allEvents = state.shared.eventsHistory.filter(e => !!e.values);
 
     const pinnedMessages = pinnedEvents.map(event => getEventMessageItem(event, true)).join('');
     const allMessage = allEvents.map(event => getEventMessageItem(event)).join('');
@@ -250,21 +158,27 @@ function getEventMessageItem(event, isPinned) {
 }
 
 function pinEvent(eventId) {
-    const event = state.shared.eventsHistory.find(e => e.eventId === eventId);
-    if (event) {
-        event.pinned = true
-    }
+    const player = findCurrentPlayer();
 
-    sendToHost({ type: 'update-event', event })
+    const pinnedEvent = buildEventHistory({
+      player,
+      eventName: 'event-pinned',
+      eventPayload: { eventId },
+      values: '', type: 'event' });
+
+    publishEventsHistory([pinnedEvent]);
 }
 
 function unpinEvent(eventId) {
-    const event = state.shared.eventsHistory.find(e => e.eventId === eventId);
-    if (event) {
-        event.pinned = false
-    }
+    const player = findCurrentPlayer();
 
-    sendToHost({ type: 'update-event', event })
+    const pinnedEvent = buildEventHistory({
+      player,
+      eventName: 'event-unpinned',
+      eventPayload: { eventId },
+      values: '', type: 'event' });
+
+    publishEventsHistory([pinnedEvent]);
 }
 
 function updateStationsToWin() {
@@ -301,41 +215,6 @@ function fillOtherPlayers(players) {
     return [...otherPlayers, updatingPlayer].sort((a, b) => a.id < b.id ? -1 : 1);
 }
 
-function handleData(data) {
-    console.log('Received data:', data);
-
-    if (data.type === 'updateState') {
-        data.sharedState.players = fillOtherPlayers(data.sharedState.players)
-        updateSharedState(data.sharedState);
-    }
-
-    if (data.type === 'broadcastState') {
-        replaceSharedState(data.sharedState);
-        const currPlayer = findCurrentPlayer();
-        loadPlayerDeckImages(currPlayer.job);
-    }
-
-    if (data.type === 'gameStarted') {
-        showSnackbar('Game Started');
-        startGameConfetti();
-        replaceSharedState(data.sharedState);
-        putInitTechCardsToHand();
-        peer.disconnect();
-    }
-
-    if (data.type === 'add-events') {
-        state.shared.eventsHistory.unshift(...data.events);
-        state.shared.currentStep = data.events[0].payload.currentStep;
-        updateSharedState();
-    }
-
-    if (data.type === 'update-event') {
-        const eventIndex = state.shared.eventsHistory.findIndex(e => e.eventId === data.event.eventId);
-        state.shared.eventsHistory[eventIndex] = data.event;
-        updateSharedState();
-    }
-}
-
 function sortToPutCurrentPlayerLast(players) {
     const currentPlayer = findCurrentPlayer();
     if (!currentPlayer) {
@@ -358,57 +237,6 @@ function putCardToHand(deckId, count) {
         const card = state.player.decks[deckId].pop();
         addCardToHand(deckId, card.id);
     }
-}
-
-const broadcastTimeouts = {};
-
-function broadcast(data) {
-    if (broadcastTimeouts[data.type]) {
-        clearTimeout(broadcastTimeouts[data.type]);
-    }
-
-    // Boucing the broadcast if multiple broadcasts are happening for the same type
-    broadcastTimeouts[data.type] = setTimeout(() => {
-      console.log('Broadcasting data:', data);
-      connections.forEach(connection => connection.send(data));
-    }, 100);
-}
-
-function sendSharedStateToHost(data) {
-    const reducedSharedState = {
-        ...state.shared,
-        players: state.shared.players.filter(p => p.peerId === connectedPeerId),
-        eventsHistory: [],
-    };
-
-    sendToHost({ type: 'updateState', sharedState: reducedSharedState });
-}
-
-const sendToHostTimeouts = {};
-function sendToHost(data, deboucingTimeout = 0) {
-    updateUIFromState();
-
-    if (isHost) {
-      updateSharedState();
-      return;
-    }
-
-    if (sendToHostTimeouts[data.type]) {
-        clearTimeout(sendToHostTimeouts[data.type]);
-    }
-
-    if(deboucingTimeout == 0) {
-       console.log('Sending data to host', data);
-       conn.send(data);
-
-       return;
-    }
-
-    // Deboucing the sending to host if multiple sendings are happening for the same type
-    sendSharedStateToHost[data.type] = setTimeout(() => {
-       console.log('[debouced] Sending data to host', data);
-       conn.send(data);
-    }, deboucingTimeout);
 }
 
 let maxRetriesPeerServer = 3;
@@ -458,7 +286,8 @@ document.getElementById('startHost').addEventListener('click', () => {
                     document.getElementById('startGame').style.display = 'block';
                 }
 
-                updateSharedState(state.shared);
+                updateUIFromState();
+                broadcastState();
             });
             connection.on('close', () => {
                 console.log('Client disconnected');
@@ -501,8 +330,11 @@ function removePlayer(peerId) {
     if (player) {
         player.connected = false;
         player.peerId = null;
-        updateSharedState(state.shared);
+
         showSnackbar(`Player ${state.shared.players.indexOf(player) + 1} - ${player.name} disconnected`);
+
+        updateUIFromState();
+        broadcastState();
     }
 }
 
@@ -517,21 +349,26 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 
 
 document.getElementById('startGame').addEventListener('click', () => {
-    const stationsToWin = Math.max(15 - (getTotalPlayersCount() * 2), 9);
+  const stationsToWin = Math.max(15 - (getTotalPlayersCount() * 2), 9);
 
-    state.shared.stationsToWin = stationsToWin;
-    state.shared.isGameStarted = true;
+  state.shared.stationsToWin = stationsToWin;
+  state.shared.isGameStarted = true;
 
-    peer.disconnect();
+  peer.disconnect();
 
-    showSnackbar('Game Started');
-    startGameConfetti();
-    broadcast({ type: 'gameStarted', sharedState: state.shared });
+  showSnackbar('Game Started');
+  startGameConfetti();
+  putInitTechCardsToHand();
 
-    const event = buildEventHistory({ values: `Game Started! ${emojis.PartyPepper}`, type: 'game' });
-    publishEventsHistory([event]);
+  const event = buildEventHistory({
+    eventName: 'game-started',
+    eventPayload: {},
+    values: `Game Started! ${emojis.PartyPepper}`,
+    type: 'game' });
 
-    putInitTechCardsToHand();
+  publishEventsHistory([event]);
+
+  broadcast({ type: 'game-started' });
 });
 
 document.getElementById('stopGame').addEventListener('click', () => {
@@ -568,17 +405,21 @@ function rollDice(diceType) {
                 const die1 = Math.floor(Math.random() * 6) + 1;
                 const die2 = Math.floor(Math.random() * 6) + 1;
 
-                if(hasStation(die1, die2)) {
-                    state.shared.currentStep = STEP.roll;
-                } else {
-                    state.shared.currentStep = STEP.choose;
-                }
-
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
-                result = buildEventHistory({ player: currPlayer, values: [die1, die2], type: 'roll-dice' });
+
+                result = buildEventHistory({
+                  player: currPlayer,
+                  eventName: 'slot-dice-rolled',
+                  eventPayload: { die1, die2 },
+                  values: [die1, die2], type: 'roll-dice' });
             } else {
                 const die1 = Math.floor(Math.random() * diceType) + 1;
-                result = buildEventHistory({ player: currPlayer, values: die1, type: 'dice'});
+                result = buildEventHistory({
+                  player: currPlayer,
+                  eventName: 'dice-rolled',
+                  eventPayload: { die1 },
+                  values: die1, type: 'dice'});
+
                 diceResult.textContent = `Result: (${die1})`;
             }
 
@@ -601,24 +442,23 @@ function resetHighlightSlot() {
 
 function sendChat(msg) {
     const currPlayer = findCurrentPlayer();
-    const event = buildEventHistory({ player: currPlayer, values: msg, type: 'chat' });
+    const event = buildEventHistory({
+      player: currPlayer,
+      eventName: 'chat-sent',
+      eventPayload: { playerPeerId: currPlayer.peerId },
+      values: msg, type: 'chat' });
 
     publishEventsHistory([event]);
 }
 
-function buildEventHistory({ player, values, type }) {
+function buildEventHistory({ player, values, type, eventName, eventPayload }) {
     const eventId = generateUID();
     const eventTime = new Date().toLocaleTimeString();
-    const payload = { currentStep: state.shared.currentStep }
+    const payload = { ...eventPayload }
     const playerName = player?.name || 'Host';
     const playerColor = player?.color || '#000';
-    return { eventId, eventTime, playerName, playerColor, values, type, payload };
-}
 
-function publishEventsHistory(events) {
-    state.shared.eventsHistory.unshift(...events);
-
-    sendToHost({ type: 'add-events', events }, 200);
+    return { eventId, eventName, eventTime, playerName, playerColor, values, type, payload };
 }
 
 const defaultSlotBackgroundColor = '#f0f0f0';
@@ -718,13 +558,16 @@ function loadPlayerDeckImages(job) {
 
     console.log({ peerId: connectedPeerId, cardInfos: state.shared.cardInfos })
 
-    updateSharedState({
-        ...state.shared,
-        cardInfos: {
-          ...state.shared.cardInfos,
-          [connectedPeerId]: [...shuffledImages],
-        }
-    })
+    state.shared.cardInfos = {
+        ...state.shared.cardInfos,
+        [connectedPeerId]: [...shuffledImages],
+    }
+
+    console.log('Player deck images loaded');
+
+    if (isHost) {
+        broadcastState();
+    }
 }
 
 // also send message when press enter key on chat-message input
@@ -793,27 +636,18 @@ hand.addEventListener('drop', (e) => {
 
     const count = parseInt(deckCountNode.textContent);
     if (count > 0) {
-        const deck = isPlayerDeck(deckId) ? state.player.decks[deckId] : state.shared.decks[deckId];
+        const deck = state.player.decks[deckId];
         const card = deck.pop();
+
         addCardToHand(deckId, card.id);
 
-        if (isPlayerDeck(deckId)) {
-            updatePlayerState({
-                ...state.player,
-                decks: {
-                    ...state.player.decks,
-                    [deckId]: state.player.decks[deckId].slice(0, count - 1)
-                }
-            });
-        } else {
-            updateSharedState({
-                ...state.shared,
-                decks: {
-                    ...state.shared.decks,
-                    [deckId]: state.shared.decks[deckId].slice(0, count - 1)
-                }
-            });
-        }
+        updatePlayerState({
+            ...state.player,
+            decks: {
+                ...state.player.decks,
+                [deckId]: state.player.decks[deckId].slice(0, count - 1)
+            }
+        });
     }
 });
 
@@ -900,13 +734,16 @@ function getCardNodeId(deckId, cardId, playerPeerId) {
 function addCardToHand(deckId, cardId) {
     console.log(`Adding card to hand from ${deckId}, card index: ${cardId}`);
     const currPlayer = findCurrentPlayer();
-    currPlayer.cards++;
     const card = createCardElement(deckId, cardId, currPlayer.job, currPlayer.peerId);
     hand.appendChild(card);
 
-    const event = buildEventHistory({ player: currPlayer, values: `${emojis.Card} Added a [${deckId} card] to hands`, type: 'card' });
-
-    updateSharedState();
+    const event = buildEventHistory({
+      player: currPlayer,
+      values: `${emojis.Card} Added a [${deckId} card] to hands`,
+      type: 'card' ,
+      eventName: 'card-added-to-hands',
+      eventPayload: { playerPeerId: currPlayer.peerId }
+    });
 
     publishEventsHistory([event]);
 }
@@ -921,18 +758,19 @@ function recycleStationOnBoard(slotIndex, player) {
         return;
     }
 
-    slot.playerColor = null;
-
-    player.resources++;
-    player.stations--;
-    player.population-=stationPopulation;
-
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const recycledEvent = buildEventHistory({ player, values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
-    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Down} Lost -${stationPopulation} population`, type: 'population' });
+    const recycledEvent = buildEventHistory({
+       player,
+       eventName: 'station-recycled',
+       eventPayload: { playerPeerId: player.peerId, slotIndex },
+       values: `${emojis.Station}♻️ Recycled a station on slot (${row}, ${col})`, type: 'station' });
 
-    updateSharedState();
+    const populationDecreasedEvent = buildEventHistory({
+      player,
+      eventName: 'population-decreased',
+      eventPayload: { playerPeerId: player.peerId, change: stationPopulation },
+      values: `${emojis.Population} ${emojis.Down} Lost -${stationPopulation} population`, type: 'population' });
 
     publishEventsHistory([populationDecreasedEvent, recycledEvent]);
 }
@@ -947,17 +785,18 @@ function destroyStationOnBoard(slotIndex, player) {
         return;
     }
 
-    slot.playerColor = null;
-
-    player.stations--;
-    player.population-=stationPopulation;
-
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const destroyEvent = buildEventHistory({ player, values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
-    const populationDecreasedEvent = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Down} Lost -${stationPopulation} population`, type: 'population' });
-
-    updateSharedState();
+    const destroyEvent = buildEventHistory({
+      player,
+      eventName: 'station-destroyed',
+      eventPayload: { playerPeerId: player.peerId, slotIndex },
+      values: `${emojis.Station}⚠️Destroyed a station on slot (${row}, ${col})`, type: 'station' });
+    const populationDecreasedEvent = buildEventHistory({
+      player,
+      eventName: 'population-decreased',
+      eventPayload: { playerPeerId: player.peerId, change: stationPopulation },
+      values: `${emojis.Population} ${emojis.Down} Lost -${stationPopulation} population`, type: 'population' });
 
     publishEventsHistory([populationDecreasedEvent, destroyEvent]);
 }
@@ -968,35 +807,36 @@ function getRowColFromSlotIndex(slotIndex) {
     return [row, col];
 }
 
-
 // Place a card on the board
 function placeStationOnBoard(slotIndex, player) {
     if (player.resources <= 0) {
       return
     }
 
+    const slot = state.shared.board[slotIndex];
+
+    if (slot.playerColor) {
+      return
+    }
+
     console.log(`Placing a station on board at slot ${slotIndex}, with color ${player.color}`);
-
-    const newBoard = state.shared.board.map((s, i) => i.toString() === slotIndex.toString() ? ({ ...s, playerColor: player.color }) : s)
-
-    player.resources--;
-    player.stations++;
-    player.population+=stationPopulation;
 
     const [row, col] = getRowColFromSlotIndex(slotIndex);
 
-    const buildEvent = buildEventHistory({ player, values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
+    const buildEvent = buildEventHistory({
+      player,
+      eventName: 'station-built',
+      eventPayload: { playerPeerId: player.peerId, slotIndex },
+      values: `${emojis.Station}🛠️  Built a station on slot (${row}, ${col})`, type: 'station' });
 
-    const populationIncreasedEvent = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Up} Gained +${stationPopulation} population`, type: 'population' });
-
-    updateSharedState({
-        ...state.shared,
-        board: newBoard,
-    });
+    const populationIncreasedEvent = buildEventHistory({
+      player,
+      eventName: 'population-increased',
+      eventPayload: { playerPeerId: player.peerId, change: stationPopulation },
+      values: `${emojis.Population} ${emojis.Up} Gained +${stationPopulation} population`, type: 'population' });
 
     publishEventsHistory([populationIncreasedEvent, buildEvent]);
 }
-// Add these lines in the appropriate place, likely after initializing the board and hand event listeners
 
 const playArea = document.getElementById('play-area');
 playArea.addEventListener('dragover', (e) => {
@@ -1016,16 +856,14 @@ playArea.addEventListener('drop', (e) => {
         const card = document.querySelector(`.card[data-deck-card-id='${deckCardId}']`);
         if (card) {
             const player = findCurrentPlayer();
-            player.cards--;
 
             const cardTitle = getCardInfo(deckId, cardId, playerPeerId).title;
 
-            updateSharedState({
-                ...state.shared,
-                playArea: { deckId, cardId, playerColor: player.color, playerJob: player.job, playerPeerId }
-            });
-
-            const event = buildEventHistory({ player, values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
+            const event = buildEventHistory({
+              player,
+              eventName: 'card-played',
+              eventPayload: { deckId, cardId, playerPeerId },
+              values: `${emojis.Card} Played a [${cardTitle}] card`, type: 'play' });
             publishEventsHistory([event]);
         }
     }
@@ -1338,11 +1176,11 @@ function increaseJobLevel() {
     const player = findCurrentPlayer();
 
     if (player && player.jobLevel < 3) {
-        player.jobLevel += 1;
-
-        updateSharedState();
-
-        const event = buildEventHistory({ player, values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
+        const event = buildEventHistory({
+          player,
+          eventName: 'job-level-increased',
+          eventPayload: { playerPeerId: player.peerId },
+          values: `${emojis.Learn} Increased job level to ${player.jobLevel}`, type: 'job' });
         publishEventsHistory([event]);
     }
 }
@@ -1353,11 +1191,12 @@ function increasePopulation(inputPlayer) {
 
     if (player) {
         const change = parseInt(populationChange || '1');
-        player.population += parseInt(change);
 
-        updateSharedState();
-
-        const event = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
+        const event = buildEventHistory({
+          player,
+          eventName: 'population-increased',
+          eventPayload: { playerPeerId: player.peerId, change },
+          values: `${emojis.Population} ${emojis.Up} Gained +${change} population`, type: 'population' });
         publishEventsHistory([event]);
     }
 }
@@ -1368,35 +1207,25 @@ function decreasePopulation(inputPlayer) {
 
     if (player) {
         const change = parseInt(populationChange || '1');
-        player.population -= parseInt(change);
 
-        updateSharedState();
-
-        const event = buildEventHistory({ player, values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
+        const event = buildEventHistory({
+          player,
+          eventName: 'population-decreased',
+          eventPayload: { playerPeerId: player.peerId, change },
+          values: `${emojis.Population} ${emojis.Down} Lost -${change} population`, type: 'population' });
         publishEventsHistory([event]);
 
     }
 }
 
 function increaseResource() {
-    if (state.shared.isGameStarted) {
-      switch (state.shared.currentStep) {
-          case STEP.roll:
-              state.shared.currentStep = STEP.choose;
-              break;
-          case STEP.choose:
-              state.shared.currentStep = STEP.build;
-              break;
-      }
-    }
-
     const player = findCurrentPlayer();
     if (player) {
-        player.resources += 1;
-
-        updateSharedState();
-
-        const event = buildEventHistory({ player, values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
+        const event = buildEventHistory({
+          player,
+          eventName: 'resources-increased',
+          eventPayload: { playerPeerId: player.peerId, change: 1 },
+          values: `${emojis.Resource} ${emojis.Up} Gained +1 resource`, type: 'resource' });
         publishEventsHistory([event]);
     }
 }
@@ -1404,11 +1233,11 @@ function increaseResource() {
 function decreaseResource() {
     const player = findCurrentPlayer();
     if (player) {
-        player.resources -= 1;
-
-        updateSharedState();
-
-        const event = buildEventHistory({ player, values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
+        const event = buildEventHistory({
+          player,
+          eventName: 'resources-decreased',
+          eventPayload: { playerPeerId: player.peerId, change: 1 },
+          values: `${emojis.Resource} ${emojis.Down} Lost -1 resource`, type: 'resource' });
         publishEventsHistory([event]);
     }
 }
@@ -1436,20 +1265,25 @@ function initTurnSteps() {
 
     steps.forEach((step, index) => {
         step.addEventListener("click", () => {
-           state.shared.currentStep = index;
-           updateSharedState();
+           const player = findCurrentPlayer();
+
+           const event = buildEventHistory({
+             player,
+             eventName: 'step-changed',
+             eventPayload: { step: index },
+             values: `${emojis.Turn} Changed step to ${index}`, type: 'step' });
+
+           publishEventsHistory([event])
         });
     });
 
     endTurnButton.addEventListener("click", () => {
-        state.shared.currentStep = STEP.roll;
+        const event = buildEventHistory({
+          player: findCurrentPlayer(),
+          eventName: 'turn-ended',
+          eventPayload: {},
+          values: `${emojis.Turn} Ended turn`, type: 'turn' });
 
-        updateSharedState({
-            ...state.shared,
-            playArea: {},
-        });
-
-        const event = buildEventHistory({ player: findCurrentPlayer(), values: `${emojis.Turn} Ended turn`, type: 'turn' });
         publishEventsHistory([event]);
     });
 }
