@@ -349,6 +349,8 @@ document.getElementById('leaveGame').addEventListener('click', () => {
 
 
 document.getElementById('startGame').addEventListener('click', () => {
+  putInitTechCardsToHand();
+
   const stationsToWin = Math.max(16 - (getTotalPlayersCount() * 2), 10);
 
   state.shared.stationsToWin = stationsToWin;
@@ -358,7 +360,6 @@ document.getElementById('startGame').addEventListener('click', () => {
 
   showSnackbar('Game Started');
   startGameConfetti();
-  putInitTechCardsToHand();
 
   const event = buildEventHistory({
     eventName: 'game-started',
@@ -608,17 +609,6 @@ function isPlayerDeck(deckId) {
 
 hand.addEventListener('drop', (e) => {
     e.preventDefault();
-
-    if (state.shared.isGameStarted) {
-      switch(state.shared.currentStep) {
-         case STEP.roll:
-            state.shared.currentStep = STEP.choose;
-            break;
-         case STEP.choose:
-            state.shared.currentStep = STEP.build;
-            break;
-      }
-    }
 
     const deckId = e.dataTransfer.getData('text/plain');
     console.log('Dropping card from deck:', deckId);
