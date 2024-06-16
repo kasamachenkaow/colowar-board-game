@@ -40,12 +40,12 @@ const state = {
         },
         playArea: { cardId: null, playerColor: null },
         eventsHistory: [],
-        cardInfos: {},
         currentStep: STEP['roll'],
         stationsToWin: 0,
     },
     player: {
-        ...initPlayer
+        ...initPlayer,
+        cardInfos: {},
     }
 };
 

@@ -10,12 +10,12 @@ function handleData(data) {
     console.log('Received data:', data);
 
     if (data.type === 'broadcastState') {
+        loadJobsDeckImages();
         replaceSharedState(data.sharedState);
-        const currPlayer = findCurrentPlayer();
-        loadPlayerDeckImages(currPlayer.job);
     }
 
     if (data.type === 'add-events') {
+        loadJobsDeckImages();
         state.shared.eventsHistory.unshift(...data.events);
 
         data.events.forEach(event => {

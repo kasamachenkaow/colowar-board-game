@@ -540,10 +540,16 @@ function loadSharedDeckImages() {
     });
 }
 
+function loadJobsDeckImages() {
+    const playerJobs = state.shared.players.map(p => p.job).filter(Boolean);
+
+    playerJobs.forEach(loadPlayerDeckImages)
+}
+
 // Load player-specific deck images based on job when joining or becoming a host
 function loadPlayerDeckImages(job) {
-    if (state.shared.cardInfos[connectedPeerId]) {
-        console.log('Player deck images already loaded');
+    if (state.player.cardInfos[job]) {
+        console.log('Job deck images already loaded');
         return;
     }
 
@@ -556,18 +562,12 @@ function loadPlayerDeckImages(job) {
     const shuffledImages = shuffle([...multipleCopies]);
     state.player.decks.tech = shuffledImages;
 
-    console.log({ peerId: connectedPeerId, cardInfos: state.shared.cardInfos })
-
-    state.shared.cardInfos = {
-        ...state.shared.cardInfos,
-        [connectedPeerId]: [...shuffledImages],
+    state.player.cardInfos = {
+        ...state.player.cardInfos,
+        [job]: [...shuffledImages],
     }
 
-    console.log('Player deck images loaded');
-
-    if (isHost) {
-        broadcastState();
-    }
+    console.log('Job deck images loaded');
 }
 
 // also send message when press enter key on chat-message input
@@ -656,8 +656,10 @@ function getCardInfo(deckId, cardId, playerPeerId) {
 
     console.log({ deckId, cardId, playerPeerId })
 
+    const p = state.shared.players.find(p => p.peerId === playerPeerId);
+
     const cardInfo = deckId === 'tech'
-        ? state.shared.cardInfos[playerPeerId].find(card => card.id === cardId)
+        ? state.player.cardInfos[p.job].find(card => card.id === cardId)
         : deckImages[deckId].find(card => card.id === cardId);
 
     console.log('Card info:', cardInfo)
@@ -670,6 +672,8 @@ function createCardElement(deckId, cardId, playerJob, playerPeerId) {
 
     const card = document.createElement('div');
     card.className = 'card';
+
+    console.log('Creating card element:', cardInfo)
 
     if (cardInfo.pattern) {
         const pattern = cardInfo.pattern;
@@ -1108,7 +1112,7 @@ joinButton.addEventListener('click', () => {
         if (isHost) {
             newPlayer(connectedPeerId, playerName, playerJob)
 
-            loadPlayerDeckImages(playerJob);
+            loadJobsDeckImages();
 
             modal.style.display = 'none';
 
