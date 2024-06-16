@@ -21,7 +21,7 @@ const jobMetadata = {
       initResources: 2,
       initTechCards: 1,
       skill: (level) => `Can reroll ${level} time(s) per turn`,
-      traits: ["always-start-first"],
+      traits: ["beginner-friendly", "always-start-first"],
    },
    "politician": {
       initResources: 1,
@@ -42,7 +42,7 @@ const jobMetadata = {
    "botanist": {
       initResources: 2,
       initTechCards: 1,
-      skill: (level) => `When the slot roll matches with one of your stations, you gain upto ${level} extra effect(s), depending on the number of connected slots with the same slot type, also when your station is being destroyed you can spend 1 resource to prevent it`,
+      skill: (level) => `When the slot roll matches with one of your stations, you gain upto ${level} extra effect(s), depending on the number of connected slots with the same slot type, also when your station is being destroyed you can spend 1 resource to prevent it, you can only gain extra effect(s) when there is at least 1 player that has stations more than you`,
       traits: ["beginner-friendly"],
    },
 }

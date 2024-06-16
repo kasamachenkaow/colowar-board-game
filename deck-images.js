@@ -668,11 +668,11 @@ const deckImages = {
                 [X, 1, X],
                 [0, 1, 0]
               ],
-              title: 'Watering',
+              title: 'Early Cultivate',
               details: {
                 type: 'Station',
-                effect: 'Choose 2 stations and swap them',
-                text: 'Water your stations to help them grow and flourish.',
+                effect: 'Roll slot dices 2 times, only you get the effects',
+                text: 'Cultivate your stations to help them grow and flourish.',
               },
               copies: 6,
             },
@@ -698,7 +698,7 @@ const deckImages = {
                 [0, 1, 0],
                 [0, 1, 0]
               ],
-              title: 'Cultivate',
+              title: 'Full Cultivate',
               details: {
                 type: 'Special',
                 effect: 'Roll slot dices 5 times, only you get the effects',
