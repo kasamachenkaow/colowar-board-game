@@ -11,6 +11,18 @@ const eventReducer = (state, event) => {
 
       const affectedPlayer = findPlayerByPeerId(state, playerPeerId);
       affectedPlayer.cards++;
+
+      if (state.shared.isGameStarted) {
+        switch(state.shared.currentStep) {
+           case STEP.roll:
+              state.shared.currentStep = STEP.choose;
+              break;
+           case STEP.choose:
+              state.shared.currentStep = STEP.build;
+              break;
+        }
+      }
+
     } break;
     case 'station-recycled': {
       const { playerPeerId, slotIndex } = event.payload;
