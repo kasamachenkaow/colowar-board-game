@@ -504,10 +504,8 @@ function highlightSlot(row, col) {
 }
 
 function updateDecks() {
-    const sharedDeckIds = Object.keys(state.shared.decks);
     const playerDeckIds = Object.keys(state.player.decks);
 
-    sharedDeckIds.forEach(deckId => updateDeck(deckId, 'shared'));
     playerDeckIds.forEach(deckId => updateDeck(deckId, 'player'));
 }
 
@@ -540,15 +538,11 @@ function loadSharedDeckImages() {
     });
 }
 
-function loadJobsDeckImages() {
-    const playerJobs = state.shared.players.map(p => p.job).filter(Boolean);
-
-    playerJobs.forEach(loadPlayerDeckImages)
-}
-
 // Load player-specific deck images based on job when joining or becoming a host
 function loadPlayerDeckImages(job) {
-    if (state.player.cardInfos[job]) {
+    const currPlayer = findCurrentPlayer();
+
+    if (state.player.decks.tech && state.player.decks.tech.length > 0) {
         console.log('Job deck images already loaded');
         return;
     }
@@ -560,12 +554,8 @@ function loadPlayerDeckImages(job) {
     });
     console.log({ multipleCopies })
     const shuffledImages = shuffle([...multipleCopies]);
-    state.player.decks.tech = shuffledImages;
 
-    state.player.cardInfos = {
-        ...state.player.cardInfos,
-        [job]: [...shuffledImages],
-    }
+    state.player.decks.tech = shuffledImages;
 
     console.log('Job deck images loaded');
 }
@@ -652,15 +642,11 @@ hand.addEventListener('drop', (e) => {
 });
 
 function getCardInfo(deckId, cardId, playerPeerId) {
-    console.log(`Getting card info from ${deckId}, card id: ${cardId}`)
-
-    console.log({ deckId, cardId, playerPeerId })
+    console.log(`Getting card info from ${deckId}, card id: ${cardId}, player peer id: ${playerPeerId}`)
 
     const p = state.shared.players.find(p => p.peerId === playerPeerId);
 
-    const cardInfo = deckId === 'tech'
-        ? state.player.cardInfos[p.job].find(card => card.id === cardId)
-        : deckImages[deckId].find(card => card.id === cardId);
+    const cardInfo = deckImages.tech[p.job].find(card => cardId.includes(card.id))
 
     console.log('Card info:', cardInfo)
 
@@ -1109,10 +1095,10 @@ joinButton.addEventListener('click', () => {
     const playerJob = document.getElementById('playerJob').value;
 
     if (playerName && playerJob) {
+        loadPlayerDeckImages(playerJob);
+
         if (isHost) {
             newPlayer(connectedPeerId, playerName, playerJob)
-
-            loadJobsDeckImages();
 
             modal.style.display = 'none';
 
