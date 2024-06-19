@@ -577,7 +577,7 @@ const deckImages = {
               title: 'Rule Paragraph 7 - Section A',
               details: {
                 type: 'Special',
-                effect: 'Player who violated the last rule declared by you the most loses the game, if there are multiple players, they all lose the game',
+                effect: 'Opponents who violated the last rule declared by you the most lose the game (if there is a tie, all tied players lose)',
                 text: 'Death sentence for the most notorious violators.'
               },
               copies: 2,
