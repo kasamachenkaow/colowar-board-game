@@ -20,7 +20,7 @@ const jobMetadata = {
    "hacker": {
       initResources: 2,
       initTechCards: 1,
-      skill: (level) => `Can reroll ${level} time(s) per turn`,
+      skill: (level) => `Can reroll ${level} time(s) per turn, hacker always starts first`,
       traits: ["beginner-friendly", "always-start-first"],
    },
    "politician": {
