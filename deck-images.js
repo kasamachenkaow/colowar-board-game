@@ -609,7 +609,7 @@ const deckImages = {
               title: 'Information Leak',
               details: {
                 type: 'Station',
-                effect: 'Gain X resource(s) and build that many station(s), where X is the number of stations that has been built by players your are spying this turn',
+                effect: 'Gain X resource(s) and build that many station(s), where X is the maximum of number of stations that has been built by one of player your are spying this turn',
                 text: 'Leak information to gain an advantage over your opponents.',
               },
               copies: 5,
