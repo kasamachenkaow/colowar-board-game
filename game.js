@@ -383,6 +383,10 @@ function hasStation(die1, die2) {
     return state.shared.board[slotIndex].playerColor;
 }
 
+function getDiceResult(diceType) {
+  return Math.floor(Math.random() * diceType) + 1;
+}
+
 function rollDice(diceType) {
     console.log('Rolling dice:', diceType)
 
@@ -403,8 +407,8 @@ function rollDice(diceType) {
             const currPlayer = findCurrentPlayer();
             let result;
             if (diceType === '2d6') {
-                const die1 = Math.floor(Math.random() * 6) + 1;
-                const die2 = Math.floor(Math.random() * 6) + 1;
+                const die1 = getDiceResult(6);
+                const die2 = getDiceResult(6);
 
                 diceResult.textContent = `Result: (${die1}, ${die2})`;
 
@@ -414,7 +418,7 @@ function rollDice(diceType) {
                   eventPayload: { die1, die2 },
                   values: [die1, die2], type: 'roll-dice' });
             } else {
-                const die1 = Math.floor(Math.random() * diceType) + 1;
+                const die1 = getDiceResult(diceType);
                 result = buildEventHistory({
                   player: currPlayer,
                   eventName: 'dice-rolled',
@@ -427,9 +431,9 @@ function rollDice(diceType) {
             publishEventsHistory([result]);
         } else {
             if (diceType === '2d6') {
-                diceResult.textContent = `Rolling... (${Math.floor(Math.random() * 6) + 1}, ${Math.floor(Math.random() * 6) + 1})`;
+                diceResult.textContent = `Rolling... (${getDiceResult(6)}, ${getDiceResult(6)})`;
             } else {
-                diceResult.textContent = `Rolling... (${Math.floor(Math.random() * diceType) + 1})`;
+                diceResult.textContent = `Rolling... (${getDiceResult(diceType)})`;
             }
             rolls++;
         }
