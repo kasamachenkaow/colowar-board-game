@@ -410,7 +410,7 @@ const deckImages = {
               title: 'Population Growth',
               details: {
                 type: 'Population',
-                effect: 'Gain X*2 Population, where X is the number of all players cards in hands',
+                effect: 'Gain X Population, where X is the number of all players cards in hands',
                 text: 'Implement policies to encourage population growth.'
               },
               copies: 3,
