@@ -597,7 +597,7 @@ const deckImages = {
                 effect: 'Move 1 of your stations to any adjacent free slot',
                 text: 'Change your mission to gain an advantage over your opponents.'
               },
-              copies: 3,
+              copies: 7,
             },
             {
               id: 'spy_lv2_A',
@@ -642,7 +642,7 @@ const deckImages = {
                 effect: 'Gain X*3 Population, where X is the number of the stations for players you are spying',
                 text: 'Spread propaganda to increase your population.'
               },
-              copies: 2,
+              copies: 3,
             }
         ],
         "botanist": [
