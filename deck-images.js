@@ -487,7 +487,7 @@ const deckImages = {
               title: 'Rule Paragraph 2 - Section A',
               details: {
                 type: 'Population',
-                effect: 'Seize X*2 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule and you can give any amount of them to any non-violated players',
+                effect: 'Punish playeys by seizing X*2 Population from players, where X is the number of the violations of the last rule declared by you, you can only choose players who violated the rule and you can give any amount of them to any non-violated players',
                 text: 'Rob the bad to give the good.'
               },
               copies: 2,
@@ -517,7 +517,7 @@ const deckImages = {
               title: 'Rule Paragraph 3 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Move any X / 3 (rounded down) stations to any free slots, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Punish players by moving any X / 3 (rounded down) stations to any free slots, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Realocate illegal stations to maintain order and stability.'
               },
               copies: 2,
@@ -547,7 +547,7 @@ const deckImages = {
               title: 'Rule Paragraph 4 - Section A',
               details: {
                 type: 'Station',
-                effect: 'Destroy X / 2 (rounded down) stations, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
+                effect: 'Punish players by destroying X / 2 (rounded down) stations, where X is the number of the violations of the last rule declared by you, you can only choose stations of players who violated the rule',
                 text: 'Eradicate illegal stations to maintain order and stability.'
               },
               copies: 2,

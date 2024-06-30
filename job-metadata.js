@@ -31,7 +31,7 @@ const jobMetadata = {
    "ruler": {
       initResources: 2,
       initTechCards: 2,
-      skill: (level) => `Each turn you must declare to activate ${level} law(s), options are ['no-build', 'no-gain-resource', 'no-draw', 'no-play-card'], at least 1 law must be changed each turn`,
+      skill: (level) => `Each turn you must declare to activate ${level} law(s), options are ['no-build', 'no-gain-resource', 'no-draw', 'no-play-card'], at least 1 law must be changed each turn, whenever you punish players, the most-violated player(s) need to take the most penalties`,
       traits: ["advanced-strategy-required"],
    },
    "spy": {
@@ -43,6 +43,5 @@ const jobMetadata = {
       initResources: 2,
       initTechCards: 2,
       skill: (level) => `When the slot roll matches with one of your stations, you gain upto ${level} extra effect(s), depending on the number of connected slots with the same slot type, also when your station is being destroyed you can spend 1 resource to prevent it, you can only gain extra effect(s) when there is at least 1 player that has stations more than you, you can build up to 3 stations in a turn in the build phase`,
-      traits: ["beginner-friendly"],
    },
 }
