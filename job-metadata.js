@@ -6,8 +6,8 @@ const jobMetadata = {
       traits: ["beginner-friendly"],
    },
    "spiritual-leader": {
-      initResources: 1,
-      initTechCards: 2,
+      initResources: 2,
+      initTechCards: 3,
       skill: (level, playersCount) => `Gain ${isNaN(level) ? level + `*${playersCount+1}` : level*(playersCount+1)} population each turn`,
       traits: ["beginner-friendly"],
    },
