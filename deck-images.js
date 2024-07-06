@@ -422,11 +422,11 @@ const deckImages = {
                 [1, 0, 1],
                 [0, 1, 0]
               ],
-              title: 'Population Lockdown',
+              title: 'technological Incentive',
               details: {
                 type: 'Resource',
-                effect: 'All players except you cannot gain Population for 1 turn',
-                text: 'Redistribute resources to ensure a more equitable distribution.'
+                effect: 'All players draw an additional Tech card in the choose R/T phase until the end of your next turn',
+                text: 'Offer incentives to encourage technological advancement.'
               },
               copies: 3,
             },
